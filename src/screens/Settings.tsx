@@ -48,7 +48,10 @@ export default function Settings() {
 
   return (
     <div className="settings-screen">
-      <h1 className="settings-title">Settings</h1>
+      <header className="settings-header">
+        <span className="eyebrow">Configuration</span>
+        <h1 className="settings-title">Settings</h1>
+      </header>
 
       {message && (
         <div className={`panel settings-message ${message.kind === 'error' ? 'settings-message-error' : ''}`} role="status">
@@ -56,7 +59,7 @@ export default function Settings() {
         </div>
       )}
 
-      <section className="panel settings-section">
+      <section className="panel settings-section" style={{ ['--i' as string]: 0 }}>
         <div className="panel-header">
           <h2 className="label">Appearance</h2>
         </div>
@@ -83,7 +86,7 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="panel settings-section">
+      <section className="panel settings-section" style={{ ['--i' as string]: 1 }}>
         <div className="panel-header">
           <h2 className="label">Notifications</h2>
         </div>
@@ -100,7 +103,7 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="panel settings-section">
+      <section className="panel settings-section" style={{ ['--i' as string]: 2 }}>
         <div className="panel-header">
           <h2 className="label">Data &amp; Export</h2>
         </div>
@@ -129,7 +132,7 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="panel settings-section settings-danger">
+      <section className="panel settings-section settings-danger" style={{ ['--i' as string]: 3 }}>
         <div className="panel-header">
           <h2 className="label">Reset</h2>
         </div>

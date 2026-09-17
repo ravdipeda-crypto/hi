@@ -70,9 +70,13 @@ export default function NewCommitment() {
 
   return (
     <div className="new-commitment-screen">
-      <h1 className="new-commitment-title">New Commitment</h1>
+      <header className="new-commitment-head">
+        <span className="eyebrow">Define</span>
+        <h1 className="new-commitment-title">New Commitment</h1>
+        <p className="new-commitment-sub">A promise, measured in days and minutes.</p>
+      </header>
 
-      <form className="panel new-commitment-form" onSubmit={handleSubmit} noValidate>
+      <form className="panel ticked new-commitment-form" onSubmit={handleSubmit} noValidate>
         <div className="field">
           <label className="label" htmlFor="name">
             Commitment Name

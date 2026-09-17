@@ -89,3 +89,35 @@ export function ArrowLeftIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function PlayIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M7 5 L19 12 L7 19 Z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function PauseIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M8 5 V19 M16 5 V19" strokeWidth={2.4} strokeLinecap="butt" />
+    </svg>
+  );
+}
+
+export function StopIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="6" y="6" width="12" height="12" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function ArrowRightIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M5 12 H19 M13 6 L19 12 L13 18" />
+    </svg>
+  );
+}

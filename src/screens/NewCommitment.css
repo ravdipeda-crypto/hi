@@ -1,19 +1,38 @@
 .new-commitment-screen {
-  max-width: 480px;
+  max-width: 500px;
   margin: 0 auto;
 }
 
-.new-commitment-title {
-  font-size: 22px;
-  font-weight: 700;
+.new-commitment-head {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
   margin-bottom: 20px;
 }
 
+.new-commitment-title {
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.new-commitment-sub {
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+}
+
 .new-commitment-form {
-  padding: 24px;
+  padding: 26px;
   display: flex;
   flex-direction: column;
   gap: 18px;
+  animation: enter-fade-up var(--dur-base) var(--ease-out) both;
+}
+
+.new-commitment-duration-row select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-dim);
+  outline: none;
 }
 
 .new-commitment-duration-row {
@@ -26,7 +45,9 @@
   background: var(--color-bg-elevated);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-sm);
-  padding: 9px 11px;
+  padding: 10px 12px;
+  color: var(--color-text);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .new-commitment-preview {

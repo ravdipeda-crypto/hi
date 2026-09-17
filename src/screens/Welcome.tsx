@@ -21,21 +21,23 @@ export default function Welcome() {
 
   return (
     <div className="welcome-screen">
-      <div className="welcome-card panel">
-        <div className="welcome-mark">
-          <TriangleMark width={36} height={36} />
+      <div className="welcome-card panel ticked">
+        <div className="welcome-head">
+          <div className="welcome-mark">
+            <TriangleMark width={40} height={40} />
+          </div>
+          <h1 className="welcome-title wordmark">THE ARCHITECT</h1>
+          <p className="welcome-tagline label">Build a better you</p>
         </div>
-        <h1 className="welcome-title wordmark">THE ARCHITECT</h1>
-        <p className="welcome-tagline label">Build a better you</p>
 
         <p className="welcome-copy">
           A focused system for keeping promises you make to yourself. Plan a commitment,
           execute it with a timer, and let the record speak for itself.
         </p>
 
-        <ul className="welcome-steps">
-          {STEPS.map((step) => (
-            <li key={step.title} className="welcome-step">
+        <ul className="welcome-steps stagger">
+          {STEPS.map((step, i) => (
+            <li key={step.title} className="welcome-step" style={{ ['--i' as string]: i + 2 }}>
               <span className="welcome-step-glyph mono" aria-hidden="true">
                 {step.number}
               </span>
@@ -47,7 +49,7 @@ export default function Welcome() {
           ))}
         </ul>
 
-        <button type="button" className="btn btn-primary btn-block" onClick={start}>
+        <button type="button" className="btn btn-primary btn-block welcome-cta" onClick={start}>
           Start Building
         </button>
 

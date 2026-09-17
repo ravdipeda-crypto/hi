@@ -5,6 +5,7 @@ import { formatDuration, formatHoursMinutes, formatLongDate, formatShortDate, pa
 import { summarizeProgress } from '../utils/progress';
 import { computeDisplayStatus } from '../utils/status';
 import StatusBadge from '../components/StatusBadge';
+import AnimatedNumber from '../components/AnimatedNumber';
 import { ArrowLeftIcon } from '../components/icons';
 import type { DayRecord, DisplayStatus } from '../types';
 import './CommitmentDetail.css';
@@ -57,14 +58,20 @@ export default function CommitmentDetail() {
       </Link>
 
       <header className="commitment-detail-header">
-        <div>
+        <div className="commitment-detail-head-lead">
+          <span className="eyebrow">Commitment</span>
           <h1 className="commitment-detail-title">{commitment.name}</h1>
           <p className="label commitment-detail-meta">
             {formatHoursMinutes(commitment.dailyTargetSeconds)} / day · {commitment.durationDays} days ·{' '}
             {formatShortDate(commitment.startDate)} – {formatShortDate(commitment.endDate)}
           </p>
         </div>
-        <div className="commitment-detail-percent mono">{summary.completionPercent}%</div>
+        <div className="commitment-detail-percent-wrap">
+          <div className="commitment-detail-percent mono">
+            <AnimatedNumber value={summary.completionPercent} suffix="%" />
+          </div>
+          <span className="label label-faint">complete</span>
+        </div>
       </header>
 
       <div className="commitment-detail-grid">
