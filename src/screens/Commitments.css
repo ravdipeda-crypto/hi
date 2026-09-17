@@ -126,15 +126,11 @@
 }
 
 .commitment-row-fill {
-  width: 100%;
   height: 100%;
   border-radius: var(--radius-pill);
   background: linear-gradient(90deg, var(--accent-deep), var(--accent), var(--accent-bright));
   box-shadow: inset 0 1px 0 var(--highlight);
-  /* transform:scaleX instead of animating width — same visual growth, but
-     compositor-only so the fill animation can't drop frames. */
-  transform-origin: left;
-  transition: transform var(--dur-slow) var(--ease-liquid);
+  transition: width var(--dur-slow) var(--ease-liquid);
 }
 
 .commitment-row-fill.full {

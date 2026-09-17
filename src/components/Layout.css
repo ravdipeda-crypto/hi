@@ -34,7 +34,6 @@
   background: repeating-radial-gradient(circle, transparent 0 30px, rgba(150, 242, 239, 0.1) 33px 36px, transparent 40px 56px);
   animation: sidebar-ripple 14s var(--ease-liquid) infinite;
   pointer-events: none;
-  will-change: transform;
 }
 @keyframes sidebar-ripple {
   0%, 100% { transform: scale(0.94); opacity: 0.5; }
@@ -116,7 +115,6 @@
   border-radius: 50%;
   background: var(--accent-bright);
   animation: bead-pulse-ring 2s var(--ease-liquid) infinite;
-  will-change: transform, opacity;
 }
 .sidebar-flow { color: var(--on-ocean-muted); font-size: var(--fs-micro); }
 

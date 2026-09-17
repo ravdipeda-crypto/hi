@@ -87,7 +87,7 @@ function Section({
                 <div className="commitment-row-track" aria-hidden="true">
                   <div
                     className={`commitment-row-fill${summary.completionPercent === 100 ? ' full' : ''}`}
-                    style={{ transform: `scaleX(${summary.completionPercent / 100})` }}
+                    style={{ width: `${summary.completionPercent}%` }}
                   />
                 </div>
               </div>
