@@ -147,6 +147,23 @@
   }
   .mobile-topbar-status.live { color: var(--accent-deep); background: var(--accent-tint); }
 
+  .mobile-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    padding: 7px 13px 7px 10px;
+    border-radius: var(--radius-pill);
+    color: var(--accent-deep);
+    font-size: var(--fs-micro);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--accent-wash);
+    transition: transform var(--dur-quick) var(--ease-settle), background var(--dur-base) var(--ease-liquid);
+  }
+  .mobile-theme-toggle:active { transform: scale(0.94); }
+
   .app-main { padding: 8px 14px 104px; }
 
   .mobile-nav {

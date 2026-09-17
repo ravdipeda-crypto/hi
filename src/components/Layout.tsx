@@ -1,8 +1,8 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { BrandDrop, CommitmentsIcon, ProgressIcon, SettingsIcon, TodayIcon } from './icons';
+import { BrandDrop, CommitmentsIcon, MoonIcon, ProgressIcon, SettingsIcon, SunIcon, TodayIcon } from './icons';
 import RouteTransition from './RouteTransition';
 import { useApp } from '../context/AppContext';
-import { formatShortDate, todayISO } from '../utils/date';
+import { todayISO } from '../utils/date';
 import './Layout.css';
 
 const NAV_ITEMS = [
@@ -13,10 +13,11 @@ const NAV_ITEMS = [
 ];
 
 export default function Layout() {
-  const { timer, commitments } = useApp();
+  const { timer, commitments, settings, updateSettings } = useApp();
   const today = todayISO();
   const activeCount = commitments.filter((c) => c.startDate <= today && today <= c.endDate).length;
   const timerLabel = timer ? (timer.status === 'running' ? 'Flowing' : 'Paused') : 'Still water';
+  const isDeep = settings.theme === 'dark';
 
   return (
     <div className="app-shell">
@@ -26,9 +27,17 @@ export default function Layout() {
           <BrandDrop width={20} height={20} />
         </span>
         <span className="mobile-topbar-title">Architect</span>
-        <span className={`mobile-topbar-status${timer ? ' live' : ''}`}>
-          {timer ? timerLabel : formatShortDate(today)}
-        </span>
+        {timer && <span className="mobile-topbar-status live">{timerLabel}</span>}
+        <button
+          type="button"
+          className="mobile-theme-toggle"
+          onClick={() => void updateSettings({ theme: isDeep ? 'light' : 'dark' })}
+          aria-label={isDeep ? 'Switch to Daylight theme' : 'Switch to Deep theme'}
+          aria-pressed={isDeep}
+        >
+          {isDeep ? <MoonIcon width={15} height={15} /> : <SunIcon width={15} height={15} />}
+          {isDeep ? 'Deep' : 'Daylight'}
+        </button>
       </header>
 
       <aside className="sidebar" aria-label="Primary navigation">

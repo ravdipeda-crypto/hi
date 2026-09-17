@@ -121,3 +121,20 @@ export function ArrowRightIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function SunIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="12" r="4.2" />
+      <path d="M12 3 V5.4 M12 18.6 V21 M4.4 4.4 L6.1 6.1 M17.9 17.9 L19.6 19.6 M3 12 H5.4 M18.6 12 H21 M4.4 19.6 L6.1 17.9 M17.9 6.1 L19.6 4.4" />
+    </svg>
+  );
+}
+
+export function MoonIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M20 14.3A8.5 8.5 0 1 1 9.7 4 7 7 0 0 0 20 14.3Z" />
+    </svg>
+  );
+}
