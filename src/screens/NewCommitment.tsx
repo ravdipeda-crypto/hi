@@ -17,6 +17,7 @@ export default function NewCommitment() {
   const { createCommitment } = useApp();
   const navigate = useNavigate();
 
+  const [trackingType, setTrackingType] = useState<'DURATION' | 'COMPLETION'>('DURATION');
   const [name, setName] = useState('');
   const [hours, setHours] = useState('1');
   const [minutes, setMinutes] = useState('0');
@@ -26,19 +27,22 @@ export default function NewCommitment() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  const isCompletion = trackingType === 'COMPLETION';
   const hoursNum = Number(hours);
   const minutesNum = Number(minutes);
   const durationNum = Number(duration);
-  const dailyTargetSeconds = (hoursNum || 0) * 3600 + (minutesNum || 0) * 60;
+  const dailyTargetSeconds = isCompletion ? 0 : (hoursNum || 0) * 3600 + (minutesNum || 0) * 60;
   const previewEndDate =
     startDate && durationNum > 0 ? computeEndDate(startDate, durationNum) : null;
 
   function validate(): FormErrors {
     const next: FormErrors = {};
     if (!name.trim()) next.name = 'Commitment name is required.';
-    if (!hours && !minutes) next.hours = 'Daily target is required.';
-    if (hoursNum < 0 || minutesNum < 0 || minutesNum > 59) next.minutes = 'Enter a valid duration.';
-    if (dailyTargetSeconds <= 0) next.hours = 'Daily target must be greater than zero.';
+    if (!isCompletion) {
+      if (!hours && !minutes) next.hours = 'Daily target is required.';
+      if (hoursNum < 0 || minutesNum < 0 || minutesNum > 59) next.minutes = 'Enter a valid duration.';
+      if (dailyTargetSeconds <= 0) next.hours = 'Daily target must be greater than zero.';
+    }
     if (!duration || durationNum < 1 || !Number.isInteger(durationNum)) {
       next.duration = 'Duration must be a whole number of at least 1 day.';
     }
@@ -60,6 +64,7 @@ export default function NewCommitment() {
         dailyTargetSeconds,
         durationDays: durationNum,
         startDate,
+        trackingType,
       });
       navigate(`/commitments/${commitment.id}`);
     } catch (err) {
@@ -101,29 +106,61 @@ export default function NewCommitment() {
         </div>
 
         <div className="field">
-          <label className="label" htmlFor="hours">
-            Daily Target
+          <label className="label" htmlFor="trackingType">
+            Tracking Type
           </label>
-          <div className="new-commitment-duration-row">
-            <select id="hours" value={hours} onChange={(e) => setHours(e.target.value)} aria-label="Hours">
-              {Array.from({ length: 13 }, (_, i) => i).map((h) => (
-                <option key={h} value={h}>
-                  {h} hr
-                </option>
-              ))}
-            </select>
-            <select value={minutes} onChange={(e) => setMinutes(e.target.value)} aria-label="Minutes">
-              {[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map((m) => (
-                <option key={m} value={m}>
-                  {m} min
-                </option>
-              ))}
-            </select>
+          <div className="new-commitment-type-row" role="radiogroup" aria-label="Tracking Type">
+            <button
+              type="button"
+              role="radio"
+              aria-checked={!isCompletion}
+              className={`new-commitment-type-option${!isCompletion ? ' active' : ''}`}
+              onClick={() => setTrackingType('DURATION')}
+            >
+              Duration
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={isCompletion}
+              className={`new-commitment-type-option${isCompletion ? ' active' : ''}`}
+              onClick={() => setTrackingType('COMPLETION')}
+            >
+              Completion
+            </button>
           </div>
-          {(errors.hours || errors.minutes) && (
-            <span className="field-error">{errors.hours ?? errors.minutes}</span>
-          )}
         </div>
+
+        {isCompletion ? (
+          <p className="new-commitment-completion-hint">
+            No timer — just a simple <strong>Complete</strong> tap once per day.
+          </p>
+        ) : (
+          <div className="field">
+            <label className="label" htmlFor="hours">
+              Daily Target
+            </label>
+            <div className="new-commitment-duration-row">
+              <select id="hours" value={hours} onChange={(e) => setHours(e.target.value)} aria-label="Hours">
+                {Array.from({ length: 13 }, (_, i) => i).map((h) => (
+                  <option key={h} value={h}>
+                    {h} hr
+                  </option>
+                ))}
+              </select>
+              <select value={minutes} onChange={(e) => setMinutes(e.target.value)} aria-label="Minutes">
+                {[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map((m) => (
+                  <option key={m} value={m}>
+                    {m} min
+                  </option>
+                ))}
+              </select>
+            </div>
+            {(errors.hours || errors.minutes) && (
+              <span className="field-error">{errors.hours ?? errors.minutes}</span>
+            )}
+          </div>
+        )}
 
         <div className="field">
           <label className="label" htmlFor="duration">

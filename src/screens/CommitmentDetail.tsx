@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext';
 import { formatDuration, formatHoursMinutes, formatLongDate, formatShortDate, parseISODate, toISODate } from '../utils/date';
 import { summarizeProgress } from '../utils/progress';
 import { computeDisplayStatus } from '../utils/status';
+import { resolveTrackingType } from '../db/repository';
 import StatusBadge from '../components/StatusBadge';
 import FocusLens from '../components/FocusLens';
 import { ArrowLeftIcon } from '../components/icons';
@@ -44,6 +45,8 @@ export default function CommitmentDetail() {
   const weeks = groupByWeek(records);
   const selectedRecord = selectedDate ? records.find((r) => r.date === selectedDate) : undefined;
   const commitmentId = commitment.id;
+  const trackingType = resolveTrackingType(commitment);
+  const isCompletion = trackingType === 'COMPLETION';
 
   async function handleDelete() {
     await deleteCommitment(commitmentId);
@@ -61,8 +64,8 @@ export default function CommitmentDetail() {
           <span className="eyebrow">Commitment</span>
           <h1 className="commitment-detail-title display">{commitment.name}</h1>
           <p className="commitment-detail-meta">
-            {formatHoursMinutes(commitment.dailyTargetSeconds)} / day · {commitment.durationDays} days ·{' '}
-            {formatShortDate(commitment.startDate)} – {formatShortDate(commitment.endDate)}
+            {isCompletion ? 'Completion' : `${formatHoursMinutes(commitment.dailyTargetSeconds)} / day`} ·{' '}
+            {commitment.durationDays} days · {formatShortDate(commitment.startDate)} – {formatShortDate(commitment.endDate)}
           </p>
         </div>
         <FocusLens percent={summary.completionPercent} size={96} variant="round" state={summary.completionPercent === 100 ? 'done' : 'idle'}>
@@ -114,7 +117,7 @@ export default function CommitmentDetail() {
             <h2 className="label">Day detail</h2>
           </div>
           {selectedRecord ? (
-            <DayDetail record={selectedRecord} />
+            <DayDetail record={selectedRecord} isCompletion={isCompletion} />
           ) : (
             <p className="commitment-detail-day-empty">Select a droplet in the history to read its record.</p>
           )}
@@ -144,19 +147,23 @@ export default function CommitmentDetail() {
   );
 }
 
-function DayDetail({ record }: { record: DayRecord }) {
+function DayDetail({ record, isCompletion }: { record: DayRecord; isCompletion: boolean }) {
   const { timer } = useApp();
   const status = computeDisplayStatus(record, timer);
   return (
     <div className="day-detail-body">
       <p className="day-detail-date serif">{formatLongDate(record.date)}</p>
       <StatusBadge status={status} />
-      <div className="day-detail-row">
-        <span className="label">Target</span> <span className="mono">{formatHoursMinutes(record.targetSeconds)}</span>
-      </div>
-      <div className="day-detail-row">
-        <span className="label">Recorded</span> <span className="mono">{formatDuration(record.elapsedSeconds)}</span>
-      </div>
+      {!isCompletion && (
+        <>
+          <div className="day-detail-row">
+            <span className="label">Target</span> <span className="mono">{formatHoursMinutes(record.targetSeconds)}</span>
+          </div>
+          <div className="day-detail-row">
+            <span className="label">Recorded</span> <span className="mono">{formatDuration(record.elapsedSeconds)}</span>
+          </div>
+        </>
+      )}
       {record.completedAt && (
         <div className="day-detail-row">
           <span className="label">Completed</span> <span className="mono">{toISODate(new Date(record.completedAt))}</span>

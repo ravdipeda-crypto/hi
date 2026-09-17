@@ -46,6 +46,10 @@ interface AppContextValue {
   resumeTimer: () => Promise<void>;
   stopTimer: () => Promise<void>;
 
+  /** Toggles a Completion-type commitment's today record between DONE and
+   *  NOT_STARTED. No timer is ever involved for these commitments. */
+  toggleTodayCompletion: (commitmentId: string) => Promise<void>;
+
   updateSettings: (partial: Partial<Settings>) => Promise<void>;
   exportData: () => Promise<ExportPayload>;
   importData: (payload: unknown) => Promise<void>;
@@ -277,6 +281,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setNowMs(now);
   }, []);
 
+  // ---------- completion-only habits (no timer involved) ----------
+  const toggleTodayCompletion = useCallback(async (commitmentId: string) => {
+    const date = todayISO();
+    const record = dayRecordsRef.current.find((r) => r.commitmentId === commitmentId && r.date === date);
+    if (!record) {
+      throw new Error('This commitment has no scheduled day for today.');
+    }
+    const nowDone = record.status === 'DONE';
+    let updated: DayRecord;
+    if (nowDone) {
+      const { completedAt, ...rest } = record;
+      void completedAt;
+      updated = { ...rest, status: 'NOT_STARTED' };
+    } else {
+      updated = { ...record, status: 'DONE', completedAt: Date.now() };
+    }
+    await repo.saveDayRecord(updated);
+    setDayRecords((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+  }, []);
+
   // ---------- settings ----------
   const updateSettings = useCallback(async (partial: Partial<Settings>) => {
     const updated: Settings = { ...settings, ...partial };
@@ -329,6 +353,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       pauseTimer,
       resumeTimer,
       stopTimer,
+      toggleTodayCompletion,
       updateSettings,
       exportData,
       importData,
@@ -351,6 +376,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       pauseTimer,
       resumeTimer,
       stopTimer,
+      toggleTodayCompletion,
       updateSettings,
       exportData,
       importData,

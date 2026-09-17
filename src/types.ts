@@ -3,13 +3,26 @@
 // enterprise system, so we avoid deep nesting or redundant derived fields
 // wherever a value can be computed cheaply instead.
 
+/**
+ * How a commitment's daily progress is tracked:
+ *  - DURATION: existing timer-based behavior (hours/minutes target).
+ *  - COMPLETION: a simple Done/Not Done habit with no timer. Its
+ *    `dailyTargetSeconds` is always 0 and is never used for math.
+ * Optional on read for backward compatibility with commitments created
+ * before this field existed — always treat a missing value as 'DURATION'.
+ */
+export type TrackingType = 'DURATION' | 'COMPLETION';
+
 /** A single commitment the user has made to themselves. */
 export interface Commitment {
   id: string;
   name: string;
-  /** Daily target, stored in seconds for precise timer math. */
+  /** Daily target, stored in seconds for precise timer math.
+   *  Always 0 for COMPLETION commitments. */
   dailyTargetSeconds: number;
   durationDays: number;
+  /** Defaults to 'DURATION' when absent (pre-existing commitments). */
+  trackingType?: TrackingType;
   /** ISO date string YYYY-MM-DD, local calendar day. */
   startDate: string;
   /** ISO date string YYYY-MM-DD, inclusive. startDate + durationDays - 1. */

@@ -4,15 +4,17 @@ import { useApp } from '../context/AppContext';
 import { formatDuration, formatHoursMinutes, formatLongDate, todayISO } from '../utils/date';
 import { cappedElapsedSeconds } from '../timer/engine';
 import { computeDisplayStatus } from '../utils/status';
+import { resolveTrackingType } from '../db/repository';
 import StatusBadge from '../components/StatusBadge';
 import FocusLens from '../components/FocusLens';
 import AnimatedNumber from '../components/AnimatedNumber';
-import { CloseIcon, PauseIcon, PlayIcon, StopIcon } from '../components/icons';
-import type { Commitment, DayRecord, DisplayStatus } from '../types';
+import { CheckIcon, CloseIcon, PauseIcon, PlayIcon, StopIcon } from '../components/icons';
+import type { Commitment, DayRecord, DisplayStatus, TrackingType } from '../types';
 import './Today.css';
 
 interface TodayItem {
   commitment: Commitment;
+  trackingType: TrackingType;
   record: DayRecord;
   status: DisplayStatus;
   liveElapsed: number;
@@ -22,8 +24,19 @@ interface TodayItem {
 }
 
 export default function Today() {
-  const { commitments, dayRecordFor, timer, nowMs, startTimer, pauseTimer, resumeTimer, stopTimer, error, dismissError } =
-    useApp();
+  const {
+    commitments,
+    dayRecordFor,
+    timer,
+    nowMs,
+    startTimer,
+    pauseTimer,
+    resumeTimer,
+    stopTimer,
+    toggleTodayCompletion,
+    error,
+    dismissError,
+  } = useApp();
   const [actionError, setActionError] = useState<string | null>(null);
   const today = todayISO();
 
@@ -33,14 +46,19 @@ export default function Today() {
       .map((c) => {
         const record = dayRecordFor(c.id, today);
         if (!record) return null;
+        const trackingType = resolveTrackingType(c);
         const isTimedHere = timer?.commitmentId === c.id && timer.dayDate === today;
         const liveElapsed = isTimedHere && timer
           ? cappedElapsedSeconds(timer, record.targetSeconds, nowMs)
           : record.elapsedSeconds;
         const remaining = Math.max(0, record.targetSeconds - liveElapsed);
-        const percent = record.targetSeconds > 0 ? Math.min(100, (liveElapsed / record.targetSeconds) * 100) : 0;
+        const percent =
+          trackingType === 'COMPLETION'
+            ? record.status === 'DONE' ? 100 : 0
+            : record.targetSeconds > 0 ? Math.min(100, (liveElapsed / record.targetSeconds) * 100) : 0;
         return {
           commitment: c,
+          trackingType,
           record,
           status: computeDisplayStatus(record, timer),
           liveElapsed,
@@ -72,7 +90,16 @@ export default function Today() {
     }
   }
 
-  const controls = { pauseTimer, resumeTimer, stopTimer, handleStart };
+  async function handleToggleComplete(commitmentId: string) {
+    setActionError(null);
+    try {
+      await toggleTodayCompletion(commitmentId);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Could not update this habit.');
+    }
+  }
+
+  const controls = { pauseTimer, resumeTimer, stopTimer, handleStart, handleToggleComplete };
 
   return (
     <div className="today-screen">
@@ -157,6 +184,7 @@ interface Controls {
   resumeTimer: () => Promise<void>;
   stopTimer: () => Promise<void>;
   handleStart: (id: string) => Promise<void>;
+  handleToggleComplete: (id: string) => Promise<void>;
 }
 
 function TodayGroup({
@@ -204,7 +232,8 @@ function TodayCard({
   index: number;
   compact?: boolean;
 }) {
-  const { commitment, record, status, liveElapsed, remaining, percent, isTimedHere } = item;
+  const { commitment, trackingType, record, status, liveElapsed, remaining, percent, isTimedHere } = item;
+  const isCompletion = trackingType === 'COMPLETION';
   const anotherTimerRunning = !!timer && !isTimedHere;
   const done = status === 'DONE' || status === 'COMPLETED_LATE';
   const lensState = done ? 'done' : isTimedHere && timer?.status === 'running' ? 'running' : 'idle';
@@ -215,9 +244,15 @@ function TodayCard({
       style={{ ['--i' as string]: index }}
     >
       <div className="today-card-lens">
-        <FocusLens percent={percent} size={52} variant="drop" state={lensState}>
-          <span className="today-card-lens-num">{Math.round(percent)}</span>
-        </FocusLens>
+        {isCompletion ? (
+          <span className={`today-card-check${done ? ' done' : ''}`} aria-hidden="true">
+            <CheckIcon width={20} height={20} />
+          </span>
+        ) : (
+          <FocusLens percent={percent} size={52} variant="drop" state={lensState}>
+            <span className="today-card-lens-num">{Math.round(percent)}</span>
+          </FocusLens>
+        )}
       </div>
 
       <div className="today-card-main">
@@ -228,19 +263,21 @@ function TodayCard({
           <StatusBadge status={status} />
         </div>
 
-        <div className="today-card-meta">
-          <span>Target <b className="mono">{formatHoursMinutes(record.targetSeconds)}</b></span>
-          <span className="today-card-dot" aria-hidden="true" />
-          <span>Elapsed <b className="mono">{formatDuration(liveElapsed)}</b></span>
-          {!done && (
-            <>
-              <span className="today-card-dot" aria-hidden="true" />
-              <span>Left <b className="mono">{formatDuration(remaining)}</b></span>
-            </>
-          )}
-        </div>
+        {!isCompletion && (
+          <div className="today-card-meta">
+            <span>Target <b className="mono">{formatHoursMinutes(record.targetSeconds)}</b></span>
+            <span className="today-card-dot" aria-hidden="true" />
+            <span>Elapsed <b className="mono">{formatDuration(liveElapsed)}</b></span>
+            {!done && (
+              <>
+                <span className="today-card-dot" aria-hidden="true" />
+                <span>Left <b className="mono">{formatDuration(remaining)}</b></span>
+              </>
+            )}
+          </div>
+        )}
 
-        {!compact && (
+        {!isCompletion && !compact && (
           <div
             className="today-fluid-track"
             role="progressbar"
@@ -255,7 +292,25 @@ function TodayCard({
       </div>
 
       <div className="today-card-buttons">
-        {done ? (
+        {isCompletion ? (
+          done ? (
+            <button
+              type="button"
+              className="btn btn-ghost today-btn-sm today-btn-completed"
+              onClick={() => void controls.handleToggleComplete(commitment.id)}
+            >
+              <CheckIcon width={13} height={13} /> Completed
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-primary today-btn-sm"
+              onClick={() => void controls.handleToggleComplete(commitment.id)}
+            >
+              <CheckIcon width={13} height={13} /> Complete
+            </button>
+          )
+        ) : done ? (
           <Link to="/progress" className="btn btn-ghost today-btn-sm">
             Progress
           </Link>
@@ -288,7 +343,7 @@ function TodayCard({
             <PlayIcon width={13} height={13} /> Start
           </button>
         )}
-        {isTimedHere && (
+        {!isCompletion && isTimedHere && (
           <Link to="/timer" className="btn btn-ghost today-btn-sm">
             Lens
           </Link>

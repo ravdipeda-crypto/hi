@@ -100,6 +100,25 @@
 .today-card-lens { position: relative; z-index: 1; }
 .today-card-lens-num { font-size: 12px; font-weight: 750; color: #eafcfa; }
 
+/* Completion-only habits swap the FocusLens ring for a simple round mark,
+   same footprint (52px) so cards keep a consistent grid. */
+.today-card-check {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--drop-radius);
+  color: var(--muted);
+  background: var(--surface-sunk);
+  box-shadow: inset 0 1px 3px var(--surface-sunk);
+  transition: color var(--dur-base) var(--ease-liquid), background var(--dur-base) var(--ease-liquid), box-shadow var(--dur-base) var(--ease-liquid);
+}
+.today-card-check.done {
+  color: #eafcfa;
+  background: linear-gradient(145deg, var(--accent), var(--accent-deep));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 6px 14px var(--accent-glow);
+}
+
 .today-card-main { min-width: 0; display: flex; flex-direction: column; gap: 9px; }
 .today-card-head { display: flex; align-items: center; gap: 11px; flex-wrap: wrap; }
 .today-card-name {
@@ -132,6 +151,7 @@
 
 .today-card-buttons { display: flex; flex-direction: column; gap: 7px; min-width: 112px; }
 .today-btn-sm { padding: 9px 14px; font-size: var(--fs-label); font-weight: 650; }
+.today-btn-completed { color: var(--positive); }
 
 /* ---------------- Context rail ---------------- */
 .today-context { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 20px; }

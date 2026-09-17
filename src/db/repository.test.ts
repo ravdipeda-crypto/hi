@@ -60,6 +60,70 @@ describe('repository: commitments + day records', () => {
   });
 });
 
+describe('repository: completion-only tracking type', () => {
+  it('defaults trackingType to DURATION when omitted, for backward compatibility', async () => {
+    const commitment = await repo.createCommitment({
+      name: 'Legacy habit',
+      dailyTargetSeconds: 1800,
+      durationDays: 2,
+      startDate: '2026-06-01',
+    });
+    expect(repo.resolveTrackingType(commitment)).toBe('DURATION');
+  });
+
+  it('resolves a commitment with no trackingType field at all as DURATION', () => {
+    const legacy = {
+      id: 'x',
+      name: 'Old',
+      dailyTargetSeconds: 600,
+      durationDays: 1,
+      startDate: '2026-01-01',
+      endDate: '2026-01-01',
+      createdAt: 0,
+    };
+    expect(repo.resolveTrackingType(legacy)).toBe('DURATION');
+  });
+
+  it('creates a COMPLETION commitment with dailyTargetSeconds forced to 0, even if a nonzero value is passed', async () => {
+    const commitment = await repo.createCommitment({
+      name: 'Drink 3L Water',
+      dailyTargetSeconds: 9999,
+      durationDays: 4,
+      startDate: '2026-06-10',
+      trackingType: 'COMPLETION',
+    });
+
+    expect(commitment.trackingType).toBe('COMPLETION');
+    expect(commitment.dailyTargetSeconds).toBe(0);
+
+    const records = await repo.listDayRecordsForCommitment(commitment.id);
+    expect(records).toHaveLength(4);
+    expect(records.every((r) => r.targetSeconds === 0)).toBe(true);
+    expect(records.every((r) => r.status === 'NOT_STARTED')).toBe(true);
+  });
+
+  it('completing then un-completing a day record round-trips through the repository', async () => {
+    const commitment = await repo.createCommitment({
+      name: 'Meditate',
+      dailyTargetSeconds: 0,
+      durationDays: 1,
+      startDate: '2026-06-20',
+      trackingType: 'COMPLETION',
+    });
+    const record = await repo.getDayRecord(commitment.id, '2026-06-20');
+    expect(record).toBeDefined();
+
+    await repo.saveDayRecord({ ...record!, status: 'DONE', completedAt: Date.now() });
+    let updated = await repo.getDayRecord(commitment.id, '2026-06-20');
+    expect(updated?.status).toBe('DONE');
+    expect(updated?.elapsedSeconds).toBe(0);
+
+    await repo.saveDayRecord({ ...updated!, status: 'NOT_STARTED', completedAt: undefined });
+    updated = await repo.getDayRecord(commitment.id, '2026-06-20');
+    expect(updated?.status).toBe('NOT_STARTED');
+  });
+});
+
 describe('repository: timer state persistence', () => {
   it('saves and restores timer state (simulated refresh recovery)', async () => {
     const commitment = await repo.createCommitment({

@@ -3,8 +3,14 @@
 // components never talk to IndexedDB directly.
 
 import { STORES, clearStore, getAll, getById, getByIndex, put, remove } from './db';
-import type { Commitment, DayRecord, ExportPayload, Settings, TimerState } from '../types';
+import type { Commitment, DayRecord, ExportPayload, Settings, TimerState, TrackingType } from '../types';
 import { computeEndDate, enumerateDates } from '../utils/date';
+
+/** Commitments created before `trackingType` existed have no such field;
+ *  always treat that as 'DURATION' so old data keeps working unchanged. */
+export function resolveTrackingType(commitment: Commitment): TrackingType {
+  return commitment.trackingType ?? 'DURATION';
+}
 
 // ---------- Commitments ----------
 
@@ -22,16 +28,23 @@ export interface NewCommitmentInput {
   dailyTargetSeconds: number;
   durationDays: number;
   startDate: string;
+  /** Defaults to 'DURATION' when omitted, to keep existing callers/tests working. */
+  trackingType?: TrackingType;
 }
 
 /** Creates a commitment and generates one DayRecord for every scheduled day. */
 export async function createCommitment(input: NewCommitmentInput): Promise<Commitment> {
   const endDate = computeEndDate(input.startDate, input.durationDays);
+  const trackingType = input.trackingType ?? 'DURATION';
+  // Completion habits have no timer target — force this to 0 regardless of
+  // what was passed in, so history/progress math never sees stray seconds.
+  const dailyTargetSeconds = trackingType === 'COMPLETION' ? 0 : input.dailyTargetSeconds;
   const commitment: Commitment = {
     id: crypto.randomUUID(),
     name: input.name.trim(),
-    dailyTargetSeconds: input.dailyTargetSeconds,
+    dailyTargetSeconds,
     durationDays: input.durationDays,
+    trackingType,
     startDate: input.startDate,
     endDate,
     createdAt: Date.now(),
@@ -45,7 +58,7 @@ export async function createCommitment(input: NewCommitmentInput): Promise<Commi
       id: dayRecordId(commitment.id, date),
       commitmentId: commitment.id,
       date,
-      targetSeconds: input.dailyTargetSeconds,
+      targetSeconds: dailyTargetSeconds,
       elapsedSeconds: 0,
       status: 'NOT_STARTED',
     };

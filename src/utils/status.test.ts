@@ -69,4 +69,22 @@ describe('computeDisplayStatus', () => {
     // The scheduled date itself must never move.
     expect(r.date).toBe(scheduledDate);
   });
+
+  // Completion-only habits (targetSeconds always 0, elapsedSeconds always 0,
+  // never attached to a timer) must resolve the same way as any other
+  // record: NOT_STARTED/MISSED before completion, DONE/COMPLETED_LATE after.
+  it("marks an untouched completion habit's today record as NOT_STARTED", () => {
+    const r = record({ date: todayISO(), status: 'NOT_STARTED', elapsedSeconds: 0, targetSeconds: 0 });
+    expect(computeDisplayStatus(r)).toBe('NOT_STARTED');
+  });
+
+  it('marks a completion habit completed today as DONE', () => {
+    const r = record({ date: todayISO(), status: 'DONE', elapsedSeconds: 0, targetSeconds: 0, completedAt: Date.now() });
+    expect(computeDisplayStatus(r)).toBe('DONE');
+  });
+
+  it('marks a past, uncompleted completion habit day as MISSED', () => {
+    const r = record({ date: addDays(todayISO(), -1), status: 'NOT_STARTED', elapsedSeconds: 0, targetSeconds: 0 });
+    expect(computeDisplayStatus(r)).toBe('MISSED');
+  });
 });
