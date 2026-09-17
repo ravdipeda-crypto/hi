@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { formatHoursMinutes, formatShortDate, todayISO } from '../utils/date';
 import { summarizeProgress, type ProgressSummary } from '../utils/progress';
+import { resolveTrackingType } from '../db/repository';
 import AnimatedNumber from '../components/AnimatedNumber';
 import { ArrowRightIcon } from '../components/icons';
 import type { Commitment } from '../types';
@@ -81,8 +82,10 @@ function Section({
               <div className="commitment-row-main">
                 <div className="commitment-row-name serif">{commitment.name}</div>
                 <div className="commitment-row-meta">
-                  {formatHoursMinutes(commitment.dailyTargetSeconds)} / day · {commitment.durationDays} days ·{' '}
-                  {formatShortDate(commitment.startDate)} – {formatShortDate(commitment.endDate)}
+                  {resolveTrackingType(commitment) === 'COMPLETION'
+                    ? 'Completion'
+                    : `${formatHoursMinutes(commitment.dailyTargetSeconds)} / day`}{' '}
+                  · {commitment.durationDays} days · {formatShortDate(commitment.startDate)} – {formatShortDate(commitment.endDate)}
                 </div>
                 <div className="commitment-row-track" aria-hidden="true">
                   <div
