@@ -39,6 +39,23 @@
   color: var(--faint);
 }
 
+/* Override the global boxed focus ring — a hard pill outline around a
+   heading-sized input reads as "form field", not "name on display". A
+   thin, fading underline reads as a caption/label edge instead, matching
+   the liquid/no-hard-border Aqua Lens language. */
+.welcome-name-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.welcome-name-input {
+  border-bottom: 2px solid transparent;
+  transition: border-color var(--dur-base) var(--ease-liquid);
+}
+.welcome-name-input:focus-visible {
+  border-bottom-color: var(--accent-soft);
+}
+
 /* Smaller supporting text underneath. */
 .welcome-tagline {
   font-size: var(--fs-h2);
