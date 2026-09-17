@@ -133,7 +133,9 @@
     top: 12px;
     z-index: 20;
     margin: 0 12px 6px;
-    padding: 16px 22px;
+    /* ~15% shorter than the original bar height, via reduced vertical
+       padding (top/bottom), rather than narrowing the horizontal width. */
+    padding: 12px 22px;
     border-radius: var(--radius-xl);
     background: linear-gradient(135deg, var(--surface-2), transparent 130%);
     -webkit-backdrop-filter: blur(22px) saturate(1.3);
