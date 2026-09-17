@@ -96,14 +96,29 @@
   align-items: center;
   gap: 18px;
   padding: 16px 20px;
-  transition: transform var(--dur-base) var(--ease-liquid), box-shadow var(--dur-base) var(--ease-liquid);
+  transition: transform var(--dur-base) var(--ease-liquid);
   /* Isolates this row's layout from the rest of the scrolling list, so a
      state change in one card (timer tick, completion toggle) can't trigger
      a reflow check across every other card on the page. */
   contain: layout;
 }
+/* Hover's "extra shadow" fades in via opacity on a pseudo-element rather
+   than the card's own box-shadow interpolating — this card already pays
+   for a live backdrop-filter (.lens), so avoiding a second paint-triggering
+   transition on top of that keeps hover cheap. */
+.today-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--shadow-raised);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-liquid);
+}
 @media (hover: hover) and (pointer: fine) {
-  .today-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-raised); }
+  .today-card:hover { transform: translateY(-2px); }
+  .today-card:hover::after { opacity: 1; }
 }
 .today-card-lens { position: relative; z-index: 1; }
 .today-card-lens-num { font-size: 12px; font-weight: 750; color: #eafcfa; }

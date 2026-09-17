@@ -17,11 +17,21 @@ export default function Today() {
   const items = useTodayItems();
 
   // Operational grouping: what needs attention -> what is in progress -> what is complete.
-  const complete = items.filter((i) => i.status === 'DONE' || i.status === 'COMPLETED_LATE');
-  const inProgress = items.filter((i) => i.isTimedHere && i.status !== 'DONE' && i.status !== 'COMPLETED_LATE');
-  const needsAttention = items.filter(
-    (i) => !i.isTimedHere && i.status !== 'DONE' && i.status !== 'COMPLETED_LATE',
-  );
+  // `items` is a fresh array every render (see useTodayItems), including
+  // every timer tick, so these three filter passes re-ran unconditionally
+  // on every tick regardless of whether any item's status actually changed.
+  // Memoizing on `items` itself keeps that cheap: recomputes only when the
+  // items array reference actually changes (which useTodayItems only
+  // produces when commitments/records/timer truly changed), not on every
+  // render this component happens to do for other reasons.
+  const { complete, inProgress, needsAttention } = useMemo(() => {
+    const complete = items.filter((i) => i.status === 'DONE' || i.status === 'COMPLETED_LATE');
+    const inProgress = items.filter((i) => i.isTimedHere && i.status !== 'DONE' && i.status !== 'COMPLETED_LATE');
+    const needsAttention = items.filter(
+      (i) => !i.isTimedHere && i.status !== 'DONE' && i.status !== 'COMPLETED_LATE',
+    );
+    return { complete, inProgress, needsAttention };
+  }, [items]);
 
   const total = items.length;
   const completedCount = complete.length;

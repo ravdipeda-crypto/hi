@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { useApp } from './context/AppContext';
+import { useApp, useSettings } from './context/AppContext';
 import { useAndroidBackButton } from './hooks/useAndroidBackButton';
 import Layout from './components/Layout';
 import Welcome from './screens/Welcome';
@@ -12,7 +12,13 @@ import ProgressScreen from './screens/Progress';
 import Settings from './screens/Settings';
 
 export default function App() {
-  const { loading, settings } = useApp();
+  // Only `loading` is read from the main context here — it's set once at
+  // startup and never again, so this doesn't cost App a re-render on every
+  // commitments/dayRecords/timer change. `settings` (which does change, via
+  // Settings/Welcome) comes from the narrower SettingsContext instead, so
+  // App only re-renders when settings itself actually changes.
+  const { loading } = useApp();
+  const { settings } = useSettings();
   useAndroidBackButton();
 
   if (loading) {

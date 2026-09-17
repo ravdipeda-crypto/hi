@@ -76,6 +76,27 @@ const AppContext = createContext<AppContextValue | null>(null);
  */
 const NowMsContext = createContext<number>(0);
 
+/**
+ * Also split out on purpose, same rationale as NowMsContext: `settings`
+ * changes far less often than `commitments`/`dayRecords`/`timer` (a couple
+ * of taps on the Settings screen, ever), but living on the main context
+ * value meant EVERY app state change — saving a day record, starting a
+ * timer, completing a habit — forced a re-render on any component that
+ * merely reads `settings` for something unrelated to that change (the
+ * Settings screen itself; App's onboarding route guard). A dedicated
+ * context means those consumers only re-render when settings actually
+ * changes. Components that already need other AppContext fields alongside
+ * settings (e.g. Layout, which needs timer + commitments too) keep reading
+ * settings via useApp() as before — splitting wouldn't reduce their
+ * re-renders anyway, since they depend on the frequently-changing fields
+ * regardless.
+ */
+interface SettingsContextValue {
+  settings: Settings;
+  updateSettings: (partial: Partial<Settings>) => Promise<void>;
+}
+const SettingsContext = createContext<SettingsContextValue | null>(null);
+
 export function useApp(): AppContextValue {
   const ctx = useContext(AppContext);
   if (!ctx) throw new Error('useApp must be used within AppProvider');
@@ -84,6 +105,12 @@ export function useApp(): AppContextValue {
 
 export function useNowMs(): number {
   return useContext(NowMsContext);
+}
+
+export function useSettings(): SettingsContextValue {
+  const ctx = useContext(SettingsContext);
+  if (!ctx) throw new Error('useSettings must be used within AppProvider');
+  return ctx;
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -360,9 +387,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ],
   );
 
+  const settingsValue = useMemo<SettingsContextValue>(
+    () => ({ settings, updateSettings }),
+    [settings, updateSettings],
+  );
+
   return (
     <AppContext.Provider value={value}>
-      <NowMsContext.Provider value={nowMs}>{children}</NowMsContext.Provider>
+      <SettingsContext.Provider value={settingsValue}>
+        <NowMsContext.Provider value={nowMs}>{children}</NowMsContext.Provider>
+      </SettingsContext.Provider>
     </AppContext.Provider>
   );
 }

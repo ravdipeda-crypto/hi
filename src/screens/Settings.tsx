@@ -1,8 +1,8 @@
-import { useApp } from '../context/AppContext';
+import { useSettings } from '../context/AppContext';
 import './Settings.css';
 
 export default function Settings() {
-  const { settings, updateSettings } = useApp();
+  const { settings, updateSettings } = useSettings();
 
   return (
     <div className="settings-screen">

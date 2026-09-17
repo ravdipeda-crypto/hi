@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useSettings } from '../context/AppContext';
 import { capitalizeFirstLetter, getStoredUserName, storeUserName } from '../utils/userName';
 import { ArrowRightIcon } from '../components/icons';
 import './Welcome.css';
@@ -22,7 +22,7 @@ const TAGLINE = 'Grit — Build Through Action.';
  * always correctly cased without fighting the cursor while typing.
  */
 export default function Welcome() {
-  const { updateSettings } = useApp();
+  const { updateSettings } = useSettings();
   const navigate = useNavigate();
   const [name, setName] = useState(() => getStoredUserName());
 

@@ -170,19 +170,37 @@ a {
   color: var(--accent-deep);
   background: var(--surface-strong);
   box-shadow: 0 8px 20px rgba(2, 74, 86, 0.1), inset 0 1px 0 var(--highlight);
-  /* Only transform/box-shadow/color/background — never border-radius or
-     "all". Transform+opacity are compositor-only (GPU, no repaint), so a
-     tap's :active feedback lands immediately instead of waiting on a
-     paint pass. --dur-tap keeps that feedback inside ~120ms so taps feel
-     instant rather than animated. */
-  transition: transform var(--dur-tap) var(--ease-settle), box-shadow var(--dur-quick) var(--ease-liquid),
+  /* Only transform/color/background — box-shadow is no longer transitioned
+     directly (see .btn::after below). Transform+opacity are compositor-only
+     (GPU, no repaint), so a tap's :active feedback lands immediately
+     instead of waiting on a paint pass. --dur-tap keeps that feedback
+     inside ~120ms so taps feel instant rather than animated. */
+  transition: transform var(--dur-tap) var(--ease-settle),
     background var(--dur-quick) var(--ease-liquid), color var(--dur-quick) var(--ease-liquid);
+}
+/* The hover-only "extra glow" shadow lives on a pseudo-element that fades
+   in via opacity instead of the button's own box-shadow interpolating
+   between two values. An animated box-shadow repaints the element (and,
+   for buttons sitting on a .lens glass surface, competes with an active
+   backdrop-filter) every frame of the transition; opacity is compositor-
+   only. Same rest-state and hover-state shadow, same timing, cheaper to
+   animate between them. */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--shadow-raised), inset 0 1px 0 var(--highlight);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-quick) var(--ease-liquid);
 }
 /* Hover lift only for real pointers — on touch, tapping a link fires a
    synthetic hover that can stick after release, fighting with :active and
    producing a rapid double-animation ("flutter") between the two states. */
 @media (hover: hover) and (pointer: fine) {
-  .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-raised), inset 0 1px 0 var(--highlight); }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:hover::after { opacity: 1; }
 }
 /* Press feedback is transform-only (scale) — a border-radius "blob morph"
    on tap forces a full repaint every frame of the transition (border-radius
@@ -191,21 +209,18 @@ a {
    rest and on release. */
 .btn:active { transform: scale(0.96); }
 .btn:disabled { opacity: 0.42; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn:disabled::after { display: none; }
 
 .btn-primary {
   color: #eafcfa;
   background: linear-gradient(135deg, var(--accent), var(--accent-deep));
   box-shadow: 0 12px 26px rgba(3, 91, 105, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
-@media (hover: hover) and (pointer: fine) {
-  .btn-primary:hover { box-shadow: 0 16px 32px rgba(3, 91, 105, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
-}
+.btn-primary::after { box-shadow: 0 16px 32px rgba(3, 91, 105, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
 
 .btn-ghost { background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--surface-sunk); }
 .btn-danger { color: var(--danger); background: var(--danger-soft); box-shadow: inset 0 0 0 1px rgba(217, 105, 78, 0.2); }
-@media (hover: hover) and (pointer: fine) {
-  .btn-danger:hover { box-shadow: 0 12px 26px rgba(217, 105, 78, 0.22); }
-}
+.btn-danger::after { box-shadow: 0 12px 26px rgba(217, 105, 78, 0.22); }
 .btn-block { width: 100%; }
 .btn-icon { padding: 11px; aspect-ratio: 1; border-radius: 50%; }
 

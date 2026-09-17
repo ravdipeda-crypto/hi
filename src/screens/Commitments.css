@@ -78,14 +78,32 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   contain: layout;
-  transition: transform var(--dur-tap) var(--ease-settle),
-    box-shadow var(--dur-quick) var(--ease-liquid);
+  transition: transform var(--dur-tap) var(--ease-settle);
+}
+
+/* Hover's "extra shadow" fades in via opacity on a pseudo-element instead
+   of animating the row's own box-shadow — this row already pays for a
+   live backdrop-filter (.lens), so this avoids stacking a second
+   paint-triggering transition on top of that. `overflow: hidden` above
+   would clip an inset-only glow pseudo-element, so this sits as a sibling
+   layer sized to the row via absolute inset:0 same as the row itself. */
+.commitment-row::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--shadow-raised);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-quick) var(--ease-liquid);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .commitment-row:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-raised);
+  }
+  .commitment-row:hover::after {
+    opacity: 1;
   }
 }
 
