@@ -1,5 +1,5 @@
 /*
-  THE ARCHITECT — offline service worker.
+  GRIT — offline service worker.
 
   Strategy: precache the app shell on install, then cache-first with a network
   fallback for every same-origin GET (hashed JS/CSS/font/image assets get
@@ -7,7 +7,7 @@
   cached shell so the app opens with no network at all after the first visit.
   Dependency-free and scoped automatically to the registration path (/hi/).
 */
-const CACHE = 'architect-aqua-v3';
+const CACHE = 'grit-aqua-v4';
 const BASE = self.registration.scope; // e.g. https://host/hi/
 
 self.addEventListener('install', (event) => {

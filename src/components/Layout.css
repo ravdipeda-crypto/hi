@@ -122,47 +122,47 @@
   .app-shell { grid-template-columns: 1fr; }
   .sidebar { display: none; }
 
+  /* Floats directly on the page — no card, panel, border, or background.
+     GRIT sits top-left, the theme control top-right, both bare elements
+     over the flowing Aqua Lens page background. */
   .mobile-topbar {
     display: flex;
     align-items: center;
-    gap: 11px;
+    justify-content: space-between;
     position: sticky;
-    top: 10px;
+    top: 0;
     z-index: 20;
-    margin: 10px 12px 4px;
-    padding: 11px 16px;
-    border-radius: var(--radius-pill);
+    padding: 18px 20px 6px;
+    background: transparent;
   }
-  .mobile-topbar-mark { display: inline-flex; color: var(--accent-deep); }
-  .mobile-topbar-title { flex: 1; font-family: var(--font-serif); font-size: 17px; font-weight: 500; letter-spacing: 0.01em; }
-  .mobile-topbar-status {
-    font-size: var(--fs-micro);
-    font-weight: 700;
-    letter-spacing: 0.1em;
+
+  .mobile-topbar-grit {
+    font-size: 15px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--muted);
-    padding: 5px 11px;
-    border-radius: var(--radius-pill);
-    background: var(--accent-wash);
+    text-shadow: 0 0 16px var(--accent-glow);
   }
-  .mobile-topbar-status.live { color: var(--accent-deep); background: var(--accent-tint); }
 
   .mobile-theme-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
     border: 0;
-    padding: 7px 13px 7px 10px;
-    border-radius: var(--radius-pill);
+    padding: 0;
+    border-radius: 50%;
     color: var(--accent-deep);
-    font-size: var(--fs-micro);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    background: var(--accent-wash);
-    transition: transform var(--dur-quick) var(--ease-settle), background var(--dur-base) var(--ease-liquid);
+    background: transparent;
+    transition: color var(--dur-base) var(--ease-liquid), filter var(--dur-base) var(--ease-liquid),
+      transform var(--dur-quick) var(--ease-settle);
   }
-  .mobile-theme-toggle:active { transform: scale(0.94); }
+  .mobile-theme-toggle svg { filter: drop-shadow(0 0 0 transparent); transition: filter var(--dur-base) var(--ease-liquid); }
+  @media (hover: hover) and (pointer: fine) {
+    .mobile-theme-toggle:hover svg { filter: drop-shadow(0 0 8px var(--accent-glow)); }
+    .mobile-theme-toggle:hover { color: var(--accent-bright); }
+  }
+  .mobile-theme-toggle:active { transform: scale(0.88); }
 
   .app-main { padding: 8px 14px 104px; }
 

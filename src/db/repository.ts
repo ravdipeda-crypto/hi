@@ -146,7 +146,7 @@ export async function exportAllData(): Promise<ExportPayload> {
 /** Validates and imports an export payload, replacing existing data. */
 export async function importAllData(payload: unknown): Promise<void> {
   if (!isExportPayload(payload)) {
-    throw new Error('This file is not a valid THE ARCHITECT export.');
+    throw new Error('This file is not a valid GRIT export.');
   }
 
   await clearStore(STORES.commitments);

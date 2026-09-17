@@ -5,7 +5,7 @@
 // dynamically, without touching IndexedDB persistence, the repository
 // layer, AppContext, or routes.
 
-const STORAGE_KEY = 'architect_user_name';
+const STORAGE_KEY = 'grit_user_name';
 
 /**
  * Capitalizes only the first letter of a name; the rest is lowercased.

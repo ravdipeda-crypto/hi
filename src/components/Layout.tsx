@@ -21,13 +21,9 @@ export default function Layout() {
 
   return (
     <div className="app-shell">
-      {/* Mobile brand rail */}
-      <header className="mobile-topbar lens">
-        <span className="mobile-topbar-mark" aria-hidden="true">
-          <BrandDrop width={20} height={20} />
-        </span>
-        <span className="mobile-topbar-title">Architect</span>
-        {timer && <span className="mobile-topbar-status live">{timerLabel}</span>}
+      {/* Mobile header — floats directly on the page: no card/panel/border. */}
+      <header className="mobile-topbar">
+        <span className="mobile-topbar-grit accent">GRIT</span>
         <button
           type="button"
           className="mobile-theme-toggle"
@@ -35,8 +31,7 @@ export default function Layout() {
           aria-label={isDeep ? 'Switch to Daylight theme' : 'Switch to Deep theme'}
           aria-pressed={isDeep}
         >
-          {isDeep ? <MoonIcon width={15} height={15} /> : <SunIcon width={15} height={15} />}
-          {isDeep ? 'Deep' : 'Daylight'}
+          {isDeep ? <MoonIcon width={19} height={19} /> : <SunIcon width={19} height={19} />}
         </button>
       </header>
 
@@ -46,7 +41,7 @@ export default function Layout() {
             <BrandDrop width={22} height={22} />
           </span>
           <span className="brand-name">
-            <strong>ARCHITECT</strong>
+            <strong>GRIT</strong>
             <span>Shape your time</span>
           </span>
         </div>

@@ -1,4 +1,4 @@
-// Core data models for THE ARCHITECT.
+// Core data models for GRIT.
 // Kept intentionally small and flat — this is a personal-use app, not an
 // enterprise system, so we avoid deep nesting or redundant derived fields
 // wherever a value can be computed cheaply instead.

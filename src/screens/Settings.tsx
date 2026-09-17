@@ -16,7 +16,7 @@ export default function Settings() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `the-architect-export-${payload.exportedAt.slice(0, 10)}.json`;
+      a.download = `grit-export-${payload.exportedAt.slice(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
       setMessage({ kind: 'success', text: 'Export downloaded.' });

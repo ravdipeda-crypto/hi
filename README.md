@@ -1,4 +1,4 @@
-# THE ARCHITECT
+# GRIT
 
 **Build a better you.**
 

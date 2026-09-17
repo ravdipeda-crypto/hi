@@ -7,6 +7,10 @@
 
 import type { Commitment, DayRecord, Settings, TimerState } from '../types';
 
+// NOTE: kept as the original value on purpose — changing this string would
+// make the app open a brand-new (empty) IndexedDB and orphan every existing
+// user's saved commitments/history on their device. Renaming the product
+// does not require renaming its storage.
 const DB_NAME = 'the-architect';
 const DB_VERSION = 1;
 

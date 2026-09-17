@@ -344,7 +344,7 @@ function TodayEmpty() {
             The surface is <em className="accent">calm.</em>
           </h2>
           <p className="today-empty-copy">
-            THE ARCHITECT moves on a single current. Set your first commitment and the day begins to
+            GRIT moves on a single current. Set your first commitment and the day begins to
             fill with something you can measure.
           </p>
           <Link to="/new-commitment" className="btn btn-primary today-empty-cta">
