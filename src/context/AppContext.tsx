@@ -289,14 +289,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       throw new Error('This commitment has no scheduled day for today.');
     }
     const nowDone = record.status === 'DONE';
-    let updated: DayRecord;
-    if (nowDone) {
-      const { completedAt, ...rest } = record;
-      void completedAt;
-      updated = { ...rest, status: 'NOT_STARTED' };
-    } else {
-      updated = { ...record, status: 'DONE', completedAt: Date.now() };
-    }
+    const updated: DayRecord = nowDone
+      ? { ...record, status: 'NOT_STARTED', completedAt: undefined }
+      : { ...record, status: 'DONE', completedAt: Date.now() };
     await repo.saveDayRecord(updated);
     setDayRecords((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
   }, []);

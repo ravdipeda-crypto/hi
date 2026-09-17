@@ -23,8 +23,10 @@ export const STORES = {
 
 let dbPromise: Promise<IDBDatabase> | null = null;
 
-/** Opens (and lazily migrates) the database. Cached across calls. */
-export function openDB(): Promise<IDBDatabase> {
+/** Opens (and lazily migrates) the database. Cached across calls.
+ *  Not exported — every read/write in this module goes through withStore(),
+ *  which is the only caller; nothing outside this file needs a raw handle. */
+function openDB(): Promise<IDBDatabase> {
   if (dbPromise) return dbPromise;
 
   dbPromise = new Promise((resolve, reject) => {
@@ -102,14 +104,6 @@ export async function put<T>(storeName: string, value: T): Promise<void> {
   await withStore(storeName, 'readwrite', (store) => promisifyRequest(store.put(value)));
 }
 
-export async function putMany<T>(storeName: string, values: T[]): Promise<void> {
-  await withStore(storeName, 'readwrite', async (store) => {
-    for (const value of values) {
-      store.put(value);
-    }
-  });
-}
-
 export async function remove(storeName: string, id: string): Promise<void> {
   await withStore(storeName, 'readwrite', (store) => promisifyRequest(store.delete(id)));
 }
@@ -122,14 +116,6 @@ export async function getByIndex<T>(storeName: string, indexName: string, value:
   return withStore(storeName, 'readonly', (store) =>
     promisifyRequest(store.index(indexName).getAll(value) as IDBRequest<T[]>),
   );
-}
-
-export async function clearAllStores(): Promise<void> {
-  await clearStore(STORES.commitments);
-  await clearStore(STORES.dayRecords);
-  await clearStore(STORES.timerState);
-  // Settings are intentionally preserved unless the caller clears them too —
-  // repository.resetAllData() decides that policy explicitly.
 }
 
 export type { Commitment, DayRecord, Settings, TimerState };

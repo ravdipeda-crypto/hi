@@ -88,64 +88,113 @@ export default function TodayCard({
         )}
       </div>
 
+      <TodayCardButtons
+        item={item}
+        controls={controls}
+        isTimerRunningHere={isTimedHere && timer?.status === 'running'}
+        isTimerPausedHere={isTimedHere && timer?.status === 'paused'}
+        anotherTimerRunning={anotherTimerRunning}
+      />
+    </div>
+  );
+}
+
+/**
+ * The action-button area of a Today card. Split out of the same 5-way
+ * branch that used to live inline in TodayCard (Completion-done /
+ * Completion-pending / done / timer-running / timer-paused / idle) so each
+ * case reads as its own early return instead of a deeply nested ternary —
+ * same rendered output, easier to scan and modify safely.
+ */
+function TodayCardButtons({
+  item,
+  controls,
+  isTimerRunningHere,
+  isTimerPausedHere,
+  anotherTimerRunning,
+}: {
+  item: TodayItem;
+  controls: TodayCardControls;
+  isTimerRunningHere: boolean;
+  isTimerPausedHere: boolean;
+  anotherTimerRunning: boolean;
+}) {
+  const { commitment, trackingType, status, isTimedHere } = item;
+  const isCompletion = trackingType === 'COMPLETION';
+  const done = status === 'DONE' || status === 'COMPLETED_LATE';
+
+  if (isCompletion) {
+    return (
       <div className="today-card-buttons">
-        {isCompletion ? (
-          done ? (
-            <button
-              type="button"
-              className="btn btn-ghost today-btn-sm today-btn-completed"
-              onClick={() => void controls.handleToggleComplete(commitment.id)}
-            >
-              <CheckIcon width={13} height={13} /> Completed
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="btn btn-primary today-btn-sm"
-              onClick={() => void controls.handleToggleComplete(commitment.id)}
-            >
-              <CheckIcon width={13} height={13} /> Complete
-            </button>
-          )
-        ) : done ? (
-          <Link to="/progress" className="btn btn-ghost today-btn-sm">
-            Progress
-          </Link>
-        ) : isTimedHere && timer?.status === 'running' ? (
-          <>
-            <button type="button" className="btn btn-ghost today-btn-sm" onClick={() => void controls.pauseTimer()}>
-              <PauseIcon width={13} height={13} /> Pause
-            </button>
-            <button type="button" className="btn btn-danger today-btn-sm" onClick={() => void controls.stopTimer()}>
-              <StopIcon width={13} height={13} /> Stop
-            </button>
-          </>
-        ) : isTimedHere && timer?.status === 'paused' ? (
-          <>
-            <button type="button" className="btn btn-primary today-btn-sm" onClick={() => void controls.resumeTimer()}>
-              <PlayIcon width={13} height={13} /> Resume
-            </button>
-            <button type="button" className="btn btn-danger today-btn-sm" onClick={() => void controls.stopTimer()}>
-              <StopIcon width={13} height={13} /> Stop
-            </button>
-          </>
-        ) : (
-          <button
-            type="button"
-            className="btn btn-primary today-btn-sm"
-            onClick={() => void controls.handleStart(commitment.id)}
-            disabled={anotherTimerRunning}
-            title={anotherTimerRunning ? 'Stop the active current first' : undefined}
-          >
-            <PlayIcon width={13} height={13} /> Start
-          </button>
-        )}
-        {!isCompletion && isTimedHere && (
-          <Link to="/timer" className="btn btn-ghost today-btn-sm">
-            Lens
-          </Link>
-        )}
+        <button
+          type="button"
+          className={`btn today-btn-sm${done ? ' btn-ghost today-btn-completed' : ' btn-primary'}`}
+          onClick={() => void controls.handleToggleComplete(commitment.id)}
+        >
+          <CheckIcon width={13} height={13} /> {done ? 'Completed' : 'Complete'}
+        </button>
       </div>
+    );
+  }
+
+  if (done) {
+    return (
+      <div className="today-card-buttons">
+        <Link to="/progress" className="btn btn-ghost today-btn-sm">
+          Progress
+        </Link>
+      </div>
+    );
+  }
+
+  if (isTimerRunningHere) {
+    return (
+      <div className="today-card-buttons">
+        <button type="button" className="btn btn-ghost today-btn-sm" onClick={() => void controls.pauseTimer()}>
+          <PauseIcon width={13} height={13} /> Pause
+        </button>
+        <button type="button" className="btn btn-danger today-btn-sm" onClick={() => void controls.stopTimer()}>
+          <StopIcon width={13} height={13} /> Stop
+        </button>
+        <Link to="/timer" className="btn btn-ghost today-btn-sm">
+          Lens
+        </Link>
+      </div>
+    );
+  }
+
+  if (isTimerPausedHere) {
+    return (
+      <div className="today-card-buttons">
+        <button type="button" className="btn btn-primary today-btn-sm" onClick={() => void controls.resumeTimer()}>
+          <PlayIcon width={13} height={13} /> Resume
+        </button>
+        <button type="button" className="btn btn-danger today-btn-sm" onClick={() => void controls.stopTimer()}>
+          <StopIcon width={13} height={13} /> Stop
+        </button>
+        <Link to="/timer" className="btn btn-ghost today-btn-sm">
+          Lens
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="today-card-buttons">
+      <button
+        type="button"
+        className="btn btn-primary today-btn-sm"
+        onClick={() => void controls.handleStart(commitment.id)}
+        disabled={anotherTimerRunning}
+        title={anotherTimerRunning ? 'Stop the active current first' : undefined}
+      >
+        <PlayIcon width={13} height={13} /> Start
+      </button>
+      {isTimedHere && (
+        <Link to="/timer" className="btn btn-ghost today-btn-sm">
+          Lens
+        </Link>
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { cappedElapsedSeconds } from '../timer/engine';
+import { deriveTodayItem } from '../domain/todayItem';
 import { formatDuration, formatHoursMinutes, formatLongDate } from '../utils/date';
 import FocusLens from '../components/FocusLens';
 import { ArrowLeftIcon, CheckIcon, PauseIcon, PlayIcon, StopIcon } from '../components/icons';
@@ -38,9 +38,10 @@ export default function Timer() {
     );
   }
 
-  const elapsed = cappedElapsedSeconds(timer, record.targetSeconds, nowMs);
-  const remaining = Math.max(0, record.targetSeconds - elapsed);
-  const percent = record.targetSeconds > 0 ? Math.min(100, (elapsed / record.targetSeconds) * 100) : 0;
+  // Shares its elapsed/remaining/percent math with the Today screen's cards
+  // via deriveTodayItem — the timer only ever runs for DURATION commitments,
+  // so its percent formula here is exactly the DURATION branch of that helper.
+  const { liveElapsed: elapsed, remaining, percent } = deriveTodayItem(commitment, record, timer.dayDate, timer, nowMs);
   const isRunning = timer.status === 'running';
   const isDone = record.status === 'DONE';
   const state = isDone ? 'done' : isRunning ? 'running' : 'paused';

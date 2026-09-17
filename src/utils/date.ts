@@ -58,10 +58,6 @@ export function isToday(iso: string): boolean {
   return iso === todayISO();
 }
 
-export function isFuture(iso: string): boolean {
-  return iso > todayISO();
-}
-
 /** Formats seconds as H:MM:SS (or M:SS if under an hour) for compact display. */
 export function formatDuration(totalSeconds: number): string {
   const s = Math.max(0, Math.floor(totalSeconds));

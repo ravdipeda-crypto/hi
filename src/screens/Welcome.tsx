@@ -12,7 +12,7 @@ const TAGLINE = 'Grit — Build Through Action.';
  *
  * Exact minimal presentation, per spec:
  *   [User's name]
- *   GRIT — Build Through Action.
+ *   Grit — Build Through Action.
  *
  * The name itself doubles as the capture mechanism: it IS the large,
  * heading-styled input (no separate "Welcome" copy, no step list). Typing

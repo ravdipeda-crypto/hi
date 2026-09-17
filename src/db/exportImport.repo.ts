@@ -33,9 +33,7 @@ export async function importAllData(payload: unknown): Promise<void> {
     throw new Error('This file is not a valid Grit export.');
   }
 
-  await clearStore(STORES.commitments);
-  await clearStore(STORES.dayRecords);
-  await clearStore(STORES.timerState);
+  await resetAllData();
 
   for (const commitment of payload.commitments) {
     await put(STORES.commitments, commitment);
@@ -62,9 +60,9 @@ function isExportPayload(value: unknown): value is ExportPayload {
 }
 
 /** Permanently deletes all commitments, day records, and timer state.
- *  Settings (theme, notification pref) are preserved by design. */
+ *  Settings (theme, notification pref) are preserved by design.
+ *  Also used by importAllData() to clear existing data before restoring
+ *  from a payload — the two operations need the exact same clear step. */
 export async function resetAllData(): Promise<void> {
-  await clearStore(STORES.commitments);
-  await clearStore(STORES.dayRecords);
-  await clearStore(STORES.timerState);
+  await Promise.all([clearStore(STORES.commitments), clearStore(STORES.dayRecords), clearStore(STORES.timerState)]);
 }
