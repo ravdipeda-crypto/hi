@@ -1,60 +1,76 @@
+import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { BrandDrop } from '../components/icons';
+import { capitalizeFirstLetter, getStoredUserName, storeUserName } from '../utils/userName';
+import { ArrowRightIcon } from '../components/icons';
 import './Welcome.css';
 
-const STEPS = [
-  { number: '01', title: 'Create commitments', body: 'Define what you will do, and for how long.' },
-  { number: '02', title: 'Track with a timer', body: 'Execute the work. Time is recorded automatically.' },
-  { number: '03', title: 'Keep a permanent record', body: 'Every scheduled day is logged. History is never rewritten.' },
-  { number: '04', title: 'See real progress', body: 'Factual completion and consistency — nothing gamified.' },
-];
+const TAGLINE = 'GRIT — Build Through Action.';
 
+/**
+ * First-launch/onboarding screen.
+ *
+ * Exact minimal presentation, per spec:
+ *   [User's name]
+ *   GRIT — Build Through Action.
+ *
+ * The name itself doubles as the capture mechanism: it IS the large,
+ * heading-styled input (no separate "Welcome" copy, no step list). Typing
+ * is left untouched while focused (normal input UX); the moment the field
+ * loses focus or the form is submitted, the value snaps to
+ * "first letter capitalized, rest lowercased" — so the displayed name is
+ * always correctly cased without fighting the cursor while typing.
+ */
 export default function Welcome() {
   const { updateSettings } = useApp();
   const navigate = useNavigate();
+  const [name, setName] = useState(() => getStoredUserName());
 
-  async function start() {
+  const canContinue = name.trim().length > 0;
+
+  function handleBlur() {
+    if (name) setName(capitalizeFirstLetter(name));
+  }
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    const finalName = capitalizeFirstLetter(name);
+    if (!finalName) return;
+    storeUserName(finalName);
     await updateSettings({ hasOnboarded: true });
     navigate('/today', { replace: true });
   }
 
   return (
     <div className="welcome-screen">
-      <div className="welcome-card lens">
-        <div className="welcome-head">
-          <div className="welcome-orb" aria-hidden="true">
-            <BrandDrop width={44} height={44} />
-          </div>
-          <h1 className="welcome-title display">THE ARCHITECT</h1>
-          <p className="welcome-tagline accent">Build a better you</p>
-        </div>
+      <form className="welcome-card lens" onSubmit={handleSubmit}>
+        <label className="visually-hidden" htmlFor="welcome-name">
+          Your name
+        </label>
+        <input
+          id="welcome-name"
+          className="welcome-name-input display"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onBlur={handleBlur}
+          placeholder="Your name"
+          autoComplete="given-name"
+          maxLength={40}
+          autoFocus
+        />
 
-        <p className="welcome-copy">
-          A focused system for keeping promises you make to yourself. Plan a commitment,
-          execute it with a timer, and let the record speak for itself.
-        </p>
+        <p className="welcome-tagline accent">{TAGLINE}</p>
 
-        <ul className="welcome-steps stagger">
-          {STEPS.map((step, i) => (
-            <li key={step.title} className="welcome-step" style={{ ['--i' as string]: i + 2 }}>
-              <span className="welcome-step-glyph mono" aria-hidden="true">
-                {step.number}
-              </span>
-              <div>
-                <div className="welcome-step-title serif">{step.title}</div>
-                <div className="welcome-step-body">{step.body}</div>
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <button type="button" className="btn btn-primary btn-block welcome-cta" onClick={start}>
-          Start Building
+        <button
+          type="submit"
+          className="btn btn-primary btn-icon welcome-continue"
+          disabled={!canContinue}
+          aria-label="Continue"
+        >
+          <ArrowRightIcon width={20} height={20} />
         </button>
-
-        <p className="welcome-footer label">Plan · Execute · Record · Repeat</p>
-      </div>
+      </form>
     </div>
   );
 }

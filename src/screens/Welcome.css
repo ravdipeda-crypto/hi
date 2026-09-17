@@ -7,114 +7,47 @@
 }
 
 .welcome-card {
-  max-width: 480px;
+  max-width: 560px;
   width: 100%;
-  padding: 48px 42px 38px;
+  padding: 64px 42px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
   animation: surface-in var(--dur-slow) var(--ease-liquid) both;
 }
 
-.welcome-head {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Aqua orb cradling the brand drop. */
-.welcome-orb {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 88px;
-  height: 88px;
-  margin-bottom: 22px;
-  color: var(--accent-deep);
-  border-radius: var(--drop-radius);
-  background: radial-gradient(circle at 32% 26%, var(--accent-soft), var(--accent-tint) 72%);
-  box-shadow: var(--shadow-lens), 0 0 38px var(--accent-glow);
-  animation: rise-in var(--dur-slow) var(--ease-liquid) both;
-}
-
-.welcome-title {
-  font-size: var(--fs-display);
+/* The primary, larger visual element — the input IS the name display.
+   (.display sets family/weight/tracking only; font-size must be set here —
+   it isn't part of that shared helper, so this needed an explicit size.) */
+.welcome-name-input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  text-align: center;
+  color: var(--ink);
+  font-size: clamp(40px, 10vw, 64px);
   letter-spacing: 0.015em;
-  color: var(--ink);
+  padding: 4px 0;
+  animation: rise-in var(--dur-slow) var(--ease-liquid) both;
+  animation-delay: 80ms;
 }
 
-.welcome-tagline {
-  margin-top: 8px;
-  font-size: var(--fs-h2);
-}
-
-.welcome-copy {
-  margin-top: 22px;
-  color: var(--muted);
-  line-height: 1.7;
-  font-size: var(--fs-small);
-}
-
-/* ---------------- Steps ---------------- */
-.welcome-steps {
-  list-style: none;
-  margin: 32px 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  text-align: left;
-}
-
-.welcome-step {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  padding: 15px 16px;
-  border-radius: var(--radius-md);
-  background: var(--surface-2);
-  box-shadow: inset 0 1px 0 var(--highlight);
-  transition: transform var(--dur-quick) var(--ease-settle),
-    box-shadow var(--dur-quick) var(--ease-liquid);
-}
-
-.welcome-step:active {
-  transform: scale(0.99);
-}
-
-/* Small aqua drop numeral. */
-.welcome-step-glyph {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--drop-radius);
-  background: linear-gradient(140deg, var(--accent), var(--accent-deep));
-  color: var(--on-ocean);
-  font-size: 12px;
-  font-weight: 700;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
-}
-
-.welcome-step-title {
-  font-size: var(--fs-body);
-  font-weight: 500;
-  color: var(--ink);
-}
-
-.welcome-step-body {
-  margin-top: 3px;
-  font-size: var(--fs-small);
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-/* ---------------- CTA + footer ---------------- */
-.welcome-cta {
-  margin-top: 30px;
-}
-
-.welcome-footer {
-  margin-top: 22px;
+.welcome-name-input::placeholder {
   color: var(--faint);
+}
+
+/* Smaller supporting text underneath. */
+.welcome-tagline {
+  font-size: var(--fs-h2);
+  animation: rise-in var(--dur-slow) var(--ease-liquid) both;
+  animation-delay: 160ms;
+}
+
+.welcome-continue {
+  margin-top: 14px;
+  animation: rise-in var(--dur-slow) var(--ease-liquid) both;
+  animation-delay: 240ms;
 }
