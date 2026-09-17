@@ -3,6 +3,12 @@
 /* ---------------- Reset ---------------- */
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+/* Always reserve the scrollbar gutter so the viewport's usable width stays
+   constant whether or not a given screen's content is tall enough to
+   scroll — otherwise fixed-width elements (e.g. the mobile topbar) visibly
+   shift/narrow by the scrollbar's width when switching between a short tab
+   and a tall one. */
+html { scrollbar-gutter: stable; }
 
 body {
   min-height: 100vh;
