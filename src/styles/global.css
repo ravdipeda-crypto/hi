@@ -42,6 +42,12 @@ body::before {
     radial-gradient(ellipse at 49% 81%, transparent 57%, var(--caustic) 60%, transparent 65%);
   background-size: 40vw 26vw, 48vw 30vw, 44vw 28vw;
   animation: caustic-drift 26s linear infinite alternate;
+  /* This animation already only touches transform (compositor-only), but
+     it's a huge, always-visible, infinitely-running layer — promoting it
+     to its own GPU layer up front (rather than letting the browser decide
+     mid-animation) is what keeps it locked to a steady 60fps instead of
+     occasionally dropping frames the first time it starts moving. */
+  will-change: transform;
 }
 
 #root { position: relative; z-index: 1; min-height: 100vh; }

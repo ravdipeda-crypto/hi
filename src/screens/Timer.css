@@ -33,6 +33,7 @@
   border-radius: 50%;
   background: var(--accent-glow);
   animation: bead-pulse-ring 1.4s var(--ease-liquid) infinite;
+  will-change: transform, opacity;
 }
 .timer-state-pill.state-paused { color: var(--warning); background: rgba(215, 154, 82, 0.16); }
 .timer-state-pill.state-done { color: var(--positive); background: rgba(22, 165, 140, 0.16); }

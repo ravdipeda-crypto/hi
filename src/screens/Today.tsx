@@ -130,7 +130,7 @@ export default function Today() {
             </div>
             <span className="label">complete</span>
             <div className="today-meter-track" aria-hidden="true">
-              <div className="today-meter-fill" style={{ width: `${completionPercent}%` }} />
+              <div className="today-meter-fill" style={{ transform: `scaleX(${completionPercent / 100})` }} />
             </div>
           </div>
         )}
@@ -321,7 +321,7 @@ const TodayCard = memo(function TodayCard({ item, controls, timer, index, compac
             aria-valuemax={100}
             aria-label={`${commitment.name} progress`}
           >
-            <div className={`today-fluid-fill${done ? ' done' : ''}`} style={{ width: `${percent}%` }} />
+            <div className={`today-fluid-fill${done ? ' done' : ''}`} style={{ transform: `scaleX(${percent / 100})` }} />
           </div>
         )}
       </div>

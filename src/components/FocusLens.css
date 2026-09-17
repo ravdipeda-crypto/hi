@@ -14,7 +14,11 @@
 .focus-lens.variant-round { border-radius: 50%; }
 .focus-lens.variant-drop { border-radius: 49% 51% 46% 54% / 58% 42% 63% 37%; }
 
-.focus-lens.state-running { animation: lens-breathe 5s var(--ease-liquid) infinite; }
+/* Continuous, infinite animation — will-change keeps it on its own
+   compositor layer for the whole time it's running, so the transform tween
+   never has to be recomputed against the rest of the page and stays locked
+   to a steady 60fps instead of occasionally janking on a busy frame. */
+.focus-lens.state-running { animation: lens-breathe 5s var(--ease-liquid) infinite; will-change: transform; }
 
 /* Water body rising from the bottom */
 .focus-lens-water {
@@ -43,6 +47,7 @@
   background: var(--accent-bright);
   opacity: 0.9;
   animation: crest-spin 7s linear infinite;
+  will-change: transform;
 }
 .crest-b {
   top: -11px;
@@ -50,6 +55,7 @@
   background: var(--accent-soft);
   opacity: 0.5;
   animation: crest-spin 11s linear infinite reverse;
+  will-change: transform;
 }
 .focus-lens.state-running .crest-a { animation-duration: 3.4s; }
 .focus-lens.state-running .crest-b { animation-duration: 5.5s; }
