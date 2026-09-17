@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { computeEndDate, formatLongDate, todayISO } from '../utils/date';
+import { ArrowRightIcon } from '../components/icons';
 import './NewCommitment.css';
 
 interface FormErrors {
@@ -72,11 +73,13 @@ export default function NewCommitment() {
     <div className="new-commitment-screen">
       <header className="new-commitment-head">
         <span className="eyebrow">Define</span>
-        <h1 className="new-commitment-title">New Commitment</h1>
+        <h1 className="new-commitment-title display">
+          A new <span className="accent">commitment</span>
+        </h1>
         <p className="new-commitment-sub">A promise, measured in days and minutes.</p>
       </header>
 
-      <form className="panel ticked new-commitment-form" onSubmit={handleSubmit} noValidate>
+      <form className="lens new-commitment-form" onSubmit={handleSubmit} noValidate>
         <div className="field">
           <label className="label" htmlFor="name">
             Commitment Name
@@ -163,15 +166,20 @@ export default function NewCommitment() {
         </div>
 
         {previewEndDate && (
-          <div className="new-commitment-preview label">
-            Scheduled {formatLongDate(startDate)} {'->'} {formatLongDate(previewEndDate)}
+          <div className="new-commitment-preview">
+            <span className="new-commitment-preview-tag eyebrow">Scheduled</span>
+            <span className="new-commitment-preview-range">
+              <span className="mono">{formatLongDate(startDate)}</span>
+              <ArrowRightIcon width={15} height={15} />
+              <span className="mono">{formatLongDate(previewEndDate)}</span>
+            </span>
           </div>
         )}
 
         {submitError && <div className="field-error">{submitError}</div>}
 
         <div className="new-commitment-actions">
-          <button type="button" className="btn" onClick={() => navigate(-1)}>
+          <button type="button" className="btn btn-ghost" onClick={() => navigate(-1)}>
             Cancel
           </button>
           <button type="submit" className="btn btn-primary" disabled={submitting}>

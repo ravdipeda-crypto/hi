@@ -108,7 +108,8 @@ const SETTINGS_KEY = 'app';
 
 export const DEFAULT_SETTINGS: Settings = {
   id: SETTINGS_KEY,
-  theme: 'dark',
+  // Daylight is the primary Aqua Lens identity; Deep is the dark alternative.
+  theme: 'light',
   notificationsEnabled: false,
   hasOnboarded: false,
 };

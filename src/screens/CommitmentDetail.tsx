@@ -5,7 +5,7 @@ import { formatDuration, formatHoursMinutes, formatLongDate, formatShortDate, pa
 import { summarizeProgress } from '../utils/progress';
 import { computeDisplayStatus } from '../utils/status';
 import StatusBadge from '../components/StatusBadge';
-import AnimatedNumber from '../components/AnimatedNumber';
+import FocusLens from '../components/FocusLens';
 import { ArrowLeftIcon } from '../components/icons';
 import type { DayRecord, DisplayStatus } from '../types';
 import './CommitmentDetail.css';
@@ -15,7 +15,7 @@ const STATUS_DOT_CLASS: Record<DisplayStatus, string> = {
   IN_PROGRESS: 'cal-accent',
   PARTIAL: 'cal-warning',
   DONE: 'cal-success',
-  COMPLETED_LATE: 'cal-success',
+  COMPLETED_LATE: 'cal-late',
   MISSED: 'cal-danger',
 };
 
@@ -32,7 +32,7 @@ export default function CommitmentDetail() {
 
   if (!commitment) {
     return (
-      <div className="panel commitment-detail-missing">
+      <div className="lens commitment-detail-missing">
         <p>This commitment could not be found.</p>
         <Link to="/commitments" className="btn btn-primary">
           Back to Commitments
@@ -43,7 +43,6 @@ export default function CommitmentDetail() {
 
   const weeks = groupByWeek(records);
   const selectedRecord = selectedDate ? records.find((r) => r.date === selectedDate) : undefined;
-
   const commitmentId = commitment.id;
 
   async function handleDelete() {
@@ -53,37 +52,34 @@ export default function CommitmentDetail() {
 
   return (
     <div className="commitment-detail-screen">
-      <Link to="/commitments" className="label commitment-detail-back">
-        <ArrowLeftIcon width={12} height={12} /> Back to Commitments
+      <Link to="/commitments" className="commitment-detail-back">
+        <ArrowLeftIcon width={13} height={13} /> Commitments
       </Link>
 
       <header className="commitment-detail-header">
         <div className="commitment-detail-head-lead">
           <span className="eyebrow">Commitment</span>
-          <h1 className="commitment-detail-title">{commitment.name}</h1>
-          <p className="label commitment-detail-meta">
+          <h1 className="commitment-detail-title display">{commitment.name}</h1>
+          <p className="commitment-detail-meta">
             {formatHoursMinutes(commitment.dailyTargetSeconds)} / day · {commitment.durationDays} days ·{' '}
             {formatShortDate(commitment.startDate)} – {formatShortDate(commitment.endDate)}
           </p>
         </div>
-        <div className="commitment-detail-percent-wrap">
-          <div className="commitment-detail-percent mono">
-            <AnimatedNumber value={summary.completionPercent} suffix="%" />
-          </div>
-          <span className="label label-faint">complete</span>
-        </div>
+        <FocusLens percent={summary.completionPercent} size={96} variant="round" state={summary.completionPercent === 100 ? 'done' : 'idle'}>
+          <span className="commitment-detail-percent">{summary.completionPercent}%</span>
+        </FocusLens>
       </header>
 
       <div className="commitment-detail-grid">
-        <section className="panel commitment-detail-calendar">
-          <div className="panel-header">
+        <section className="lens commitment-detail-calendar">
+          <div className="lens-head">
             <h2 className="label">History</h2>
             <span className="label">
               {summary.completedDays} / {summary.totalPlanned} days
             </span>
           </div>
           <div className="commitment-calendar-body">
-            <div className="commitment-calendar-weekdays label">
+            <div className="commitment-calendar-weekdays">
               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
                 <span key={i}>{d}</span>
               ))}
@@ -113,34 +109,34 @@ export default function CommitmentDetail() {
           <Legend />
         </section>
 
-        <section className="panel commitment-detail-day">
-          <div className="panel-header">
-            <h2 className="label">Day Detail</h2>
+        <section className="lens commitment-detail-day">
+          <div className="lens-head">
+            <h2 className="label">Day detail</h2>
           </div>
           {selectedRecord ? (
             <DayDetail record={selectedRecord} />
           ) : (
-            <p className="commitment-detail-day-empty">Select a day in the calendar to see its record.</p>
+            <p className="commitment-detail-day-empty">Select a droplet in the history to read its record.</p>
           )}
         </section>
       </div>
 
       <section className="commitment-detail-danger">
         {confirmingDelete ? (
-          <div className="panel commitment-delete-confirm">
+          <div className="lens commitment-delete-confirm">
             <span>Delete this commitment and all its history? This cannot be undone.</span>
             <div className="commitment-delete-actions">
               <button type="button" className="btn btn-danger" onClick={handleDelete}>
-                Delete Permanently
+                Delete permanently
               </button>
-              <button type="button" className="btn" onClick={() => setConfirmingDelete(false)}>
+              <button type="button" className="btn btn-ghost" onClick={() => setConfirmingDelete(false)}>
                 Cancel
               </button>
             </div>
           </div>
         ) : (
           <button type="button" className="btn btn-danger" onClick={() => setConfirmingDelete(true)}>
-            Delete Commitment
+            Delete commitment
           </button>
         )}
       </section>
@@ -153,17 +149,17 @@ function DayDetail({ record }: { record: DayRecord }) {
   const status = computeDisplayStatus(record, timer);
   return (
     <div className="day-detail-body">
-      <p className="day-detail-date">{formatLongDate(record.date)}</p>
+      <p className="day-detail-date serif">{formatLongDate(record.date)}</p>
       <StatusBadge status={status} />
-      <div className="day-detail-row label">
-        Target <span className="mono">{formatHoursMinutes(record.targetSeconds)}</span>
+      <div className="day-detail-row">
+        <span className="label">Target</span> <span className="mono">{formatHoursMinutes(record.targetSeconds)}</span>
       </div>
-      <div className="day-detail-row label">
-        Recorded <span className="mono">{formatDuration(record.elapsedSeconds)}</span>
+      <div className="day-detail-row">
+        <span className="label">Recorded</span> <span className="mono">{formatDuration(record.elapsedSeconds)}</span>
       </div>
       {record.completedAt && (
-        <div className="day-detail-row label">
-          Completed <span className="mono">{toISODate(new Date(record.completedAt))}</span>
+        <div className="day-detail-row">
+          <span className="label">Completed</span> <span className="mono">{toISODate(new Date(record.completedAt))}</span>
         </div>
       )}
       {status === 'COMPLETED_LATE' && (
@@ -186,7 +182,7 @@ function Legend() {
   return (
     <div className="commitment-calendar-legend">
       {items.map((item) => (
-        <span key={item.label} className="label commitment-calendar-legend-item">
+        <span key={item.label} className="commitment-calendar-legend-item">
           <span className={`commitment-calendar-legend-dot ${item.cls}`} />
           {item.label}
         </span>

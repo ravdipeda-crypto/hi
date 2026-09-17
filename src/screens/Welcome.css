@@ -3,15 +3,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 28px;
 }
 
 .welcome-card {
-  max-width: 460px;
+  max-width: 480px;
   width: 100%;
-  padding: 40px 38px 34px;
+  padding: 48px 42px 38px;
   text-align: center;
-  animation: enter-fade-up var(--dur-slow) var(--ease-out) both;
+  animation: surface-in var(--dur-slow) var(--ease-liquid) both;
 }
 
 .welcome-head {
@@ -20,87 +20,101 @@
   align-items: center;
 }
 
-.welcome-mark {
+/* Aqua orb cradling the brand drop. */
+.welcome-orb {
   display: flex;
+  align-items: center;
   justify-content: center;
-  color: var(--color-accent);
-  margin-bottom: 14px;
-  filter: drop-shadow(0 0 12px var(--color-accent-glow));
-  animation: enter-fade var(--dur-slow) var(--ease-out) both;
+  width: 88px;
+  height: 88px;
+  margin-bottom: 22px;
+  color: var(--accent-deep);
+  border-radius: var(--drop-radius);
+  background: radial-gradient(circle at 32% 26%, var(--accent-soft), var(--accent-tint) 72%);
+  box-shadow: var(--shadow-lens), 0 0 38px var(--accent-glow);
+  animation: rise-in var(--dur-slow) var(--ease-liquid) both;
 }
 
 .welcome-title {
-  font-size: 30px;
-  letter-spacing: 0.13em;
-  color: var(--color-text);
+  font-size: var(--fs-display);
+  letter-spacing: 0.015em;
+  color: var(--ink);
 }
 
 .welcome-tagline {
-  margin-top: 10px;
-  color: var(--color-accent);
-  letter-spacing: var(--tracking-wider);
+  margin-top: 8px;
+  font-size: var(--fs-h2);
 }
 
 .welcome-copy {
   margin-top: 22px;
-  color: var(--color-text-muted);
-  line-height: 1.65;
+  color: var(--muted);
+  line-height: 1.7;
   font-size: var(--fs-small);
 }
 
+/* ---------------- Steps ---------------- */
 .welcome-steps {
   list-style: none;
-  margin: 28px 0 0;
+  margin: 32px 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   text-align: left;
 }
 
 .welcome-step {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   align-items: flex-start;
-  padding: 12px 14px;
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg-elevated);
-  transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
+  padding: 15px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  box-shadow: inset 0 1px 0 var(--highlight);
+  transition: transform var(--dur-quick) var(--ease-settle),
+    box-shadow var(--dur-quick) var(--ease-liquid);
 }
 
-.welcome-step:hover {
-  border-color: var(--color-border-strong);
-  background: var(--color-surface);
-  transform: translateX(2px);
+.welcome-step:active {
+  transform: scale(0.99);
 }
 
+/* Small aqua drop numeral. */
 .welcome-step-glyph {
-  color: var(--color-accent);
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--drop-radius);
+  background: linear-gradient(140deg, var(--accent), var(--accent-deep));
+  color: var(--on-ocean);
+  font-size: 12px;
   font-weight: 700;
-  margin-top: 1px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .welcome-step-title {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: var(--ink);
 }
 
 .welcome-step-body {
-  font-size: 12px;
-  color: var(--color-text-muted);
   margin-top: 3px;
+  font-size: var(--fs-small);
+  color: var(--muted);
   line-height: 1.5;
 }
 
+/* ---------------- CTA + footer ---------------- */
 .welcome-cta {
-  margin-top: 26px;
+  margin-top: 30px;
 }
 
 .welcome-footer {
   margin-top: 22px;
-  color: var(--color-text-faint);
-  letter-spacing: var(--tracking-wide);
+  color: var(--faint);
 }

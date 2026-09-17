@@ -3,15 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { cappedElapsedSeconds } from '../timer/engine';
 import { formatDuration, formatHoursMinutes, formatLongDate } from '../utils/date';
-import ProgressRing from '../components/ProgressRing';
+import FocusLens from '../components/FocusLens';
 import { ArrowLeftIcon, CheckIcon, PauseIcon, PlayIcon, StopIcon } from '../components/icons';
 import './Timer.css';
 
-// State-based captions are drawn from the reference board's timer screens.
 const CAPTIONS = {
-  running: 'Deep work. Real progress.',
-  paused: 'A little more discipline today.',
-  done: 'Well done. Consistency builds freedom.',
+  running: 'The current is flowing. Stay in it.',
+  paused: 'Held still. Return when you are ready.',
+  done: 'The lens is full. Consistency builds freedom.',
 } as const;
 
 export default function Timer() {
@@ -28,9 +27,9 @@ export default function Timer() {
   if (!timer || !commitment || !record) {
     return (
       <div className="timer-screen timer-empty">
-        <div className="panel ticked timer-empty-card">
-          <span className="eyebrow">No active session</span>
-          <p className="timer-empty-copy">There is no timer running right now. Start one from Today.</p>
+        <div className="lens timer-empty-card">
+          <span className="eyebrow">Still water</span>
+          <p className="timer-empty-copy">No current is running right now. Begin one from Today.</p>
           <button type="button" className="btn btn-primary" onClick={() => navigate('/today')}>
             Go to Today
           </button>
@@ -45,84 +44,75 @@ export default function Timer() {
   const isRunning = timer.status === 'running';
   const isDone = record.status === 'DONE';
   const state = isDone ? 'done' : isRunning ? 'running' : 'paused';
-  const ringColor = isDone ? 'var(--color-success)' : 'var(--color-accent)';
 
   return (
     <div className={`timer-screen timer-state-${state}`}>
       <div className="timer-topbar">
-        <button type="button" className="btn timer-back-btn" onClick={() => navigate('/today')}>
+        <button type="button" className="btn btn-ghost timer-back-btn" onClick={() => navigate('/today')}>
           <ArrowLeftIcon width={13} height={13} /> Today
         </button>
-        <span className="timer-topbar-date label label-faint mono">{formatLongDate(timer.dayDate)}</span>
+        <span className="timer-topbar-date label">{formatLongDate(timer.dayDate)}</span>
       </div>
 
       <div className="timer-stage">
         <div className="timer-heading">
-          <span className={`timer-state-pill state-${state}`}>
-            <span className="timer-state-dot" aria-hidden="true" />
-            {isDone ? 'Complete' : isRunning ? 'Recording' : 'On hold'}
+          <span className={`status-pill aqua timer-state-pill state-${state}`}>
+            <span className="bead" aria-hidden="true" />
+            {isDone ? 'Complete' : isRunning ? 'Flowing' : 'On hold'}
           </span>
-          <h1 className="timer-context">{commitment.name}</h1>
+          <h1 className="timer-context serif">{commitment.name}</h1>
         </div>
 
         <div className="timer-instrument">
-          <ProgressRing
-            percent={percent}
-            size={300}
-            strokeWidth={12}
-            ticks={60}
-            color={ringColor}
-            glow={isRunning || isDone}
-          >
+          <FocusLens percent={percent} size={306} variant="drop" state={state}>
             <span className="timer-elapsed mono" aria-live="polite">
               {formatDuration(elapsed)}
             </span>
-            <span className="timer-target mono">/ {formatHoursMinutes(record.targetSeconds)}</span>
+            <span className="timer-target mono">of {formatHoursMinutes(record.targetSeconds)}</span>
             <span className={`timer-percent-badge${isDone ? ' done' : ''}`}>
               {isDone ? (
                 <>
                   <CheckIcon width={12} height={12} /> 100%
                 </>
               ) : (
-                `${Math.round(percent)}% complete`
+                `${Math.round(percent)}% filled`
               )}
             </span>
-          </ProgressRing>
+          </FocusLens>
         </div>
 
-        {/* Precision readouts */}
-        <div className="timer-readouts panel">
+        <div className="timer-readouts lens">
           <Readout label="Elapsed" value={formatDuration(elapsed)} live={isRunning} />
-          <div className="timer-readout-sep" aria-hidden="true" />
+          <span className="timer-readout-sep" aria-hidden="true" />
           <Readout label="Target" value={formatHoursMinutes(record.targetSeconds)} />
-          <div className="timer-readout-sep" aria-hidden="true" />
+          <span className="timer-readout-sep" aria-hidden="true" />
           <Readout label="Remaining" value={isDone ? '—' : formatDuration(remaining)} />
         </div>
 
         {isDone ? (
           <div className="timer-done-actions">
-            <div className="timer-done-panel panel ticked">
+            <div className="lens timer-done-panel">
               <span className="timer-done-check" aria-hidden="true">
                 <CheckIcon width={18} height={18} />
               </span>
               <div>
-                <div className="timer-done-title">Daily Target Completed</div>
-                <div className="timer-done-sub label">Capped at 100% — bonus time never over-counts.</div>
+                <div className="timer-done-title serif">Daily target completed</div>
+                <div className="timer-done-sub">Capped at 100% — bonus time never over-counts.</div>
               </div>
             </div>
             <div className="timer-controls">
-              <button type="button" className="btn" onClick={() => navigate('/today')}>
+              <button type="button" className="btn btn-ghost" onClick={() => navigate('/today')}>
                 Back to Today
               </button>
               <button type="button" className="btn btn-primary" onClick={() => navigate('/progress')}>
-                View Progress
+                View progress
               </button>
             </div>
           </div>
         ) : (
           <div className="timer-controls">
             {isRunning ? (
-              <button type="button" className="btn btn-large timer-ctrl" onClick={() => void pauseTimer()}>
+              <button type="button" className="btn btn-ghost btn-large timer-ctrl" onClick={() => void pauseTimer()}>
                 <PauseIcon width={15} height={15} /> Pause
               </button>
             ) : (
@@ -131,8 +121,8 @@ export default function Timer() {
               </button>
             )}
             {confirmingStop ? (
-              <div className="timer-stop-confirm panel">
-                <span className="label">Stop and save progress?</span>
+              <div className="lens timer-stop-confirm">
+                <span className="label">Stop and save this current?</span>
                 <div className="timer-stop-confirm-actions">
                   <button
                     type="button"
@@ -142,9 +132,9 @@ export default function Timer() {
                       setConfirmingStop(false);
                     }}
                   >
-                    Confirm Stop
+                    Confirm stop
                   </button>
-                  <button type="button" className="btn" onClick={() => setConfirmingStop(false)}>
+                  <button type="button" className="btn btn-ghost" onClick={() => setConfirmingStop(false)}>
                     Cancel
                   </button>
                 </div>
@@ -157,7 +147,7 @@ export default function Timer() {
           </div>
         )}
 
-        <p className="timer-caption">{CAPTIONS[state]}</p>
+        <p className="timer-caption accent">{CAPTIONS[state]}</p>
       </div>
     </div>
   );

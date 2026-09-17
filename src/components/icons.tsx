@@ -15,11 +15,29 @@ const base: IconProps = {
   viewBox: '0 0 24 24',
   fill: 'none',
   stroke: 'currentColor',
-  strokeWidth: 1.6,
-  strokeLinecap: 'square',
-  strokeLinejoin: 'miter',
+  strokeWidth: 1.7,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
   'aria-hidden': true,
 };
+
+export function BrandDrop(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M7 17c-2.5-2.2-3-5.7-.8-8.2C8.1 6.6 11.8 4 12 4c.3 0 4 2.7 5.8 4.9 2.1 2.6 1.5 6.1-.9 8.2A7.6 7.6 0 0 1 7 17Z" />
+      <path d="M8.3 13.6c.9 1.8 2.4 2.7 4.6 2.6" opacity="0.7" />
+    </svg>
+  );
+}
+
+export function WaveIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3 12c3-5 5 1 8-4s5 3 8-2" />
+      <path d="M3 17c3-5 5 1 8-4s5 3 8-2" opacity="0.5" />
+    </svg>
+  );
+}
 
 export function TriangleMark(props: IconProps) {
   return (

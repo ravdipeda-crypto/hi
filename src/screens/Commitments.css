@@ -2,101 +2,87 @@
   max-width: 960px;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 36px;
 }
 
+/* ---------------- Header ---------------- */
 .commitments-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 18px;
 }
 
 .commitments-header-lead {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 10px;
 }
 
 .commitments-title {
-  font-size: var(--fs-h1);
-  font-weight: 700;
-  line-height: 1;
+  font-size: var(--fs-display);
+  color: var(--ink);
+  max-width: 12ch;
 }
 
+/* ---------------- Section header with fading rule ---------------- */
 .commitments-section-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.commitments-section-marker {
-  width: 6px;
-  height: 6px;
-  border-radius: 1px;
-  transform: rotate(45deg);
-  background: var(--color-accent);
-}
-.commitments-section-head.tone-complete .commitments-section-marker {
-  background: var(--color-success);
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
 .commitments-section-title {
-  flex: 1;
-  color: var(--color-text);
+  flex-shrink: 0;
+  color: var(--ink);
+  font-size: var(--fs-label);
 }
 
 .commitments-section-count {
+  flex-shrink: 0;
   font-size: var(--fs-label);
-  color: var(--color-text-faint);
-  padding: 2px 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
+  font-weight: 700;
+  color: var(--accent-deep);
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-tint);
 }
 
-.commitments-empty {
-  padding: 22px;
-  color: var(--color-text-muted);
-  text-align: center;
-  font-size: var(--fs-small);
+.commitments-section-head.tone-complete .commitments-section-count {
+  color: var(--positive);
 }
 
+/* Divider that fades to transparent at the trailing end. */
+.commitments-section-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--divider), transparent 92%);
+}
+
+/* ---------------- Rows ---------------- */
 .commitments-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .commitment-row {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 15px 16px 15px 20px;
-  color: var(--color-text);
+  gap: 24px;
+  padding: 20px 24px;
+  color: var(--ink);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out);
-}
-
-.commitment-row-rule {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--color-accent);
-}
-.commitment-row.tone-complete .commitment-row-rule {
-  background: var(--color-success);
+  transition: transform var(--dur-quick) var(--ease-settle),
+    box-shadow var(--dur-quick) var(--ease-liquid);
 }
 
 .commitment-row:hover {
-  border-color: var(--color-border-strong);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-raised);
 }
 
@@ -107,86 +93,117 @@
 .commitment-row-main {
   min-width: 0;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
 }
 
 .commitment-row-name {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--fs-h2);
+  font-weight: 500;
+  line-height: 1.12;
+  color: var(--ink);
 }
 
 .commitment-row-meta {
-  margin-top: 5px;
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 500;
-  color: var(--color-text-muted);
+  font-size: var(--fs-small);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
-.commitment-row-progress {
-  flex-shrink: 0;
-  width: 160px;
-  text-align: right;
-}
-
-.commitment-row-percent {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--color-accent);
-}
-
-.commitment-row.tone-complete .commitment-row-percent {
-  color: var(--color-success);
-}
-
+/* Fluid completion fill — rounded pill track, aqua gradient fill. */
 .commitment-row-track {
-  height: 4px;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  border-radius: 2px;
-  margin-top: 7px;
+  position: relative;
+  height: 9px;
+  max-width: 360px;
+  margin-top: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunk);
   overflow: hidden;
 }
 
 .commitment-row-fill {
   height: 100%;
-  background: var(--color-accent);
-  transition: width var(--dur-slow) var(--ease-out);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent), var(--accent-bright));
+  box-shadow: inset 0 1px 0 var(--highlight);
+  transition: width var(--dur-slow) var(--ease-liquid);
 }
 
 .commitment-row-fill.full {
-  background: var(--color-success);
+  background: linear-gradient(90deg, var(--positive), var(--accent-bright));
+}
+
+.commitment-row-progress {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  min-width: 96px;
+}
+
+.commitment-row-percent {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent-deep);
+}
+
+.commitment-row.tone-complete .commitment-row-percent {
+  color: var(--positive);
 }
 
 .commitment-row-days {
-  margin-top: 5px;
   font-size: var(--fs-micro);
+  color: var(--faint);
 }
 
 .commitment-row-chevron {
   display: inline-flex;
-  color: var(--color-text-faint);
   flex-shrink: 0;
-  transform: translateX(-4px);
+  color: var(--faint);
   opacity: 0;
-  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  transform: translateX(-6px);
+  transition: opacity var(--dur-quick) var(--ease-liquid),
+    transform var(--dur-quick) var(--ease-liquid),
+    color var(--dur-quick) var(--ease-liquid);
 }
 
 .commitment-row:hover .commitment-row-chevron {
   opacity: 1;
   transform: none;
-  color: var(--color-accent);
+  color: var(--accent);
 }
 
+/* ---------------- Empty state ---------------- */
+.commitments-empty {
+  padding: 30px;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  color: var(--muted);
+  font-size: var(--fs-small);
+}
+
+/* ---------------- Mobile: stack internals, big tap targets ---------------- */
 @media (max-width: 768px) {
   .commitment-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .commitment-row-track {
+    max-width: none;
   }
 
   .commitment-row-progress {
-    width: auto;
-    text-align: left;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 0;
   }
 
   .commitment-row-chevron {

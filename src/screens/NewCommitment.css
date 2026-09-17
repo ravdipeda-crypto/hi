@@ -6,61 +6,87 @@
 .new-commitment-head {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 22px;
+  text-align: center;
 }
 
 .new-commitment-title {
-  font-size: var(--fs-h1);
-  font-weight: 700;
-  line-height: 1;
+  font-size: var(--fs-display);
+  color: var(--ink);
 }
 
 .new-commitment-sub {
   font-size: var(--fs-small);
-  color: var(--color-text-muted);
+  color: var(--muted);
 }
 
+/* ---------------- Calm glass form ---------------- */
 .new-commitment-form {
-  padding: 26px;
+  padding: 30px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  animation: enter-fade-up var(--dur-base) var(--ease-out) both;
-}
-
-.new-commitment-duration-row select:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--color-accent-dim);
-  outline: none;
+  gap: 20px;
+  animation: surface-in var(--dur-base) var(--ease-liquid) both;
 }
 
 .new-commitment-duration-row {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .new-commitment-duration-row select {
   flex: 1;
-  background: var(--color-bg-elevated);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  color: var(--color-text);
-  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 
+/* ---------------- Scheduled-range "ripple" preview ---------------- */
 .new-commitment-preview {
-  padding: 10px 12px;
-  background: var(--color-accent-dim);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
-  color: var(--color-accent-strong);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 15px 18px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--accent-wash), var(--accent-tint));
+  box-shadow: inset 0 1px 0 var(--highlight);
 }
 
+.new-commitment-preview-tag {
+  color: var(--accent-deep);
+}
+
+.new-commitment-preview-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.new-commitment-preview-range svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+/* ---------------- Actions ---------------- */
 .new-commitment-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 4px;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+@media (max-width: 520px) {
+  .new-commitment-form {
+    padding: 24px 20px;
+  }
+
+  .new-commitment-actions {
+    flex-direction: column-reverse;
+  }
+
+  .new-commitment-actions .btn {
+    width: 100%;
+  }
 }

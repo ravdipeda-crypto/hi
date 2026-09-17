@@ -1,166 +1,95 @@
-.settings-screen {
-  max-width: 660px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
+.settings-screen { max-width: 680px; display: flex; flex-direction: column; gap: 16px; }
 
-.settings-header {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  margin-bottom: 4px;
-}
+.settings-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
+.settings-title { font-family: var(--font-serif); font-size: var(--fs-h1); font-weight: 500; }
 
-.settings-title {
-  font-size: var(--fs-h1);
-  font-weight: 700;
-  line-height: 1;
-}
+.settings-section { animation: rise-in var(--dur-base) var(--ease-liquid) both; animation-delay: calc(var(--i, 0) * 60ms); }
 
-.settings-section {
-  animation: enter-fade-up var(--dur-base) var(--ease-out) both;
-  animation-delay: calc(var(--i, 0) * 55ms);
-}
+.settings-message { padding: 14px 18px; font-size: var(--fs-small); color: var(--positive); box-shadow: var(--shadow-soft), inset 0 0 0 1px rgba(22, 165, 140, 0.24); }
+.settings-message-error { color: var(--danger); box-shadow: var(--shadow-soft), inset 0 0 0 1px rgba(217, 105, 78, 0.24); }
 
-.settings-message {
-  padding: 11px 15px;
-  font-size: var(--fs-small);
-  border-color: var(--color-success);
-  color: var(--color-success);
-}
-
-.settings-message-error {
-  border-color: var(--color-danger);
-  color: var(--color-danger);
-}
-
-.settings-section {
-  padding-bottom: 4px;
-}
-
-.settings-danger {
-  border-color: var(--color-danger);
-}
+.settings-danger { box-shadow: var(--shadow-lens), inset 0 0 0 1px rgba(217, 105, 78, 0.18); }
 
 .settings-row {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 14px 16px;
+  padding: 16px 20px;
   font-size: var(--fs-small);
   flex-wrap: wrap;
-  border-top: 1px solid var(--color-border-faint);
+}
+.settings-row + .settings-row::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 16px; right: 16px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--divider), transparent);
 }
 
-.settings-row:first-of-type {
-  border-top: none;
-}
-
+/* Segmented Daylight/Deep toggle */
 .settings-toggle-group {
   display: inline-flex;
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunk);
+  gap: 3px;
 }
-
 .settings-toggle {
-  padding: 8px 16px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: var(--radius-pill);
   font-size: var(--fs-label);
-  font-weight: 600;
-  letter-spacing: var(--tracking-label);
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--muted);
   background: transparent;
-  color: var(--color-text-muted);
-  border: none;
-  border-right: var(--border-width) solid var(--color-border);
-  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  transition: color var(--dur-quick) var(--ease-liquid), background var(--dur-base) var(--ease-liquid), box-shadow var(--dur-base) var(--ease-liquid);
 }
-
-.settings-toggle:hover {
-  color: var(--color-text);
-}
-
-.settings-toggle:last-child {
-  border-right: none;
-}
-
+.settings-toggle:hover { color: var(--ink); }
 .settings-toggle.active {
-  background: var(--color-accent-dim);
-  color: var(--color-accent-strong);
+  color: var(--accent-deep);
+  background: var(--surface-strong);
+  box-shadow: 0 6px 14px rgba(2, 74, 86, 0.12), inset 0 1px 0 var(--highlight);
 }
 
-.settings-switch {
-  position: relative;
-  display: inline-block;
-  width: 38px;
-  height: 20px;
-}
-
-.settings-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
+/* Liquid switch */
+.settings-switch { position: relative; display: inline-block; width: 46px; height: 26px; }
+.settings-switch input { opacity: 0; width: 0; height: 0; }
 .settings-switch-track {
   position: absolute;
   inset: 0;
-  background: var(--color-bg-elevated);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: 10px;
-  transition: background-color var(--transition-fast);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunk);
+  box-shadow: inset 0 2px 4px var(--surface-sunk);
+  transition: background var(--dur-base) var(--ease-liquid);
 }
-
 .settings-switch-track::before {
   content: '';
   position: absolute;
-  width: 14px;
-  height: 14px;
-  left: 2px;
-  top: 2px;
-  background: var(--color-text-muted);
+  width: 20px; height: 20px;
+  left: 3px; top: 3px;
   border-radius: 50%;
-  transition: transform var(--transition-fast), background-color var(--transition-fast);
+  background: linear-gradient(145deg, #fff, var(--accent-soft));
+  box-shadow: 0 4px 10px rgba(2, 74, 86, 0.24);
+  transition: transform var(--dur-base) var(--ease-settle), background var(--dur-base) var(--ease-liquid);
 }
+.settings-switch input:checked + .settings-switch-track { background: linear-gradient(90deg, var(--accent), var(--accent-deep)); }
+.settings-switch input:checked + .settings-switch-track::before { transform: translateX(20px); }
+.settings-switch input:focus-visible + .settings-switch-track { box-shadow: 0 0 0 4px var(--accent-glow); }
 
-.settings-switch input:checked + .settings-switch-track {
-  border-color: var(--color-accent);
-}
-
-.settings-switch input:checked + .settings-switch-track::before {
-  transform: translateX(16px);
-  background: var(--color-accent);
-}
-
-.settings-switch input:focus-visible + .settings-switch-track {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-.settings-reset-confirm {
-  padding: 4px 16px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.settings-reset-confirm p {
-  font-size: 12px;
-  color: var(--color-text-muted);
-  line-height: 1.5;
-}
-
+.settings-reset-confirm { padding: 6px 20px 18px; display: flex; flex-direction: column; gap: 12px; }
+.settings-reset-confirm p { font-size: var(--fs-small); color: var(--muted); line-height: 1.55; }
+.settings-reset-confirm strong { color: var(--danger); }
 .settings-reset-confirm input {
-  background: var(--color-bg-elevated);
-  border: var(--border-width) solid var(--color-danger);
-  border-radius: var(--radius-sm);
-  padding: 9px 11px;
-  max-width: 160px;
+  padding: 12px 15px;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  max-width: 180px;
+  background: var(--surface-strong);
+  box-shadow: inset 0 2px 5px var(--surface-sunk), inset 0 0 0 1px rgba(217, 105, 78, 0.3);
 }
-
-.settings-reset-actions {
-  display: flex;
-  gap: 8px;
-}
+.settings-reset-confirm input:focus { outline: none; box-shadow: inset 0 2px 5px var(--surface-sunk), 0 0 0 4px rgba(217, 105, 78, 0.24); }
+.settings-reset-actions { display: flex; gap: 9px; flex-wrap: wrap; }

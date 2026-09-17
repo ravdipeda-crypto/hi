@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { TriangleMark } from '../components/icons';
+import { BrandDrop } from '../components/icons';
 import './Welcome.css';
 
 const STEPS = [
@@ -21,13 +21,13 @@ export default function Welcome() {
 
   return (
     <div className="welcome-screen">
-      <div className="welcome-card panel ticked">
+      <div className="welcome-card lens">
         <div className="welcome-head">
-          <div className="welcome-mark">
-            <TriangleMark width={40} height={40} />
+          <div className="welcome-orb" aria-hidden="true">
+            <BrandDrop width={44} height={44} />
           </div>
-          <h1 className="welcome-title wordmark">THE ARCHITECT</h1>
-          <p className="welcome-tagline label">Build a better you</p>
+          <h1 className="welcome-title display">THE ARCHITECT</h1>
+          <p className="welcome-tagline accent">Build a better you</p>
         </div>
 
         <p className="welcome-copy">
@@ -42,7 +42,7 @@ export default function Welcome() {
                 {step.number}
               </span>
               <div>
-                <div className="welcome-step-title">{step.title}</div>
+                <div className="welcome-step-title serif">{step.title}</div>
                 <div className="welcome-step-body">{step.body}</div>
               </div>
             </li>

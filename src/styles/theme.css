@@ -1,128 +1,135 @@
 /*
-  THE ARCHITECT — design tokens.
+  THE ARCHITECT — Aqua Lens design tokens.
 
-  Visual language: blueprint / engineering aesthetic. Dark navy "blueprint"
-  atmosphere by default, warm ivory light mode as the alternative. Thin 1px
-  borders, small corner radii, condensed sans labels, a narrow high-contrast
-  serif wordmark. No gradients-for-decoration, no glassmorphism, no big
-  rounded cards. The grid is an active design element, not wallpaper.
+  Visual language: clear-water optics. An ivory-aqua field, translucent liquid
+  "lens" surfaces with inner highlights and soft shadows, organic rounded /
+  teardrop geometry, dividers that fade to nothing at both ends, and one deep
+  ocean anchor for weight. Two themes share the same semantic tokens:
+    - Daylight (default / light)  : bright ivory water
+    - Deep (dark)                 : underwater night
 */
 
 :root {
-  /* Shape */
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --border-width: 1px;
-
-  /* Type */
-  --font-serif: 'Georgia', 'Times New Roman', serif;
-  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, Consolas, monospace;
-
-  --tracking-label: 0.09em;
-  --tracking-wide: 0.14em;
-  --tracking-wider: 0.22em;
+  /* Type — self-hosted variable fonts (see main.tsx) */
+  --font-serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Inter Variable', ui-monospace, 'SF Mono', Consolas, monospace;
 
   /* Type scale */
-  --fs-display: 30px;
-  --fs-h1: 24px;
-  --fs-h2: 18px;
+  --fs-display: clamp(34px, 4vw, 52px);
+  --fs-h1: 30px;
+  --fs-h2: 20px;
   --fs-body: 14px;
   --fs-small: 13px;
   --fs-label: 11px;
-  --fs-micro: 10px;
+  --fs-micro: 9px;
 
-  /* Blueprint grid geometry */
-  --grid-fine: 28px;
-  --grid-coarse: 112px;
+  --tracking-label: 0.14em;
+  --tracking-wide: 0.22em;
 
-  /* Motion — smooth, buttery, consistent. Emphasized easing feels fluid
-     without bouncing. */
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-in-out: cubic-bezier(0.45, 0, 0.15, 1);
-  --dur-instant: 120ms;
-  --dur-fast: 200ms;
-  --dur-base: 320ms;
-  --dur-slow: 520ms;
+  /* Organic geometry */
+  --radius-pill: 999px;
+  --radius-xl: 34px;
+  --radius-lg: 26px;
+  --radius-md: 18px;
+  --radius-sm: 13px;
+  /* Signature superellipse "lens" and teardrop radii */
+  --lens-radius: 47% 53% 42% 58% / 52% 44% 56% 48%;
+  --drop-radius: 52% 48% 57% 43% / 47% 58% 42% 53%;
 
-  --transition-fast: var(--dur-fast) var(--ease-out);
-  --transition-base: var(--dur-base) var(--ease-out);
+  /* Motion — liquid, fast, non-bouncy */
+  --ease-liquid: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-settle: cubic-bezier(0.2, 0.9, 0.2, 1.08);
+  --dur-quick: 200ms;
+  --dur-base: 340ms;
+  --dur-slow: 620ms;
 }
 
-/* ---------------- Dark theme (primary): navy blueprint ---------------- */
+/* ---------------- Daylight (default / light) ---------------- */
 :root,
-[data-theme='dark'] {
-  --color-bg: #081019;
-  --color-bg-elevated: #0d1a29;
-  --color-surface: #0f2033;
-  --color-surface-raised: #143050;
-  --color-surface-hover: #16345a;
-  --color-border: #24405c;
-  --color-border-strong: #34597e;
-  --color-border-faint: #1a3048;
+[data-theme='light'] {
+  --field-a: #f9fffd;
+  --field-b: #e6f7f3;
+  --field-c: #ccefeb;
+  --glow: rgba(255, 255, 255, 0.9);
+  --caustic: rgba(34, 183, 190, 0.16);
 
-  --color-grid-line: rgba(96, 150, 205, 0.06);
-  --color-grid-line-strong: rgba(96, 150, 205, 0.12);
-  --color-glow: rgba(79, 179, 255, 0.10);
+  --ocean-950: #022f3d;
+  --ocean-900: #064556;
+  --ocean-800: #086379;
+  --on-ocean: #eafcfa;
+  --on-ocean-muted: rgba(223, 252, 250, 0.62);
 
-  --color-text: #e2ecf5;
-  --color-text-muted: #86a1bb;
-  --color-text-faint: #4d647d;
+  --surface: rgba(250, 255, 253, 0.74);
+  --surface-2: rgba(255, 255, 255, 0.5);
+  --surface-strong: rgba(255, 255, 255, 0.9);
+  --surface-sunk: rgba(2, 40, 52, 0.05);
 
-  --color-accent: #4fb3ff;
-  --color-accent-strong: #8fd3ff;
-  --color-accent-dim: rgba(79, 179, 255, 0.14);
-  --color-accent-glow: rgba(79, 179, 255, 0.28);
+  --ink: #063c4a;
+  --muted: #55818a;
+  --faint: #8bb0b4;
 
-  --color-success: #35c47a;
-  --color-success-dim: rgba(53, 196, 122, 0.14);
-  --color-warning: #e0a634;
-  --color-warning-dim: rgba(224, 166, 52, 0.14);
-  --color-danger: #e0555a;
-  --color-danger-dim: rgba(224, 85, 90, 0.14);
-  --color-neutral-dim: rgba(125, 153, 179, 0.14);
+  --accent: #15afbb;
+  --accent-deep: #07657a;
+  --accent-bright: #5adbe0;
+  --accent-soft: #a2edf0;
+  --accent-tint: #dcf8f6;
+  --accent-wash: #effcf9;
+  --accent-glow: rgba(83, 217, 215, 0.34);
 
-  --color-shadow: rgba(0, 0, 0, 0.45);
-  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.02), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
-  --shadow-raised: 0 1px 0 rgba(255, 255, 255, 0.03), 0 14px 34px -14px rgba(0, 0, 0, 0.7);
-  color-scheme: dark;
+  --positive: #16a58c;
+  --warning: #d79a52;
+  --danger: #d9694e;
+  --danger-soft: rgba(217, 105, 78, 0.14);
+
+  --highlight: rgba(255, 255, 255, 0.9);
+  --shadow-soft: 0 10px 30px rgba(2, 74, 86, 0.1);
+  --shadow-lens: 0 22px 48px rgba(1, 74, 86, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --shadow-raised: 0 26px 60px rgba(1, 74, 86, 0.2);
+  --divider: rgba(22, 144, 156, 0.22);
+  color-scheme: light;
 }
 
-/* ---------------- Light theme: warm ivory ---------------- */
-[data-theme='light'] {
-  --color-bg: #f1ebdc;
-  --color-bg-elevated: #e9e1ce;
-  --color-surface: #faf6ec;
-  --color-surface-raised: #ffffff;
-  --color-surface-hover: #f4eede;
-  --color-border: #cabd9c;
-  --color-border-strong: #a2926f;
-  --color-border-faint: #ddd3ba;
+/* ---------------- Deep (dark / underwater) ---------------- */
+[data-theme='dark'] {
+  --field-a: #06303c;
+  --field-b: #042630;
+  --field-c: #021a22;
+  --glow: rgba(64, 208, 214, 0.16);
+  --caustic: rgba(90, 219, 224, 0.12);
 
-  --color-grid-line: rgba(96, 76, 34, 0.05);
-  --color-grid-line-strong: rgba(96, 76, 34, 0.1);
-  --color-glow: rgba(28, 95, 138, 0.08);
+  --ocean-950: #010f16;
+  --ocean-900: #04222c;
+  --ocean-800: #073541;
+  --on-ocean: #dff6f4;
+  --on-ocean-muted: rgba(200, 235, 235, 0.6);
 
-  --color-text: #262119;
-  --color-text-muted: #6b6350;
-  --color-text-faint: #9a9078;
+  --surface: rgba(11, 46, 58, 0.62);
+  --surface-2: rgba(12, 52, 64, 0.4);
+  --surface-strong: rgba(16, 60, 74, 0.85);
+  --surface-sunk: rgba(0, 12, 18, 0.4);
 
-  --color-accent: #1c5f8a;
-  --color-accent-strong: #133f5c;
-  --color-accent-dim: rgba(28, 95, 138, 0.12);
-  --color-accent-glow: rgba(28, 95, 138, 0.2);
+  --ink: #e4f7f4;
+  --muted: #8fbac0;
+  --faint: #4f7f88;
 
-  --color-success: #1f7a4c;
-  --color-success-dim: rgba(31, 122, 76, 0.12);
-  --color-warning: #a8721c;
-  --color-warning-dim: rgba(168, 114, 28, 0.12);
-  --color-danger: #a83c3c;
-  --color-danger-dim: rgba(168, 60, 60, 0.12);
-  --color-neutral-dim: rgba(107, 99, 80, 0.1);
+  --accent: #3fd0dc;
+  --accent-deep: #7ff0ea;
+  --accent-bright: #6ee9ef;
+  --accent-soft: rgba(90, 219, 224, 0.5);
+  --accent-tint: rgba(90, 219, 224, 0.16);
+  --accent-wash: rgba(90, 219, 224, 0.08);
+  --accent-glow: rgba(90, 219, 224, 0.4);
 
-  --color-shadow: rgba(40, 30, 10, 0.14);
-  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.5), 0 8px 22px -14px rgba(60, 45, 15, 0.4);
-  --shadow-raised: 0 1px 0 rgba(255, 255, 255, 0.6), 0 14px 30px -16px rgba(60, 45, 15, 0.45);
-  color-scheme: light;
+  --positive: #43dcae;
+  --warning: #e5b56a;
+  --danger: #ff8a6b;
+  --danger-soft: rgba(255, 138, 107, 0.16);
+
+  --highlight: rgba(255, 255, 255, 0.14);
+  --shadow-soft: 0 12px 34px rgba(0, 12, 18, 0.5);
+  --shadow-lens: 0 24px 55px rgba(0, 12, 18, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --shadow-raised: 0 28px 64px rgba(0, 10, 16, 0.62);
+  --divider: rgba(90, 219, 224, 0.24);
+  color-scheme: dark;
 }

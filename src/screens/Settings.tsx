@@ -54,13 +54,13 @@ export default function Settings() {
       </header>
 
       {message && (
-        <div className={`panel settings-message ${message.kind === 'error' ? 'settings-message-error' : ''}`} role="status">
+        <div className={`lens settings-message ${message.kind === 'error' ? 'settings-message-error' : ''}`} role="status">
           {message.text}
         </div>
       )}
 
-      <section className="panel settings-section" style={{ ['--i' as string]: 0 }}>
-        <div className="panel-header">
+      <section className="lens settings-section" style={{ ['--i' as string]: 0 }}>
+        <div className="lens-head">
           <h2 className="label">Appearance</h2>
         </div>
         <div className="settings-row">
@@ -68,26 +68,26 @@ export default function Settings() {
           <div className="settings-toggle-group" role="group" aria-label="Theme">
             <button
               type="button"
-              className={`settings-toggle ${settings.theme === 'dark' ? 'active' : ''}`}
-              onClick={() => void updateSettings({ theme: 'dark' })}
-              aria-pressed={settings.theme === 'dark'}
-            >
-              Dark
-            </button>
-            <button
-              type="button"
               className={`settings-toggle ${settings.theme === 'light' ? 'active' : ''}`}
               onClick={() => void updateSettings({ theme: 'light' })}
               aria-pressed={settings.theme === 'light'}
             >
-              Light
+              Daylight
+            </button>
+            <button
+              type="button"
+              className={`settings-toggle ${settings.theme === 'dark' ? 'active' : ''}`}
+              onClick={() => void updateSettings({ theme: 'dark' })}
+              aria-pressed={settings.theme === 'dark'}
+            >
+              Deep
             </button>
           </div>
         </div>
       </section>
 
-      <section className="panel settings-section" style={{ ['--i' as string]: 1 }}>
-        <div className="panel-header">
+      <section className="lens settings-section" style={{ ['--i' as string]: 1 }}>
+        <div className="lens-head">
           <h2 className="label">Notifications</h2>
         </div>
         <div className="settings-row">
@@ -103,20 +103,20 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="panel settings-section" style={{ ['--i' as string]: 2 }}>
-        <div className="panel-header">
-          <h2 className="label">Data &amp; Export</h2>
+      <section className="lens settings-section" style={{ ['--i' as string]: 2 }}>
+        <div className="lens-head">
+          <h2 className="label">Data &amp; export</h2>
         </div>
         <div className="settings-row">
           <span>Export all data as JSON</span>
-          <button type="button" className="btn" onClick={() => void handleExport()}>
-            Export Data
+          <button type="button" className="btn btn-ghost" onClick={() => void handleExport()}>
+            Export data
           </button>
         </div>
         <div className="settings-row">
           <span>Import data from a file</span>
-          <button type="button" className="btn" onClick={() => fileInputRef.current?.click()}>
-            Import Data
+          <button type="button" className="btn btn-ghost" onClick={() => fileInputRef.current?.click()}>
+            Import data
           </button>
           <input
             ref={fileInputRef}
@@ -132,15 +132,15 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="panel settings-section settings-danger" style={{ ['--i' as string]: 3 }}>
-        <div className="panel-header">
+      <section className="lens settings-section settings-danger" style={{ ['--i' as string]: 3 }}>
+        <div className="lens-head">
           <h2 className="label">Reset</h2>
         </div>
         <div className="settings-row">
           <span>Permanently delete all commitments and history</span>
           {!confirmingReset && (
             <button type="button" className="btn btn-danger" onClick={() => setConfirmingReset(true)}>
-              Reset All Data
+              Reset all data
             </button>
           )}
         </div>

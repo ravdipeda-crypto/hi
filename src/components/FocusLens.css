@@ -1,0 +1,85 @@
+.focus-lens {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--lens-radius);
+  background: linear-gradient(150deg, var(--surface-strong), var(--accent-wash));
+  box-shadow:
+    inset 6px 8px 16px rgba(255, 255, 255, 0.6),
+    inset -12px -16px 30px rgba(2, 100, 118, 0.12),
+    var(--shadow-lens);
+  transition: border-radius var(--dur-slow) var(--ease-liquid), transform var(--dur-base) var(--ease-liquid);
+}
+.focus-lens.variant-round { border-radius: 50%; }
+.focus-lens.variant-drop { border-radius: 49% 51% 46% 54% / 58% 42% 63% 37%; }
+
+.focus-lens.state-running { animation: lens-breathe 5s var(--ease-liquid) infinite; }
+
+/* Water body rising from the bottom */
+.focus-lens-water {
+  position: absolute;
+  left: -14%;
+  right: -14%;
+  bottom: -6%;
+  background: linear-gradient(180deg, var(--accent-bright), var(--accent) 45%, var(--accent-deep));
+  box-shadow: inset 0 10px 18px rgba(223, 255, 251, 0.28);
+  transition: height var(--dur-slow) var(--ease-liquid), background var(--dur-base) var(--ease-liquid);
+}
+.focus-lens.state-done .focus-lens-water {
+  background: linear-gradient(180deg, var(--positive), var(--accent-deep));
+}
+
+/* Wavy meniscus crest */
+.crest {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 44%;
+}
+.crest-a {
+  top: -14px;
+  height: 30px;
+  background: var(--accent-bright);
+  opacity: 0.9;
+  animation: crest-spin 7s linear infinite;
+}
+.crest-b {
+  top: -11px;
+  height: 26px;
+  background: var(--accent-soft);
+  opacity: 0.5;
+  animation: crest-spin 11s linear infinite reverse;
+}
+.focus-lens.state-running .crest-a { animation-duration: 3.4s; }
+.focus-lens.state-running .crest-b { animation-duration: 5.5s; }
+
+/* Glass highlight */
+.focus-lens-sheen {
+  position: absolute;
+  width: 40%;
+  height: 18%;
+  left: 16%;
+  top: 15%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  filter: blur(6px);
+  transform: rotate(-28deg);
+  pointer-events: none;
+}
+
+.focus-lens-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.4);
+}
+
+@keyframes crest-spin { to { transform: rotate(360deg); } }
+@keyframes lens-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}

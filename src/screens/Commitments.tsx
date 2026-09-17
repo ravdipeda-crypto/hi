@@ -31,10 +31,13 @@ export default function Commitments() {
       <header className="commitments-header">
         <div className="commitments-header-lead">
           <span className="eyebrow">Registry</span>
-          <h1 className="commitments-title">Commitments</h1>
+          <h1 className="commitments-title display">
+            Every <span className="accent">promise</span> you keep
+          </h1>
         </div>
         <Link to="/new-commitment" className="btn btn-primary">
-          New Commitment
+          <span>New Commitment</span>
+          <ArrowRightIcon width={16} height={16} />
         </Link>
       </header>
 
@@ -60,45 +63,44 @@ function Section({
   return (
     <section className="commitments-section">
       <div className={`commitments-section-head tone-${tone}`}>
-        <span className="commitments-section-marker" aria-hidden="true" />
         <h2 className="label commitments-section-title">{title}</h2>
         <span className="commitments-section-count mono">{count}</span>
+        <span className="commitments-section-rule" aria-hidden="true" />
       </div>
       {rows.length === 0 ? (
-        <div className="panel commitments-empty">{emptyLabel}</div>
+        <div className="lens commitments-empty">{emptyLabel}</div>
       ) : (
         <div className="commitments-list stagger">
           {rows.map(({ commitment, summary }, idx) => (
             <Link
               key={commitment.id}
               to={`/commitments/${commitment.id}`}
-              className={`panel commitment-row tone-${tone}`}
+              className={`lens commitment-row tone-${tone}`}
               style={{ ['--i' as string]: idx }}
             >
-              <span className="commitment-row-rule" aria-hidden="true" />
               <div className="commitment-row-main">
-                <div className="commitment-row-name">{commitment.name}</div>
-                <div className="commitment-row-meta label">
+                <div className="commitment-row-name serif">{commitment.name}</div>
+                <div className="commitment-row-meta">
                   {formatHoursMinutes(commitment.dailyTargetSeconds)} / day · {commitment.durationDays} days ·{' '}
                   {formatShortDate(commitment.startDate)} – {formatShortDate(commitment.endDate)}
+                </div>
+                <div className="commitment-row-track" aria-hidden="true">
+                  <div
+                    className={`commitment-row-fill${summary.completionPercent === 100 ? ' full' : ''}`}
+                    style={{ width: `${summary.completionPercent}%` }}
+                  />
                 </div>
               </div>
               <div className="commitment-row-progress">
                 <div className="commitment-row-percent mono">
                   <AnimatedNumber value={summary.completionPercent} suffix="%" />
                 </div>
-                <div className="commitment-row-track">
-                  <div
-                    className={`commitment-row-fill${summary.completionPercent === 100 ? ' full' : ''}`}
-                    style={{ width: `${summary.completionPercent}%` }}
-                  />
-                </div>
                 <div className="label commitment-row-days">
                   {summary.completedDays} / {summary.totalPlanned} days
                 </div>
               </div>
               <span className="commitment-row-chevron" aria-hidden="true">
-                <ArrowRightIcon width={14} height={14} />
+                <ArrowRightIcon width={16} height={16} />
               </span>
             </Link>
           ))}
