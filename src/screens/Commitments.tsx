@@ -21,11 +21,11 @@ export default function Commitments() {
     () =>
       commitments.map((commitment) => {
         const records = dayRecordsFor(commitment.id);
-        const summary = summarizeProgress(records);
+        const summary = summarizeProgress(records, settings.dailyResetHour);
         const isActive = commitment.endDate >= today;
         return { commitment, summary, isActive };
       }),
-    [commitments, dayRecordsFor, today],
+    [commitments, dayRecordsFor, today, settings.dailyResetHour],
   );
 
   const active = rows.filter((r) => r.isActive);
