@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { BrandDrop, CommitmentsIcon, MoonIcon, ProgressIcon, SettingsIcon, SunIcon, TodayIcon } from './icons';
+
 import RouteTransition from './RouteTransition';
 import { useApp } from '../context/AppContext';
 import { todayISO } from '../utils/date';
@@ -23,7 +24,12 @@ export default function Layout() {
     <div className="app-shell">
       {/* Mobile header — floats directly on the page: no card/panel/border. */}
       <header className="mobile-topbar">
-        <span className="mobile-topbar-grit accent">GRIT</span>
+        <span className="mobile-topbar-brand">
+          <span className="mobile-topbar-drop" aria-hidden="true">
+            <BrandDrop width={20} height={20} />
+          </span>
+          <span className="mobile-topbar-grit accent">Grit</span>
+        </span>
         <button
           type="button"
           className="mobile-theme-toggle"
@@ -41,7 +47,7 @@ export default function Layout() {
             <BrandDrop width={22} height={22} />
           </span>
           <span className="brand-name">
-            <strong>GRIT</strong>
+            <strong>Grit</strong>
             <span>Shape your time</span>
           </span>
         </div>

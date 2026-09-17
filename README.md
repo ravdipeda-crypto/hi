@@ -1,4 +1,4 @@
-# GRIT
+# Grit
 
 **Build a better you.**
 
