@@ -1,0 +1,201 @@
+.commitment-detail-screen {
+  max-width: 920px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.commitment-detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-accent);
+  width: fit-content;
+}
+
+.commitment-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.commitment-detail-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.commitment-detail-meta {
+  margin-top: 6px;
+}
+
+.commitment-detail-percent {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.commitment-detail-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.commitment-calendar-body {
+  padding: 14px;
+}
+
+.commitment-calendar-weekdays,
+.commitment-calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.commitment-calendar-weekdays {
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.commitment-calendar-week {
+  margin-bottom: 6px;
+}
+
+.commitment-calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+}
+
+.commitment-calendar-day.empty {
+  border-color: transparent;
+  background: transparent;
+}
+
+.commitment-calendar-day.selected {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.commitment-calendar-day.cal-success {
+  background: var(--color-success-dim);
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+.commitment-calendar-day.cal-warning {
+  background: var(--color-warning-dim);
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+.commitment-calendar-day.cal-danger {
+  background: var(--color-danger-dim);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+.commitment-calendar-day.cal-accent {
+  background: var(--color-accent-dim);
+  color: var(--color-accent-strong);
+  border-color: var(--color-accent);
+}
+
+.commitment-calendar-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.commitment-calendar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.commitment-calendar-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+.commitment-calendar-legend-dot.cal-neutral { background: var(--color-text-muted); }
+.commitment-calendar-legend-dot.cal-warning { background: var(--color-warning); }
+.commitment-calendar-legend-dot.cal-danger { background: var(--color-danger); }
+.commitment-calendar-legend-dot.cal-success { background: var(--color-success); }
+
+.commitment-detail-day {
+  min-height: 220px;
+}
+
+.day-detail-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.day-detail-date {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.day-detail-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.day-detail-note {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.commitment-detail-day-empty {
+  padding: 16px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.commitment-detail-danger {
+  margin-top: 10px;
+}
+
+.commitment-delete-confirm {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  flex-wrap: wrap;
+}
+
+.commitment-delete-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.commitment-detail-missing {
+  padding: 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .commitment-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

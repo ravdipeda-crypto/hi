@@ -1,0 +1,88 @@
+/*
+  THE ARCHITECT — design tokens.
+
+  Visual language: blueprint / engineering aesthetic. Dark navy "blueprint"
+  atmosphere by default, warm ivory light mode as the alternative. Thin 1px
+  borders, small corner radii, condensed sans labels, a narrow high-contrast
+  serif wordmark. No gradients, no glassmorphism, no big rounded cards.
+*/
+
+:root {
+  /* Shape */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --border-width: 1px;
+
+  /* Type */
+  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  --tracking-label: 0.09em;
+  --tracking-wide: 0.14em;
+
+  /* Motion */
+  --transition-fast: 120ms ease;
+  --transition-base: 200ms ease;
+}
+
+/* ---------------- Dark theme (primary): navy blueprint ---------------- */
+:root,
+[data-theme='dark'] {
+  --color-bg: #0a1420;
+  --color-bg-elevated: #0e1b2b;
+  --color-surface: #0f2033;
+  --color-surface-raised: #132741;
+  --color-border: #24405c;
+  --color-border-strong: #33587e;
+  --color-grid-line: rgba(90, 140, 190, 0.08);
+
+  --color-text: #dce8f2;
+  --color-text-muted: #7d99b3;
+  --color-text-faint: #4d647d;
+
+  --color-accent: #4fb3ff;
+  --color-accent-strong: #8fd3ff;
+  --color-accent-dim: rgba(79, 179, 255, 0.14);
+
+  --color-success: #35c47a;
+  --color-success-dim: rgba(53, 196, 122, 0.14);
+  --color-warning: #e0a634;
+  --color-warning-dim: rgba(224, 166, 52, 0.14);
+  --color-danger: #e0555a;
+  --color-danger-dim: rgba(224, 85, 90, 0.14);
+  --color-neutral-dim: rgba(125, 153, 179, 0.14);
+
+  --color-shadow: rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+
+/* ---------------- Light theme: warm ivory ---------------- */
+[data-theme='light'] {
+  --color-bg: #f4efe4;
+  --color-bg-elevated: #ede6d6;
+  --color-surface: #faf6ec;
+  --color-surface-raised: #ffffff;
+  --color-border: #cfc3a6;
+  --color-border-strong: #a99b7a;
+  --color-grid-line: rgba(90, 70, 30, 0.06);
+
+  --color-text: #2a2620;
+  --color-text-muted: #6b6350;
+  --color-text-faint: #9a9078;
+
+  --color-accent: #1c5f8a;
+  --color-accent-strong: #133f5c;
+  --color-accent-dim: rgba(28, 95, 138, 0.12);
+
+  --color-success: #1f7a4c;
+  --color-success-dim: rgba(31, 122, 76, 0.12);
+  --color-warning: #a8721c;
+  --color-warning-dim: rgba(168, 114, 28, 0.12);
+  --color-danger: #a83c3c;
+  --color-danger-dim: rgba(168, 60, 60, 0.12);
+  --color-neutral-dim: rgba(107, 99, 80, 0.1);
+
+  --color-shadow: rgba(40, 30, 10, 0.12);
+  color-scheme: light;
+}

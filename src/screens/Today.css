@@ -1,0 +1,146 @@
+.today-screen {
+  max-width: 920px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.today-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.today-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.today-summary {
+  color: var(--color-accent);
+}
+
+.today-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  font-size: 13px;
+}
+
+.today-error .btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.today-empty {
+  padding: 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  color: var(--color-text-muted);
+}
+
+.today-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.today-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 18px;
+}
+
+.today-card-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.today-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.today-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.today-card-name:hover {
+  color: var(--color-accent);
+}
+
+.today-card-meta {
+  color: var(--color-text-muted);
+}
+
+.today-progress-track {
+  height: 5px;
+  background: var(--color-bg-elevated);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  max-width: 320px;
+}
+
+.today-progress-fill {
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 200ms ease;
+}
+
+.today-card-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.today-ring-value {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.today-card-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+@media (max-width: 768px) {
+  .today-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .today-card-controls {
+    justify-content: space-between;
+  }
+
+  .today-card-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .today-progress-track {
+    max-width: none;
+  }
+}

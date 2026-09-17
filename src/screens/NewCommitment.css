@@ -1,0 +1,45 @@
+.new-commitment-screen {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.new-commitment-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.new-commitment-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.new-commitment-duration-row {
+  display: flex;
+  gap: 10px;
+}
+
+.new-commitment-duration-row select {
+  flex: 1;
+  background: var(--color-bg-elevated);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+}
+
+.new-commitment-preview {
+  padding: 10px 12px;
+  background: var(--color-accent-dim);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent-strong);
+}
+
+.new-commitment-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}

@@ -1,0 +1,84 @@
+.welcome-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.welcome-card {
+  max-width: 440px;
+  width: 100%;
+  padding: 40px 36px;
+  text-align: center;
+}
+
+.welcome-mark {
+  display: flex;
+  justify-content: center;
+  color: var(--color-accent);
+  margin-bottom: 12px;
+}
+
+.welcome-title {
+  font-size: 28px;
+  color: var(--color-text);
+}
+
+.welcome-tagline {
+  margin-top: 8px;
+  color: var(--color-accent);
+}
+
+.welcome-copy {
+  margin-top: 20px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  font-size: 13px;
+}
+
+.welcome-steps {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.welcome-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+}
+
+.welcome-step-glyph {
+  color: var(--color-accent);
+  font-size: 13px;
+  margin-top: 1px;
+}
+
+.welcome-step-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.welcome-step-body {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.welcome-footer {
+  margin-top: 26px;
+  color: var(--color-text-faint);
+}
+
+.welcome-card .btn-block {
+  margin-top: 28px;
+}
