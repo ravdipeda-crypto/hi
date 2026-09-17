@@ -81,9 +81,11 @@
     box-shadow var(--dur-quick) var(--ease-liquid);
 }
 
-.commitment-row:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-raised);
+@media (hover: hover) and (pointer: fine) {
+  .commitment-row:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-raised);
+  }
 }
 
 .commitment-row:active {
@@ -170,10 +172,12 @@
     color var(--dur-quick) var(--ease-liquid);
 }
 
-.commitment-row:hover .commitment-row-chevron {
-  opacity: 1;
-  transform: none;
-  color: var(--accent);
+@media (hover: hover) and (pointer: fine) {
+  .commitment-row:hover .commitment-row-chevron {
+    opacity: 1;
+    transform: none;
+    color: var(--accent);
+  }
 }
 
 /* ---------------- Empty state ---------------- */

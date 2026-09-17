@@ -15,7 +15,9 @@
   background: var(--accent-wash);
   transition: transform var(--dur-quick) var(--ease-settle), background var(--dur-base) var(--ease-liquid);
 }
-.commitment-detail-back:hover { transform: translateX(-2px); background: var(--accent-tint); }
+@media (hover: hover) and (pointer: fine) {
+  .commitment-detail-back:hover { transform: translateX(-2px); background: var(--accent-tint); }
+}
 
 .commitment-detail-header {
   display: flex;
@@ -62,7 +64,9 @@
   cursor: pointer;
   transition: transform var(--dur-quick) var(--ease-settle), box-shadow var(--dur-base) var(--ease-liquid);
 }
-.commitment-calendar-day:not(.empty):hover { transform: scale(1.12); }
+@media (hover: hover) and (pointer: fine) {
+  .commitment-calendar-day:not(.empty):hover { transform: scale(1.12); }
+}
 .commitment-calendar-day.empty { background: transparent; box-shadow: none; cursor: default; }
 .commitment-calendar-day.selected { box-shadow: 0 0 0 3px var(--accent-glow); transform: scale(1.08); }
 

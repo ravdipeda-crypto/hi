@@ -78,8 +78,10 @@
   background: rgba(255, 255, 255, 0.06);
   transition: color var(--dur-quick) var(--ease-liquid), background var(--dur-base) var(--ease-liquid), transform var(--dur-base) var(--ease-liquid);
 }
-.sidebar-link:hover { color: var(--on-ocean); transform: translateX(3px); }
-.sidebar-link:hover .sidebar-link-drop { color: var(--accent-bright); }
+@media (hover: hover) and (pointer: fine) {
+  .sidebar-link:hover { color: var(--on-ocean); transform: translateX(3px); }
+  .sidebar-link:hover .sidebar-link-drop { color: var(--accent-bright); }
+}
 .sidebar-link:active { transform: scale(0.98); }
 .sidebar-link.active {
   color: var(--ocean-950);

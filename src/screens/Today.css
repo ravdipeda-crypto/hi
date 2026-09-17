@@ -94,7 +94,9 @@
   padding: 16px 20px;
   transition: transform var(--dur-base) var(--ease-liquid), box-shadow var(--dur-base) var(--ease-liquid);
 }
-.today-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-raised); }
+@media (hover: hover) and (pointer: fine) {
+  .today-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-raised); }
+}
 .today-card-lens { position: relative; z-index: 1; }
 .today-card-lens-num { font-size: 12px; font-weight: 750; color: #eafcfa; }
 
@@ -105,7 +107,9 @@
   color: var(--ink);
   transition: color var(--dur-quick) var(--ease-liquid);
 }
-.today-card-name:hover { color: var(--accent-deep); }
+@media (hover: hover) and (pointer: fine) {
+  .today-card-name:hover { color: var(--accent-deep); }
+}
 .today-card-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--muted); font-size: var(--fs-small); }
 .today-card-meta b { color: var(--ink); font-weight: 600; }
 .today-card-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--faint); }
@@ -196,7 +200,9 @@
   animation-delay: calc(var(--i) * 80ms);
   transition: background var(--dur-base) var(--ease-liquid);
 }
-.today-empty-step:hover { background: var(--surface-2); }
+@media (hover: hover) and (pointer: fine) {
+  .today-empty-step:hover { background: var(--surface-2); }
+}
 .today-empty-step-drop {
   display: grid;
   place-items: center;
