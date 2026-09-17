@@ -2,6 +2,8 @@
 // 'YYYY-MM-DD' strings, so a "day" always means the user's local day and
 // never shifts because of timezone/UTC math.
 
+import type { DayRecord } from '../types';
+
 /** Returns today's date as a local 'YYYY-MM-DD' string. */
 export function todayISO(): string {
   return toISODate(new Date());
@@ -97,4 +99,32 @@ export function formatLongDate(iso: string): string {
 export function formatShortDate(iso: string): string {
   const d = parseISODate(iso);
   return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
+}
+
+/**
+ * Groups a chronologically-sorted list of day records into calendar weeks
+ * (Sun-Sat), padding leading/trailing gaps with `null` so a calendar grid
+ * can render fixed 7-column rows. Moved out of screens/CommitmentDetail.tsx
+ * verbatim — this is pure calendar-layout logic, not screen-specific.
+ */
+export function groupByWeek(records: DayRecord[]): (DayRecord | null)[][] {
+  if (records.length === 0) return [];
+  const weeks: (DayRecord | null)[][] = [];
+  let currentWeek: (DayRecord | null)[] = [];
+
+  const firstDow = parseISODate(records[0].date).getDay();
+  for (let i = 0; i < firstDow; i++) currentWeek.push(null);
+
+  for (const record of records) {
+    currentWeek.push(record);
+    if (currentWeek.length === 7) {
+      weeks.push(currentWeek);
+      currentWeek = [];
+    }
+  }
+  if (currentWeek.length > 0) {
+    while (currentWeek.length < 7) currentWeek.push(null);
+    weeks.push(currentWeek);
+  }
+  return weeks;
 }

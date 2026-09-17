@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { computeDisplayStatus } from './status';
 import type { DayRecord, TimerState } from '../types';
-import { addDays, todayISO } from './date';
+import { addDays, todayISO } from '../utils/date';
 
 function record(overrides: Partial<DayRecord>): DayRecord {
   return {

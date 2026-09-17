@@ -1,5 +1,5 @@
 import type { DisplayStatus } from '../types';
-import { STATUS_LABELS } from '../utils/status';
+import { STATUS_LABELS } from '../domain/status';
 import './StatusBadge.css';
 
 const STATUS_TONE: Record<DisplayStatus, string> = {

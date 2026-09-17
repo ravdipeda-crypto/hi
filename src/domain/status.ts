@@ -4,7 +4,7 @@
 // history stays append-only and factual.
 
 import type { DayRecord, DisplayStatus, TimerState } from '../types';
-import { isPast, toISODate } from './date';
+import { isPast, toISODate } from '../utils/date';
 
 export function computeDisplayStatus(
   record: DayRecord,

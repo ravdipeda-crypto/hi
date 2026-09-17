@@ -2,16 +2,9 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { computeEndDate, formatLongDate, todayISO } from '../utils/date';
+import { validateCommitmentForm, type CommitmentFormErrors } from '../domain/commitmentForm';
 import { ArrowRightIcon } from '../components/icons';
 import './NewCommitment.css';
-
-interface FormErrors {
-  name?: string;
-  hours?: string;
-  minutes?: string;
-  duration?: string;
-  startDate?: string;
-}
 
 export default function NewCommitment() {
   const { createCommitment } = useApp();
@@ -23,7 +16,7 @@ export default function NewCommitment() {
   const [minutes, setMinutes] = useState('0');
   const [duration, setDuration] = useState('30');
   const [startDate, setStartDate] = useState(todayISO());
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<CommitmentFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -35,24 +28,9 @@ export default function NewCommitment() {
   const previewEndDate =
     startDate && durationNum > 0 ? computeEndDate(startDate, durationNum) : null;
 
-  function validate(): FormErrors {
-    const next: FormErrors = {};
-    if (!name.trim()) next.name = 'Commitment name is required.';
-    if (!isCompletion) {
-      if (!hours && !minutes) next.hours = 'Daily target is required.';
-      if (hoursNum < 0 || minutesNum < 0 || minutesNum > 59) next.minutes = 'Enter a valid duration.';
-      if (dailyTargetSeconds <= 0) next.hours = 'Daily target must be greater than zero.';
-    }
-    if (!duration || durationNum < 1 || !Number.isInteger(durationNum)) {
-      next.duration = 'Duration must be a whole number of at least 1 day.';
-    }
-    if (!startDate) next.startDate = 'Start date is required.';
-    return next;
-  }
-
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const validationErrors = validate();
+    const validationErrors = validateCommitmentForm({ name, trackingType, hours, minutes, duration, startDate });
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 

@@ -1,7 +1,7 @@
 // Pure, factual progress calculations — no scoring, no gamification.
 
 import type { DayRecord } from '../types';
-import { isPast, isToday } from './date';
+import { isPast, isToday } from '../utils/date';
 
 export interface ProgressSummary {
   totalPlanned: number;

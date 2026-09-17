@@ -1,14 +1,15 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { formatDuration, formatHoursMinutes, formatLongDate, formatShortDate, parseISODate, toISODate } from '../utils/date';
-import { summarizeProgress } from '../utils/progress';
-import { computeDisplayStatus } from '../utils/status';
-import { resolveTrackingType } from '../db/repository';
-import StatusBadge from '../components/StatusBadge';
+import { formatLongDate, formatShortDate, groupByWeek, parseISODate } from '../utils/date';
+import { summarizeProgress } from '../domain/progress';
+import { computeDisplayStatus } from '../domain/status';
+import { resolveTrackingType, formatTrackingLabel } from '../domain/trackingType';
 import FocusLens from '../components/FocusLens';
+import DayDetail from '../components/commitmentDetail/DayDetail';
+import Legend from '../components/commitmentDetail/Legend';
 import { ArrowLeftIcon } from '../components/icons';
-import type { DayRecord, DisplayStatus } from '../types';
+import type { DisplayStatus } from '../types';
 import './CommitmentDetail.css';
 
 const STATUS_DOT_CLASS: Record<DisplayStatus, string> = {
@@ -64,8 +65,8 @@ export default function CommitmentDetail() {
           <span className="eyebrow">Commitment</span>
           <h1 className="commitment-detail-title display">{commitment.name}</h1>
           <p className="commitment-detail-meta">
-            {isCompletion ? 'Completion' : `${formatHoursMinutes(commitment.dailyTargetSeconds)} / day`} ·{' '}
-            {commitment.durationDays} days · {formatShortDate(commitment.startDate)} – {formatShortDate(commitment.endDate)}
+            {formatTrackingLabel(commitment)} · {commitment.durationDays} days ·{' '}
+            {formatShortDate(commitment.startDate)} – {formatShortDate(commitment.endDate)}
           </p>
         </div>
         <FocusLens percent={summary.completionPercent} size={96} variant="round" state={summary.completionPercent === 100 ? 'done' : 'idle'}>
@@ -145,78 +146,4 @@ export default function CommitmentDetail() {
       </section>
     </div>
   );
-}
-
-function DayDetail({ record, isCompletion }: { record: DayRecord; isCompletion: boolean }) {
-  const { timer } = useApp();
-  const status = computeDisplayStatus(record, timer);
-  return (
-    <div className="day-detail-body">
-      <p className="day-detail-date serif">{formatLongDate(record.date)}</p>
-      <StatusBadge status={status} />
-      {!isCompletion && (
-        <>
-          <div className="day-detail-row">
-            <span className="label">Target</span> <span className="mono">{formatHoursMinutes(record.targetSeconds)}</span>
-          </div>
-          <div className="day-detail-row">
-            <span className="label">Recorded</span> <span className="mono">{formatDuration(record.elapsedSeconds)}</span>
-          </div>
-        </>
-      )}
-      {record.completedAt && (
-        <div className="day-detail-row">
-          <span className="label">Completed</span> <span className="mono">{toISODate(new Date(record.completedAt))}</span>
-        </div>
-      )}
-      {status === 'COMPLETED_LATE' && (
-        <p className="day-detail-note">
-          Originally scheduled for {formatShortDate(record.date)}. This day was not completed on time and
-          cannot be marked as completed on schedule.
-        </p>
-      )}
-    </div>
-  );
-}
-
-function Legend() {
-  const items: { cls: string; label: string }[] = [
-    { cls: 'cal-neutral', label: 'Not started' },
-    { cls: 'cal-warning', label: 'Partial' },
-    { cls: 'cal-danger', label: 'Missed' },
-    { cls: 'cal-success', label: 'Done' },
-  ];
-  return (
-    <div className="commitment-calendar-legend">
-      {items.map((item) => (
-        <span key={item.label} className="commitment-calendar-legend-item">
-          <span className={`commitment-calendar-legend-dot ${item.cls}`} />
-          {item.label}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-/** Groups records into calendar weeks (Sun-Sat), padding leading gaps. */
-function groupByWeek(records: DayRecord[]): (DayRecord | null)[][] {
-  if (records.length === 0) return [];
-  const weeks: (DayRecord | null)[][] = [];
-  let currentWeek: (DayRecord | null)[] = [];
-
-  const firstDow = parseISODate(records[0].date).getDay();
-  for (let i = 0; i < firstDow; i++) currentWeek.push(null);
-
-  for (const record of records) {
-    currentWeek.push(record);
-    if (currentWeek.length === 7) {
-      weeks.push(currentWeek);
-      currentWeek = [];
-    }
-  }
-  if (currentWeek.length > 0) {
-    while (currentWeek.length < 7) currentWeek.push(null);
-    weeks.push(currentWeek);
-  }
-  return weeks;
 }

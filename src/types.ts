@@ -34,7 +34,7 @@ export interface Commitment {
  * The persisted, authoritative completion state of a day record.
  * Richer display states (IN_PROGRESS, MISSED, COMPLETED_LATE) are derived
  * at render time from this plus the scheduled date and any active timer —
- * see utils/status.ts. This keeps history append-only and avoids background
+ * see domain/status.ts. This keeps history append-only and avoids background
  * jobs that would need to "sweep" records to mark them MISSED.
  */
 export type DayRecordStatus = 'NOT_STARTED' | 'PARTIAL' | 'DONE';

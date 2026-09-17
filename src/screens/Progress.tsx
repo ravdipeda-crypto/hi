@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { summarizeProgress } from '../utils/progress';
+import { summarizeProgress } from '../domain/progress';
 import { formatShortDate } from '../utils/date';
 import FocusLens from '../components/FocusLens';
 import AnimatedNumber from '../components/AnimatedNumber';
