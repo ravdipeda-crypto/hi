@@ -149,11 +149,13 @@
 
   .mobile-nav {
     display: flex;
+    align-items: center;
     position: fixed;
     left: 16px;
     right: 16px;
     bottom: 14px;
     z-index: 30;
+    height: 64px;
     padding: 8px;
     border-radius: var(--radius-pill);
     background: var(--surface-strong);
@@ -163,11 +165,18 @@
   }
   .mobile-nav-link {
     flex: 1;
+    /* Size to content + padding (not the full bar height) and let
+       align-items: center on .mobile-nav vertically center the pill.
+       Forcing height: 100% previously made the pill's own rounded corners
+       taller than the safe curve of the outer pill, so it visually poked
+       out past the bar's rounded edge instead of sitting centered inside it. */
+    align-self: center;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 3px;
-    padding: 9px 4px;
+    justify-content: center;
+    gap: 7px;
+    padding: 12px 6px;
     border-radius: var(--radius-pill);
     color: var(--muted);
     font-size: var(--fs-micro);
@@ -176,13 +185,19 @@
     text-transform: uppercase;
     transition: color var(--dur-quick) var(--ease-liquid), background var(--dur-base) var(--ease-liquid), transform var(--dur-base) var(--ease-settle);
   }
-  .mobile-nav-link span { opacity: 0; transform: translateY(4px); height: 0; transition: opacity var(--dur-quick) var(--ease-liquid), transform var(--dur-base) var(--ease-liquid); }
-  .mobile-nav-link:active { transform: scale(0.92); }
+  .mobile-nav-link span {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: opacity var(--dur-quick) var(--ease-liquid), max-width var(--dur-base) var(--ease-liquid);
+  }
+  .mobile-nav-link:active { transform: scale(0.94); }
   .mobile-nav-link.active {
+    flex-grow: 1.6;
     color: var(--accent-deep);
     background: linear-gradient(145deg, #fff, var(--accent-soft));
     box-shadow: inset 0 1px 0 #fff, 0 8px 16px rgba(2, 100, 112, 0.18);
-    transform: translateY(-10px);
   }
-  .mobile-nav-link.active span { opacity: 1; transform: none; height: auto; }
+  .mobile-nav-link.active span { opacity: 1; max-width: 80px; }
 }

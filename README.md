@@ -25,9 +25,9 @@ rewards, or scores. Just commitments, a timer, and a factual history.
   move, and history is never rewritten.
 - **Progress** — factual totals: planned days, completed, partial, missed,
   completion %, and consistency %. No scoring, no gamification.
-- **Settings** — dark (blueprint navy) / light (warm ivory) theme, a
-  notification preference, JSON export/import, and a permanent reset with an
-  explicit confirmation.
+- **Settings** — Deep (dark) / Daylight (light) theme, a notification
+  preference, JSON export/import, and a permanent reset with an explicit
+  confirmation.
 
 ## Tech stack
 
@@ -64,7 +64,7 @@ src/
     progress.ts           Factual progress/consistency calculations
   context/
     AppContext.tsx        Single app-wide context; the only layer that talks to db/
-  components/             Shared UI: Layout/nav, StatusBadge, ProgressRing, icons
+  components/             Shared UI: Layout/nav, StatusBadge, FocusLens, icons
   screens/                One file per screen (Welcome, Today, Timer, Commitments,
                            NewCommitment, CommitmentDetail, Progress, Settings)
   styles/                 Design tokens (theme.css) and global styles (global.css)
@@ -72,7 +72,8 @@ src/
 
 ## Design system
 
-The visual language is a technical "blueprint" aesthetic: dark navy in dark
-mode, warm ivory in light mode, thin 1px borders, small corner radii, a
-condensed serif wordmark, and a faint grid background. There is a persistent
-sidebar (desktop) with a bottom tab bar on mobile (below ~768px).
+The visual language is "Aqua Lens": clear-water optics with translucent,
+liquid-glass surfaces, organic rounded/teardrop geometry, and dividers that
+fade at both ends rather than hard borders. Deep (dark, underwater) and
+Daylight (light, ivory) themes share the same tokens. There is a persistent
+sidebar (desktop) with a floating pill tab bar on mobile (below ~768px).

@@ -30,24 +30,6 @@ export function BrandDrop(props: IconProps) {
   );
 }
 
-export function WaveIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <path d="M3 12c3-5 5 1 8-4s5 3 8-2" />
-      <path d="M3 17c3-5 5 1 8-4s5 3 8-2" opacity="0.5" />
-    </svg>
-  );
-}
-
-export function TriangleMark(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <path d="M12 3 L21 20 L3 20 Z" />
-      <path d="M12 3 L12 20 M7.5 12 L16.5 12" strokeWidth={1} opacity={0.6} />
-    </svg>
-  );
-}
-
 export function TodayIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
