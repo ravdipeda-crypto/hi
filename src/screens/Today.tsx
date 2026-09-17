@@ -7,7 +7,7 @@ import { computeDisplayStatus } from '../utils/status';
 import StatusBadge from '../components/StatusBadge';
 import FocusLens from '../components/FocusLens';
 import AnimatedNumber from '../components/AnimatedNumber';
-import { ArrowRightIcon, CloseIcon, PauseIcon, PlayIcon, StopIcon } from '../components/icons';
+import { CloseIcon, PauseIcon, PlayIcon, StopIcon } from '../components/icons';
 import type { Commitment, DayRecord, DisplayStatus } from '../types';
 import './Today.css';
 
@@ -62,7 +62,6 @@ export default function Today() {
   const total = items.length;
   const completedCount = complete.length;
   const completionPercent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
-  const activeItem = items.find((i) => i.isTimedHere) ?? null;
 
   async function handleStart(commitmentId: string) {
     setActionError(null);
@@ -120,8 +119,17 @@ export default function Today() {
       ) : (
         <div className="today-layout">
           <div className="today-main">
-            <TodayGroup title="Needs attention" tone="attention" items={needsAttention} controls={controls} timer={timer} />
-            <TodayGroup title="In progress" tone="progress" items={inProgress} controls={controls} timer={timer} />
+            {timer ? (
+              <>
+                <TodayGroup title="In progress" tone="progress" items={inProgress} controls={controls} timer={timer} />
+                <TodayGroup title="Needs attention" tone="attention" items={needsAttention} controls={controls} timer={timer} />
+              </>
+            ) : (
+              <>
+                <TodayGroup title="Needs attention" tone="attention" items={needsAttention} controls={controls} timer={timer} />
+                <TodayGroup title="In progress" tone="progress" items={inProgress} controls={controls} timer={timer} />
+              </>
+            )}
             <TodayGroup title="Complete" tone="complete" items={complete} controls={controls} timer={timer} collapsedMeta />
           </div>
 
@@ -137,23 +145,6 @@ export default function Today() {
                 {completedCount} of {total} commitments complete
               </div>
             </div>
-
-            {activeItem && (
-              <Link to="/timer" className="lens today-session-card pressable">
-                <div className="today-session-head">
-                  <span className={`today-session-dot${timer?.status === 'running' ? ' live' : ''}`} aria-hidden="true" />
-                  <span className="label">{timer?.status === 'running' ? 'Current flowing' : 'Current paused'}</span>
-                </div>
-                <div className="today-session-name serif">{activeItem.commitment.name}</div>
-                <div className="today-session-time">
-                  {formatDuration(activeItem.liveElapsed)}{' '}
-                  <span className="today-session-target">/ {formatHoursMinutes(activeItem.record.targetSeconds)}</span>
-                </div>
-                <div className="today-session-open">
-                  Open the lens <ArrowRightIcon width={13} height={13} />
-                </div>
-              </Link>
-            )}
           </aside>
         </div>
       )}
