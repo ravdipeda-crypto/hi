@@ -77,7 +77,8 @@
   color: var(--ink);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: transform var(--dur-quick) var(--ease-settle),
+  contain: layout;
+  transition: transform var(--dur-tap) var(--ease-settle),
     box-shadow var(--dur-quick) var(--ease-liquid);
 }
 
