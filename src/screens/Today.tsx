@@ -62,8 +62,6 @@ export default function Today() {
   const total = items.length;
   const completedCount = complete.length;
   const completionPercent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
-  const plannedSeconds = items.reduce((sum, i) => sum + i.record.targetSeconds, 0);
-  const recordedSeconds = items.reduce((sum, i) => sum + i.liveElapsed, 0);
   const activeItem = items.find((i) => i.isTimedHere) ?? null;
 
   async function handleStart(commitmentId: string) {
@@ -138,16 +136,6 @@ export default function Today() {
               <div className="today-status-caption">
                 {completedCount} of {total} commitments complete
               </div>
-            </div>
-
-            <div className="lens today-ledger">
-              <div className="lens-head">
-                <span className="label">Today's ledger</span>
-              </div>
-              <StatLine label="Scheduled" value={String(total)} />
-              <StatLine label="Remaining" value={String(total - completedCount)} tone={total - completedCount > 0 ? 'accent' : undefined} />
-              <StatLine label="Planned time" value={formatHoursMinutes(plannedSeconds)} />
-              <StatLine label="Recorded today" value={formatDuration(recordedSeconds)} />
             </div>
 
             {activeItem && (
@@ -315,15 +303,6 @@ function TodayCard({
           </Link>
         )}
       </div>
-    </div>
-  );
-}
-
-function StatLine({ label, value, tone }: { label: string; value: string; tone?: 'accent' }) {
-  return (
-    <div className="today-statline">
-      <span className="label">{label}</span>
-      <span className={`today-statline-value mono${tone === 'accent' ? ' accent-val' : ''}`}>{value}</span>
     </div>
   );
 }
