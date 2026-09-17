@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatLongDate, todayISO } from '../utils/date';
 import { useTodayItems } from '../hooks/useTodayItems';
@@ -27,25 +27,37 @@ export default function Today() {
   const completedCount = complete.length;
   const completionPercent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
-  async function handleStart(commitmentId: string) {
-    setActionError(null);
-    try {
-      await startTimer(commitmentId);
-    } catch (err) {
-      setActionError(err instanceof Error ? err.message : 'Could not start the timer.');
-    }
-  }
+  const handleStart = useCallback(
+    async (commitmentId: string) => {
+      setActionError(null);
+      try {
+        await startTimer(commitmentId);
+      } catch (err) {
+        setActionError(err instanceof Error ? err.message : 'Could not start the timer.');
+      }
+    },
+    [startTimer],
+  );
 
-  async function handleToggleComplete(commitmentId: string) {
-    setActionError(null);
-    try {
-      await toggleTodayCompletion(commitmentId);
-    } catch (err) {
-      setActionError(err instanceof Error ? err.message : 'Could not update this habit.');
-    }
-  }
+  const handleToggleComplete = useCallback(
+    async (commitmentId: string) => {
+      setActionError(null);
+      try {
+        await toggleTodayCompletion(commitmentId);
+      } catch (err) {
+        setActionError(err instanceof Error ? err.message : 'Could not update this habit.');
+      }
+    },
+    [toggleTodayCompletion],
+  );
 
-  const controls = { pauseTimer, resumeTimer, stopTimer, handleStart, handleToggleComplete };
+  // Stable object identity across ticks (all inputs are already useCallback
+  // with stable deps) so memoized TodayCards below don't get invalidated by
+  // a "new controls object" on every render — only real prop changes do.
+  const controls = useMemo(
+    () => ({ pauseTimer, resumeTimer, stopTimer, handleStart, handleToggleComplete }),
+    [pauseTimer, resumeTimer, stopTimer, handleStart, handleToggleComplete],
+  );
 
   return (
     <div className="today-screen">
@@ -64,7 +76,7 @@ export default function Today() {
             </div>
             <span className="label">complete</span>
             <div className="today-meter-track" aria-hidden="true">
-              <div className="today-meter-fill" style={{ width: `${completionPercent}%` }} />
+              <div className="today-meter-fill" style={{ transform: `scaleX(${completionPercent / 100})` }} />
             </div>
           </div>
         )}

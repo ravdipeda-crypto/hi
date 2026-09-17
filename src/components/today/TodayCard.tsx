@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { formatDuration, formatHoursMinutes } from '../../utils/date';
@@ -14,21 +15,46 @@ export interface TodayCardControls {
   handleToggleComplete: (id: string) => Promise<void>;
 }
 
-/** A single row in the Today screen's trail. Extracted from
- *  screens/Today.tsx verbatim (same markup, same branching). */
-export default function TodayCard({
-  item,
-  controls,
-  timer,
-  index,
-  compact,
-}: {
+interface TodayCardProps {
   item: TodayItem;
   controls: TodayCardControls;
   timer: ReturnType<typeof useApp>['timer'];
   index: number;
   compact?: boolean;
-}) {
+}
+
+/**
+ * `items` is rebuilt with a fresh array + fresh per-row objects every render
+ * of Today() (it must be, to recompute the running timer's live elapsed
+ * seconds each tick) — so a plain reference check would re-render every
+ * visible card every second even though most of them show unchanged data.
+ * This comparator instead checks the actual values that affect a card's
+ * rendered output, so cards unrelated to whichever commitment is currently
+ * timed skip re-rendering entirely while the clock ticks.
+ */
+function todayCardPropsEqual(prev: TodayCardProps, next: TodayCardProps): boolean {
+  if (prev.controls !== next.controls || prev.timer !== next.timer || prev.index !== next.index || prev.compact !== next.compact) {
+    return false;
+  }
+  const a = prev.item;
+  const b = next.item;
+  return (
+    a.commitment === b.commitment &&
+    a.record === b.record &&
+    a.trackingType === b.trackingType &&
+    a.status === b.status &&
+    a.liveElapsed === b.liveElapsed &&
+    a.remaining === b.remaining &&
+    a.percent === b.percent &&
+    a.isTimedHere === b.isTimedHere
+  );
+}
+
+/** A single row in the Today screen's trail. Extracted from
+ *  screens/Today.tsx verbatim (same markup, same branching). Memoized with
+ *  a value-based comparator so unaffected cards skip re-rendering while
+ *  whichever commitment is actively timed updates each second. */
+const TodayCard = memo(function TodayCard({ item, controls, timer, index, compact }: TodayCardProps) {
   const { commitment, trackingType, record, status, liveElapsed, remaining, percent, isTimedHere } = item;
   const isCompletion = trackingType === 'COMPLETION';
   const anotherTimerRunning = !!timer && !isTimedHere;
@@ -83,7 +109,7 @@ export default function TodayCard({
             aria-valuemax={100}
             aria-label={`${commitment.name} progress`}
           >
-            <div className={`today-fluid-fill${done ? ' done' : ''}`} style={{ width: `${percent}%` }} />
+            <div className={`today-fluid-fill${done ? ' done' : ''}`} style={{ transform: `scaleX(${percent / 100})` }} />
           </div>
         )}
       </div>
@@ -97,7 +123,9 @@ export default function TodayCard({
       />
     </div>
   );
-}
+}, todayCardPropsEqual);
+
+export default TodayCard;
 
 /**
  * The action-button area of a Today card. Split out of the same 5-way

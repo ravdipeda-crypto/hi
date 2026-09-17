@@ -21,9 +21,20 @@
 
 .timer-heading { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .timer-state-pill { font-size: var(--fs-label); padding: 6px 14px 6px 11px; }
-.timer-state-pill .bead { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.timer-state-pill .bead { position: relative; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
 .timer-state-pill.state-running { color: var(--accent-deep); background: var(--accent-tint); }
-.timer-state-pill.state-running .bead { animation: bead-pulse 1.4s var(--ease-liquid) infinite; }
+/* Expanding ring via transform+opacity (compositor-only) instead of an
+   animated box-shadow, which would repaint every frame for the entire
+   running session. */
+.timer-state-pill.state-running .bead::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent-glow);
+  animation: bead-pulse-ring 1.4s var(--ease-liquid) infinite;
+  will-change: transform, opacity;
+}
 .timer-state-pill.state-paused { color: var(--warning); background: rgba(215, 154, 82, 0.16); }
 .timer-state-pill.state-done { color: var(--positive); background: rgba(22, 165, 140, 0.16); }
 .timer-context { font-size: 22px; }

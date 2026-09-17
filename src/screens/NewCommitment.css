@@ -68,6 +68,7 @@
   background: var(--surface-strong);
   box-shadow: 0 6px 14px rgba(2, 74, 86, 0.12), inset 0 1px 0 var(--highlight);
 }
+.new-commitment-type-option:active { transform: scale(0.96); }
 
 .new-commitment-completion-hint {
   margin: -6px 0 0;

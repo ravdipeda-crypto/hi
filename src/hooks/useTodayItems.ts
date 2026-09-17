@@ -4,12 +4,13 @@
 // only and this logic is reusable/testable on its own.
 
 import { useMemo } from 'react';
-import { useApp } from '../context/AppContext';
+import { useApp, useNowMs } from '../context/AppContext';
 import { deriveTodayItem, type TodayItem } from '../domain/habit';
 import { todayISO } from '../utils/date';
 
 export function useTodayItems(): TodayItem[] {
-  const { commitments, dayRecordFor, timer, nowMs } = useApp();
+  const { commitments, dayRecordFor, timer } = useApp();
+  const nowMs = useNowMs();
   const today = todayISO();
 
   return useMemo<TodayItem[]>(() => {

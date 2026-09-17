@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useApp, useNowMs } from '../context/AppContext';
 import { deriveTodayItem } from '../domain/habit';
 import { formatDuration, formatHoursMinutes, formatLongDate } from '../utils/date';
 import FocusLens from '../components/FocusLens';
@@ -14,7 +14,8 @@ const CAPTIONS = {
 } as const;
 
 export default function Timer() {
-  const { timer, commitments, dayRecordFor, nowMs, pauseTimer, resumeTimer, stopTimer } = useApp();
+  const { timer, commitments, dayRecordFor, pauseTimer, resumeTimer, stopTimer } = useApp();
+  const nowMs = useNowMs();
   const navigate = useNavigate();
   const [confirmingStop, setConfirmingStop] = useState(false);
 

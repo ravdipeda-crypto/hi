@@ -41,9 +41,6 @@ interface AppContextValue {
   dayRecords: DayRecord[];
   timer: TimerState | null;
   settings: Settings;
-  /** Advances every second while a timer is running, forcing consumers that
-   *  read elapsed time to re-render. */
-  nowMs: number;
 
   createCommitment: (input: repo.NewCommitmentInput) => Promise<Commitment>;
   deleteCommitment: (id: string) => Promise<void>;
@@ -68,10 +65,25 @@ interface AppContextValue {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
+/**
+ * Split out from AppContextValue on purpose. `nowMs` advances every second
+ * while a timer is running, and only Today/Timer screens actually read it
+ * for live elapsed-time math. If it lived on the main context value, its
+ * every-second update would force every useApp() consumer to re-render
+ * (Layout, Commitments, Progress, Settings, ...) even while just scrolling
+ * a screen that has nothing to do with the timer. A separate context means
+ * only components that call useNowMs() re-render on each tick.
+ */
+const NowMsContext = createContext<number>(0);
+
 export function useApp(): AppContextValue {
   const ctx = useContext(AppContext);
   if (!ctx) throw new Error('useApp must be used within AppProvider');
   return ctx;
+}
+
+export function useNowMs(): number {
+  return useContext(NowMsContext);
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -310,7 +322,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       dayRecords,
       timer,
       settings,
-      nowMs,
       createCommitment,
       deleteCommitment,
       dayRecordsFor,
@@ -333,7 +344,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       dayRecords,
       timer,
       settings,
-      nowMs,
       createCommitment,
       deleteCommitment,
       dayRecordsFor,
@@ -350,5 +360,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ],
   );
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      <NowMsContext.Provider value={nowMs}>{children}</NowMsContext.Provider>
+    </AppContext.Provider>
+  );
 }
