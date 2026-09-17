@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useApp } from './context/AppContext';
+import { useAndroidBackButton } from './hooks/useAndroidBackButton';
 import Layout from './components/Layout';
 import Welcome from './screens/Welcome';
 import Today from './screens/Today';
@@ -12,6 +13,7 @@ import Settings from './screens/Settings';
 
 export default function App() {
   const { loading, settings } = useApp();
+  useAndroidBackButton();
 
   if (loading) {
     return (

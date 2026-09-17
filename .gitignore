@@ -10,7 +10,16 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-capacitor
 *.local
+
+# Android build outputs (APKs are shipped as artifacts, not committed)
+android/app/build
+android/build
+android/.gradle
+android/local.properties
+android/app/*.keystore
+android/keystore.properties
 
 # Editor directories and files
 .vscode/*
