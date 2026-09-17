@@ -1,10 +1,10 @@
-// Domain logic for a commitment's tracking type (DURATION vs COMPLETION).
-// Pure, framework-free, no I/O — moved out of db/repository.ts because this
-// is business logic, not data access, even though the data access layer
-// also needs it when creating new commitments.
+// Domain logic for a habit's tracking type (DURATION vs COMPLETION). Pure,
+// framework-free, no I/O. Moved verbatim from domain/trackingType.ts into
+// domain/habit/ as part of consolidating all habit business logic under one
+// module.
 
-import type { Commitment, TrackingType } from '../types';
-import { formatHoursMinutes } from '../utils/date';
+import type { Commitment, TrackingType } from '../../types';
+import { formatHoursMinutes } from '../../utils/date';
 
 /** Commitments created before `trackingType` existed have no such field;
  *  always treat that as 'DURATION' so old data keeps working unchanged. */

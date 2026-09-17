@@ -14,6 +14,6 @@ export * from './settings.repo';
 export * from './exportImport.repo';
 
 // `resolveTrackingType` is domain logic (not data access) and now lives in
-// domain/trackingType.ts, but it's re-exported here too since existing
-// callers/tests import it from this module.
-export { resolveTrackingType } from '../domain/trackingType';
+// domain/habit/, but it's re-exported here too since existing callers/tests
+// import it from this module.
+export { resolveTrackingType } from '../domain/habit';

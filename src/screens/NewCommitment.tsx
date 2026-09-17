@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { computeEndDate, formatLongDate, todayISO } from '../utils/date';
-import { validateCommitmentForm, type CommitmentFormErrors } from '../domain/commitmentForm';
+import { validateCommitmentForm, type CommitmentFormErrors } from '../domain/habit';
 import { ArrowRightIcon } from '../components/icons';
 import './NewCommitment.css';
 

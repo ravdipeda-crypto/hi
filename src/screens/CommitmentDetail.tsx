@@ -1,10 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { formatLongDate, formatShortDate, groupByWeek, parseISODate } from '../utils/date';
-import { summarizeProgress } from '../domain/progress';
-import { computeDisplayStatus } from '../domain/status';
-import { resolveTrackingType, formatTrackingLabel } from '../domain/trackingType';
+import { formatLongDate, formatShortDate, parseISODate } from '../utils/date';
+import { summarizeProgress, computeDisplayStatus, groupByWeek, resolveTrackingType, formatTrackingLabel } from '../domain/habit';
 import FocusLens from '../components/FocusLens';
 import DayDetail from '../components/commitmentDetail/DayDetail';
 import Legend from '../components/commitmentDetail/Legend';

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { formatTrackingLabel, resolveTrackingType } from './trackingType';
-import type { Commitment } from '../types';
+import type { Commitment } from '../../types';
 
 function commitment(overrides: Partial<Commitment>): Commitment {
   return {

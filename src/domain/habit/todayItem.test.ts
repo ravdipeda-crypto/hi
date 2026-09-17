@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deriveTodayItem } from './todayItem';
-import type { Commitment, DayRecord, TimerState } from '../types';
+import type { Commitment, DayRecord, TimerState } from '../../types';
 
 function commitment(overrides: Partial<Commitment>): Commitment {
   return {

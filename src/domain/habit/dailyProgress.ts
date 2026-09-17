@@ -1,7 +1,9 @@
-// Pure, factual progress calculations — no scoring, no gamification.
+// Pure, factual progress calculations — no scoring, no gamification. Moved
+// verbatim from domain/progress.ts into domain/habit/ as part of
+// consolidating all habit business logic under one module.
 
-import type { DayRecord } from '../types';
-import { isPast, isToday } from '../utils/date';
+import type { DayRecord } from '../../types';
+import { isPast, isToday } from '../../utils/date';
 
 export interface ProgressSummary {
   totalPlanned: number;

@@ -20,7 +20,17 @@ import {
 import type { Commitment, DayRecord, ExportPayload, Settings, TimerState } from '../types';
 import * as repo from '../db/repository';
 import { todayISO } from '../utils/date';
-import { cappedElapsedSeconds, totalElapsedSeconds } from '../timer/engine';
+import {
+  applyAutoCompleteToRecord,
+  applyPauseToRecord,
+  applyStopToRecord,
+  assertCanStartSession,
+  hasReachedTarget,
+  pauseSession,
+  resumeSession,
+  startSession,
+  toggleHabitDayCompletion,
+} from '../domain/habit';
 
 interface AppContextValue {
   loading: boolean;
@@ -131,7 +141,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       );
       if (!record) return;
 
-      if (totalElapsedSeconds(currentTimer, now) >= record.targetSeconds) {
+      if (hasReachedTarget(currentTimer, record, now)) {
         await completeFromTimer(currentTimer, record, now);
       }
     }, 1000);
@@ -141,13 +151,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [timer?.status, timer?.commitmentId, timer?.dayDate]);
 
   async function completeFromTimer(currentTimer: TimerState, record: DayRecord, now: number) {
-    const capped = cappedElapsedSeconds(currentTimer, record.targetSeconds, now);
-    const updated: DayRecord = {
-      ...record,
-      elapsedSeconds: capped,
-      status: 'DONE',
-      completedAt: record.completedAt ?? now,
-    };
+    const updated = applyAutoCompleteToRecord(currentTimer, record, now);
     await repo.saveDayRecord(updated);
     await repo.clearTimerState();
     setDayRecords((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
@@ -187,29 +191,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
 
   // ---------- timer ----------
+  // Every method here is a thin persistence/state wrapper around the pure
+  // functions in domain/habit/timerSession.ts — this context decides WHEN
+  // to call them and how to save/broadcast the result; it doesn't compute
+  // the timer/record math itself anymore.
   const startTimer = useCallback(
     async (commitmentId: string) => {
-      if (timerRef.current) {
-        throw new Error('Another timer is already running. Stop it before starting a new one.');
-      }
       const date = todayISO();
       const record = dayRecordsRef.current.find((r) => r.commitmentId === commitmentId && r.date === date);
-      if (!record) {
-        throw new Error('This commitment has no scheduled target for today.');
-      }
-      if (record.status === 'DONE') {
-        throw new Error('Today\u2019s target is already complete.');
-      }
+      assertCanStartSession(timerRef.current, record);
 
-      const newTimer: TimerState = {
-        id: 'current',
-        commitmentId,
-        dayDate: date,
-        status: 'running',
-        baselineSeconds: record.elapsedSeconds,
-        accumulatedSeconds: 0,
-        runStartedAt: Date.now(),
-      };
+      const newTimer = startSession(commitmentId, date, record!.elapsedSeconds, Date.now());
       await repo.saveTimerState(newTimer);
       setTimer(newTimer);
       setNowMs(Date.now());
@@ -221,25 +213,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const current = timerRef.current;
     if (!current || current.status !== 'running' || current.runStartedAt == null) return;
     const now = Date.now();
-    const ranSeconds = Math.max(0, (now - current.runStartedAt) / 1000);
-    const updated: TimerState = {
-      ...current,
-      status: 'paused',
-      accumulatedSeconds: current.accumulatedSeconds + ranSeconds,
-      runStartedAt: null,
-    };
+    const updated = pauseSession(current, now);
     await repo.saveTimerState(updated);
 
     const record = dayRecordsRef.current.find(
       (r) => r.commitmentId === updated.commitmentId && r.date === updated.dayDate,
     );
     if (record) {
-      const capped = cappedElapsedSeconds(updated, record.targetSeconds, now);
-      const updatedRecord: DayRecord = {
-        ...record,
-        elapsedSeconds: capped,
-        status: capped > 0 ? 'PARTIAL' : record.status,
-      };
+      const updatedRecord = applyPauseToRecord(updated, record, now);
       await repo.saveDayRecord(updatedRecord);
       setDayRecords((prev) => prev.map((r) => (r.id === updatedRecord.id ? updatedRecord : r)));
     }
@@ -251,7 +232,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const resumeTimer = useCallback(async () => {
     const current = timerRef.current;
     if (!current || current.status !== 'paused') return;
-    const updated: TimerState = { ...current, status: 'running', runStartedAt: Date.now() };
+    const updated = resumeSession(current, Date.now());
     await repo.saveTimerState(updated);
     setTimer(updated);
     setNowMs(Date.now());
@@ -265,14 +246,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       (r) => r.commitmentId === current.commitmentId && r.date === current.dayDate,
     );
     if (record) {
-      const capped = cappedElapsedSeconds(current, record.targetSeconds, now);
-      const reachedTarget = capped >= record.targetSeconds;
-      const updatedRecord: DayRecord = {
-        ...record,
-        elapsedSeconds: capped,
-        status: reachedTarget ? 'DONE' : capped > 0 ? 'PARTIAL' : record.status,
-        completedAt: reachedTarget ? record.completedAt ?? now : record.completedAt,
-      };
+      const updatedRecord = applyStopToRecord(current, record, now);
       await repo.saveDayRecord(updatedRecord);
       setDayRecords((prev) => prev.map((r) => (r.id === updatedRecord.id ? updatedRecord : r)));
     }
@@ -288,10 +262,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!record) {
       throw new Error('This commitment has no scheduled day for today.');
     }
-    const nowDone = record.status === 'DONE';
-    const updated: DayRecord = nowDone
-      ? { ...record, status: 'NOT_STARTED', completedAt: undefined }
-      : { ...record, status: 'DONE', completedAt: Date.now() };
+    const updated = toggleHabitDayCompletion(record);
     await repo.saveDayRecord(updated);
     setDayRecords((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
   }, []);

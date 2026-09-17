@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { formatDuration, formatHoursMinutes } from '../../utils/date';
-import type { TodayItem } from '../../domain/todayItem';
+import type { TodayItem } from '../../domain/habit';
 import StatusBadge from '../StatusBadge';
 import FocusLens from '../FocusLens';
 import { CheckIcon, PauseIcon, PlayIcon, StopIcon } from '../icons';

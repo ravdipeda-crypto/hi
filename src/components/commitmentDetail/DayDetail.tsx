@@ -1,6 +1,6 @@
 import { useApp } from '../../context/AppContext';
 import { formatDuration, formatHoursMinutes, formatLongDate, formatShortDate, toISODate } from '../../utils/date';
-import { computeDisplayStatus } from '../../domain/status';
+import { computeDisplayStatus } from '../../domain/habit';
 import StatusBadge from '../StatusBadge';
 import type { DayRecord } from '../../types';
 

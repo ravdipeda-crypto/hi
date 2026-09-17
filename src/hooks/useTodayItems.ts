@@ -5,7 +5,7 @@
 
 import { useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { deriveTodayItem, type TodayItem } from '../domain/todayItem';
+import { deriveTodayItem, type TodayItem } from '../domain/habit';
 import { todayISO } from '../utils/date';
 
 export function useTodayItems(): TodayItem[] {

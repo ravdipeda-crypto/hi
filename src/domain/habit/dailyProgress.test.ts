@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { summarizeProgress } from './progress';
-import type { DayRecord } from '../types';
-import { addDays, todayISO } from '../utils/date';
+import { summarizeProgress } from './dailyProgress';
+import type { DayRecord } from '../../types';
+import { addDays, todayISO } from '../../utils/date';
 
 function record(overrides: Partial<DayRecord>): DayRecord {
   return {

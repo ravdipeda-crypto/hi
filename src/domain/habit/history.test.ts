@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { computeDisplayStatus } from './status';
-import type { DayRecord, TimerState } from '../types';
-import { addDays, todayISO } from '../utils/date';
+import { computeDisplayStatus, groupByWeek } from './history';
+import type { DayRecord, TimerState } from '../../types';
+import { addDays, todayISO } from '../../utils/date';
 
 function record(overrides: Partial<DayRecord>): DayRecord {
   return {
@@ -86,5 +86,39 @@ describe('computeDisplayStatus', () => {
   it('marks a past, uncompleted completion habit day as MISSED', () => {
     const r = record({ date: addDays(todayISO(), -1), status: 'NOT_STARTED', elapsedSeconds: 0, targetSeconds: 0 });
     expect(computeDisplayStatus(r)).toBe('MISSED');
+  });
+});
+
+describe('groupByWeek', () => {
+  it('returns an empty array for no records', () => {
+    expect(groupByWeek([])).toEqual([]);
+  });
+
+  it('pads the first week with leading nulls up to the first record\'s weekday', () => {
+    // 2026-01-01 is a Thursday (day index 4).
+    const records: DayRecord[] = [record({ id: '1', date: '2026-01-01' })];
+    const weeks = groupByWeek(records);
+    expect(weeks).toHaveLength(1);
+    expect(weeks[0]).toHaveLength(7);
+    expect(weeks[0].slice(0, 4)).toEqual([null, null, null, null]);
+    expect(weeks[0][4]?.date).toBe('2026-01-01');
+  });
+
+  it('pads the trailing week with nulls up to 7 columns', () => {
+    const records: DayRecord[] = [
+      record({ id: '1', date: '2026-01-01' }),
+      record({ id: '2', date: '2026-01-02' }),
+    ];
+    const weeks = groupByWeek(records);
+    expect(weeks[weeks.length - 1]).toHaveLength(7);
+  });
+
+  it('splits a full week correctly with no padding needed mid-sequence', () => {
+    // 2026-01-04 is a Sunday, so a 7-day run from there fills one week exactly.
+    const dates = ['2026-01-04', '2026-01-05', '2026-01-06', '2026-01-07', '2026-01-08', '2026-01-09', '2026-01-10'];
+    const records: DayRecord[] = dates.map((date, i) => record({ id: String(i), date }));
+    const weeks = groupByWeek(records);
+    expect(weeks).toHaveLength(1);
+    expect(weeks[0].map((r) => r?.date)).toEqual(dates);
   });
 });

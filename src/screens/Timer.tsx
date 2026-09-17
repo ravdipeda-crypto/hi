@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { deriveTodayItem } from '../domain/todayItem';
+import { deriveTodayItem } from '../domain/habit';
 import { formatDuration, formatHoursMinutes, formatLongDate } from '../utils/date';
 import FocusLens from '../components/FocusLens';
 import { ArrowLeftIcon, CheckIcon, PauseIcon, PlayIcon, StopIcon } from '../components/icons';

@@ -2,7 +2,7 @@
 
 import { STORES, getAll, getById, getByIndex, put } from './db';
 import type { DayRecord } from '../types';
-import { dayRecordId } from './commitments.repo';
+import { habitDayRecordId } from '../domain/habit';
 
 export async function listDayRecordsForCommitment(commitmentId: string): Promise<DayRecord[]> {
   const records = await getByIndex<DayRecord>(STORES.dayRecords, 'commitmentId', commitmentId);
@@ -10,7 +10,7 @@ export async function listDayRecordsForCommitment(commitmentId: string): Promise
 }
 
 export async function getDayRecord(commitmentId: string, date: string): Promise<DayRecord | undefined> {
-  return getById<DayRecord>(STORES.dayRecords, dayRecordId(commitmentId, date));
+  return getById<DayRecord>(STORES.dayRecords, habitDayRecordId(commitmentId, date));
 }
 
 export async function listAllDayRecords(): Promise<DayRecord[]> {

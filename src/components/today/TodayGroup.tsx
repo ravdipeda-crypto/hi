@@ -1,5 +1,5 @@
 import { useApp } from '../../context/AppContext';
-import type { TodayItem } from '../../domain/todayItem';
+import type { TodayItem } from '../../domain/habit';
 import TodayCard, { type TodayCardControls } from './TodayCard';
 
 /** A titled section of Today cards ("Needs attention" / "In progress" /
