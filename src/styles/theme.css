@@ -37,13 +37,14 @@
   --grid-fine: 28px;
   --grid-coarse: 112px;
 
-  /* Motion — fast, subtle, consistent. */
-  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --dur-instant: 90ms;
-  --dur-fast: 150ms;
-  --dur-base: 240ms;
-  --dur-slow: 420ms;
+  /* Motion — smooth, buttery, consistent. Emphasized easing feels fluid
+     without bouncing. */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.15, 1);
+  --dur-instant: 120ms;
+  --dur-fast: 200ms;
+  --dur-base: 320ms;
+  --dur-slow: 520ms;
 
   --transition-fast: var(--dur-fast) var(--ease-out);
   --transition-base: var(--dur-base) var(--ease-out);

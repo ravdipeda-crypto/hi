@@ -27,7 +27,7 @@
   text-align: center;
   gap: 20px;
   padding-top: 8px;
-  min-height: calc(100vh - 180px);
+  min-height: calc(100dvh - 190px);
 }
 
 .timer-heading {
@@ -280,10 +280,40 @@
 }
 
 @media (max-width: 768px) {
+  .timer-screen {
+    max-width: none;
+  }
+  .timer-stage {
+    min-height: auto;
+    gap: 16px;
+    padding-top: 4px;
+    padding-bottom: 8px;
+    justify-content: flex-start;
+  }
   .timer-elapsed {
-    font-size: 40px;
+    font-size: 42px;
   }
   .timer-readouts {
     max-width: none;
+    width: 100%;
+  }
+  .timer-ctrl {
+    flex: 1;
+    min-width: 0;
+  }
+  .timer-controls {
+    width: 100%;
+  }
+  .timer-stop-confirm {
+    width: 100%;
+  }
+  /* Scale the gauge down a touch on very narrow screens so it never crowds
+     the edges. */
+}
+
+@media (max-width: 380px) {
+  .timer-instrument {
+    transform: scale(0.9);
+    margin: -12px 0;
   }
 }

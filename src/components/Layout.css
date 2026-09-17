@@ -85,6 +85,10 @@
   border-color: var(--color-border-faint);
 }
 
+.sidebar-link:active {
+  transform: scale(0.98);
+}
+
 .sidebar-link.active {
   color: var(--color-accent-strong);
   background: var(--color-accent-dim);
@@ -283,8 +287,12 @@
     transition: color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
   }
 
+  .mobile-nav-link:active {
+    background: var(--color-surface);
+  }
+
   .mobile-nav-link:active svg {
-    transform: scale(0.9);
+    transform: scale(0.88);
   }
 
   .mobile-nav-bar {

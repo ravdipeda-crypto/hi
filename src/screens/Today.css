@@ -331,6 +331,10 @@
   box-shadow: var(--shadow-raised);
 }
 
+.today-session-card:active {
+  transform: scale(0.99);
+}
+
 .today-session-head {
   display: flex;
   align-items: center;
@@ -455,8 +459,8 @@
   margin-top: 2px;
 }
 
-/* ---------------- Responsive ---------------- */
-@media (max-width: 1080px) {
+/* ---------------- Tablet ---------------- */
+@media (max-width: 1080px) and (min-width: 769px) {
   .today-layout {
     grid-template-columns: 1fr;
   }
@@ -464,6 +468,7 @@
     position: static;
     flex-direction: row;
     flex-wrap: wrap;
+    order: 2;
   }
   .today-status-card,
   .today-stat-panel,
@@ -471,18 +476,71 @@
     flex: 1;
     min-width: 220px;
   }
-  .today-context {
-    order: -1;
-  }
 }
 
+/* ---------------- Mobile: action-first ---------------- */
 @media (max-width: 768px) {
+  .today-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
   .today-title {
-    font-size: 26px;
+    font-size: 27px;
   }
   .today-header {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
+    align-items: center;
   }
+  .today-header-lead {
+    gap: 4px;
+  }
+  .today-header-meter {
+    align-items: flex-end;
+    min-width: 128px;
+  }
+  .today-meter-track {
+    width: 128px;
+  }
+
+  /* Stats move BELOW the commitments and collapse to a compact form. */
+  .today-context {
+    order: 2;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* The header meter already communicates daily completion — drop the big
+     ring and the redundant session card on phones to keep actions on-screen. */
+  .today-status-card,
+  .today-session-card {
+    display: none;
+  }
+
+  /* Ledger becomes a compact 2-up grid. */
+  .today-stat-panel .panel-header {
+    display: none;
+  }
+  .today-stat-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .today-statline {
+    border-bottom: none;
+    border-top: 1px solid var(--color-border-faint);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 11px 14px;
+  }
+  .today-statline:nth-child(odd) {
+    border-right: 1px solid var(--color-border-faint);
+  }
+  .today-statline:nth-child(1),
+  .today-statline:nth-child(2) {
+    border-top: none;
+  }
+
   .today-empty-panel {
     grid-template-columns: 1fr;
   }
@@ -491,29 +549,44 @@
     border-bottom: 1px solid var(--color-border);
     padding: 24px 20px;
   }
+
+  /* Commitment card: horizontal, compact, thumb-friendly. */
   .today-card {
-    flex-direction: column;
-    align-items: stretch;
     gap: 14px;
+    padding: 15px 16px 15px 18px;
   }
   .today-card-controls {
-    justify-content: space-between;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 10px;
   }
   .today-card-buttons {
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: flex-end;
     min-width: 0;
+  }
+  .today-btn-sm {
+    padding: 9px 14px;
   }
   .today-progress-track {
     max-width: none;
   }
-  .today-header-meter {
-    align-items: flex-start;
-  }
 }
 
-@media (max-width: 520px) {
-  .today-context {
+/* Very small phones: let the card breathe vertically. */
+@media (max-width: 420px) {
+  .today-card {
     flex-direction: column;
+    align-items: stretch;
+  }
+  .today-card-controls {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .today-card-buttons {
+    justify-content: flex-end;
+    flex: 1;
   }
 }

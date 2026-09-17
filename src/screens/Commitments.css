@@ -100,6 +100,10 @@
   box-shadow: var(--shadow-raised);
 }
 
+.commitment-row:active {
+  transform: scale(0.99);
+}
+
 .commitment-row-main {
   min-width: 0;
   flex: 1;
