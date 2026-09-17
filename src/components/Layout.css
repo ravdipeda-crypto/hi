@@ -180,8 +180,12 @@
     display: flex;
     align-items: center;
     position: fixed;
-    left: 16px;
-    right: 16px;
+    /* Narrower and centered — the previous edge-hugging 16px insets made
+       the pill read as a full-width bar rather than a floating dock. */
+    left: 50%;
+    right: auto;
+    width: min(340px, calc(100% - 56px));
+    transform: translateX(-50%);
     bottom: 14px;
     z-index: 30;
     /* ~15% shorter than the original 64px bar. */
