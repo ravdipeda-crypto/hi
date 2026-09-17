@@ -1,6 +1,6 @@
-import { memo, useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useApp, useNowMs } from '../context/AppContext';
+import { useApp } from '../context/AppContext';
 import { formatDuration, formatHoursMinutes, formatLongDate, todayISO } from '../utils/date';
 import { cappedElapsedSeconds } from '../timer/engine';
 import { computeDisplayStatus } from '../utils/status';
@@ -28,6 +28,7 @@ export default function Today() {
     commitments,
     dayRecordFor,
     timer,
+    nowMs,
     startTimer,
     pauseTimer,
     resumeTimer,
@@ -36,7 +37,6 @@ export default function Today() {
     error,
     dismissError,
   } = useApp();
-  const nowMs = useNowMs();
   const [actionError, setActionError] = useState<string | null>(null);
   const today = todayISO();
 
@@ -81,37 +81,25 @@ export default function Today() {
   const completedCount = complete.length;
   const completionPercent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
-  const handleStart = useCallback(
-    async (commitmentId: string) => {
-      setActionError(null);
-      try {
-        await startTimer(commitmentId);
-      } catch (err) {
-        setActionError(err instanceof Error ? err.message : 'Could not start the timer.');
-      }
-    },
-    [startTimer],
-  );
+  async function handleStart(commitmentId: string) {
+    setActionError(null);
+    try {
+      await startTimer(commitmentId);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Could not start the timer.');
+    }
+  }
 
-  const handleToggleComplete = useCallback(
-    async (commitmentId: string) => {
-      setActionError(null);
-      try {
-        await toggleTodayCompletion(commitmentId);
-      } catch (err) {
-        setActionError(err instanceof Error ? err.message : 'Could not update this habit.');
-      }
-    },
-    [toggleTodayCompletion],
-  );
+  async function handleToggleComplete(commitmentId: string) {
+    setActionError(null);
+    try {
+      await toggleTodayCompletion(commitmentId);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Could not update this habit.');
+    }
+  }
 
-  // Stable object identity across ticks (all inputs are already useCallback
-  // with stable deps) so memoized TodayCards below don't get invalidated by
-  // a "new controls object" on every render — only real prop changes do.
-  const controls = useMemo(
-    () => ({ pauseTimer, resumeTimer, stopTimer, handleStart, handleToggleComplete }),
-    [pauseTimer, resumeTimer, stopTimer, handleStart, handleToggleComplete],
-  );
+  const controls = { pauseTimer, resumeTimer, stopTimer, handleStart, handleToggleComplete };
 
   return (
     <div className="today-screen">
@@ -231,42 +219,19 @@ function TodayGroup({
   );
 }
 
-interface TodayCardProps {
+function TodayCard({
+  item,
+  controls,
+  timer,
+  index,
+  compact,
+}: {
   item: TodayItem;
   controls: Controls;
   timer: ReturnType<typeof useApp>['timer'];
   index: number;
   compact?: boolean;
-}
-
-/**
- * `items` is rebuilt with a fresh array + fresh per-row objects every render
- * of Today() (it must be, to recompute the running timer's live elapsed
- * seconds each tick) — so a plain reference check would re-render every
- * visible card every second even though most of them show unchanged data.
- * This comparator instead checks the actual values that affect a card's
- * rendered output, so cards unrelated to whichever commitment is currently
- * timed skip re-rendering entirely while the clock ticks.
- */
-function todayCardPropsEqual(prev: TodayCardProps, next: TodayCardProps): boolean {
-  if (prev.controls !== next.controls || prev.timer !== next.timer || prev.index !== next.index || prev.compact !== next.compact) {
-    return false;
-  }
-  const a = prev.item;
-  const b = next.item;
-  return (
-    a.commitment === b.commitment &&
-    a.record === b.record &&
-    a.trackingType === b.trackingType &&
-    a.status === b.status &&
-    a.liveElapsed === b.liveElapsed &&
-    a.remaining === b.remaining &&
-    a.percent === b.percent &&
-    a.isTimedHere === b.isTimedHere
-  );
-}
-
-const TodayCard = memo(function TodayCard({ item, controls, timer, index, compact }: TodayCardProps) {
+}) {
   const { commitment, trackingType, record, status, liveElapsed, remaining, percent, isTimedHere } = item;
   const isCompletion = trackingType === 'COMPLETION';
   const anotherTimerRunning = !!timer && !isTimedHere;
@@ -386,7 +351,7 @@ const TodayCard = memo(function TodayCard({ item, controls, timer, index, compac
       </div>
     </div>
   );
-}, todayCardPropsEqual);
+}
 
 function TodayEmpty() {
   const steps = [

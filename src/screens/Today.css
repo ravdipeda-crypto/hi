@@ -93,10 +93,6 @@
   gap: 18px;
   padding: 16px 20px;
   transition: transform var(--dur-base) var(--ease-liquid), box-shadow var(--dur-base) var(--ease-liquid);
-  /* Isolates this row's layout from the rest of the scrolling list, so a
-     state change in one card (timer tick, completion toggle) can't trigger
-     a reflow check across every other card on the page. */
-  contain: layout;
 }
 @media (hover: hover) and (pointer: fine) {
   .today-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-raised); }
@@ -184,19 +180,8 @@
 
 .today-session-card { display: block; padding: 18px 20px; color: var(--ink); }
 .today-session-head { display: flex; align-items: center; gap: 9px; margin-bottom: 11px; }
-.today-session-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
-.today-session-dot.live { background: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
-/* Expanding ring via transform+opacity (compositor-only) instead of an
-   animated box-shadow, which would repaint every frame for as long as a
-   timer is running. */
-.today-session-dot.live::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: var(--accent-glow);
-  animation: bead-pulse-ring 1.6s var(--ease-liquid) infinite;
-}
+.today-session-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); }
+.today-session-dot.live { background: var(--accent); box-shadow: 0 0 12px var(--accent-glow); animation: bead-pulse 1.6s var(--ease-liquid) infinite; }
 .today-session-name { font-size: 18px; }
 .today-session-time { margin-top: 6px; font-size: 22px; font-weight: 700; color: var(--accent-deep); }
 .today-session-target { font-size: 13px; color: var(--muted); font-weight: 500; }

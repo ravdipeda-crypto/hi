@@ -66,7 +66,7 @@
   font-size: 13px;
   font-weight: 600;
   transition: color var(--dur-quick) var(--ease-liquid), background var(--dur-base) var(--ease-liquid),
-    transform var(--dur-tap) var(--ease-settle);
+    transform var(--dur-quick) var(--ease-settle);
 }
 .sidebar-link-drop {
   display: grid;
@@ -103,19 +103,8 @@
 }
 .sidebar-status { display: flex; align-items: center; gap: 9px; }
 .sidebar-status .label { color: var(--on-ocean-muted); }
-.sidebar-status-bead { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--on-ocean-muted); }
-.sidebar-status-bead.live { background: var(--accent-bright); box-shadow: 0 0 12px var(--accent-bright); }
-/* Expanding ring via transform+opacity (compositor-only) instead of an
-   animated box-shadow, which would repaint every frame for as long as a
-   timer is running. */
-.sidebar-status-bead.live::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: var(--accent-bright);
-  animation: bead-pulse-ring 2s var(--ease-liquid) infinite;
-}
+.sidebar-status-bead { width: 8px; height: 8px; border-radius: 50%; background: var(--on-ocean-muted); }
+.sidebar-status-bead.live { background: var(--accent-bright); box-shadow: 0 0 12px var(--accent-bright); animation: bead-pulse 2s var(--ease-liquid) infinite; }
 .sidebar-flow { color: var(--on-ocean-muted); font-size: var(--fs-micro); }
 
 .app-main { min-width: 0; padding: 30px 36px 48px; }
@@ -149,17 +138,10 @@
     padding: 12px 22px;
     border-radius: var(--radius-xl);
     background: linear-gradient(135deg, var(--surface-2), transparent 130%);
-    /* Blur trimmed from 22px to 14px — this bar is `position: sticky` and
-       sits above content that scrolls underneath it, so the browser has to
-       recompute this blur on every scroll frame. A smaller radius is a much
-       cheaper filter while looking effectively identical at this bar's
-       size. will-change hints the compositor to keep this element on its
-       own GPU layer instead of re-flattening it into the page each frame. */
-    -webkit-backdrop-filter: blur(14px) saturate(1.3);
-    backdrop-filter: blur(14px) saturate(1.3);
+    -webkit-backdrop-filter: blur(22px) saturate(1.3);
+    backdrop-filter: blur(22px) saturate(1.3);
     box-shadow: var(--shadow-soft), inset 0 1px 0 var(--highlight), inset 0 0 0 1px var(--divider);
     transition: box-shadow var(--dur-base) var(--ease-liquid), background var(--dur-base) var(--ease-liquid);
-    will-change: transform;
   }
 
   .mobile-topbar-grit {
@@ -181,7 +163,7 @@
     color: var(--accent-deep);
     background: transparent;
     transition: color var(--dur-base) var(--ease-liquid), filter var(--dur-base) var(--ease-liquid),
-      transform var(--dur-tap) var(--ease-settle);
+      transform var(--dur-quick) var(--ease-settle);
   }
   .mobile-theme-toggle svg { filter: drop-shadow(0 0 0 transparent); transition: filter var(--dur-base) var(--ease-liquid); }
   @media (hover: hover) and (pointer: fine) {
@@ -208,12 +190,8 @@
     border-radius: var(--radius-pill);
     background: var(--surface-strong);
     box-shadow: var(--shadow-raised), inset 0 1px 0 var(--highlight);
-    /* Same reasoning as .mobile-topbar above: this bar is `position: fixed`
-       over scrolling content, so a smaller blur radius plus a dedicated
-       GPU layer keeps scroll frames cheap. */
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    will-change: transform;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
   }
   .mobile-nav-link {
     flex: 1;
@@ -235,7 +213,7 @@
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    transition: color var(--dur-quick) var(--ease-liquid), background var(--dur-base) var(--ease-liquid), transform var(--dur-tap) var(--ease-settle);
+    transition: color var(--dur-quick) var(--ease-liquid), background var(--dur-base) var(--ease-liquid), transform var(--dur-base) var(--ease-settle);
   }
   .mobile-nav-link span {
     opacity: 0;

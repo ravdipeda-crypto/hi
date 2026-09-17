@@ -45,13 +45,11 @@
   text-transform: uppercase;
   color: var(--muted);
   background: transparent;
-  transition: color var(--dur-quick) var(--ease-liquid), background var(--dur-base) var(--ease-liquid),
-    box-shadow var(--dur-base) var(--ease-liquid), transform var(--dur-tap) var(--ease-settle);
+  transition: color var(--dur-quick) var(--ease-liquid), background var(--dur-base) var(--ease-liquid), box-shadow var(--dur-base) var(--ease-liquid);
 }
 @media (hover: hover) and (pointer: fine) {
   .settings-toggle:hover { color: var(--ink); }
 }
-.settings-toggle:active { transform: scale(0.96); }
 .settings-toggle.active {
   color: var(--accent-deep);
   background: var(--surface-strong);

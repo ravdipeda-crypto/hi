@@ -39,10 +39,6 @@
   /* Motion — liquid, fast, non-bouncy */
   --ease-liquid: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-settle: cubic-bezier(0.2, 0.9, 0.2, 1.08);
-  /* Tap feedback must read as instant: keep press/release settle inside the
-     100-150ms window a finger perceives as immediate response, separate
-     from the slower --dur-quick used for hover-only crossfades. */
-  --dur-tap: 120ms;
   --dur-quick: 200ms;
   --dur-base: 340ms;
   --dur-slow: 620ms;

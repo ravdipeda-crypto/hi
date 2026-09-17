@@ -47,22 +47,9 @@ body::before {
 #root { position: relative; z-index: 1; min-height: 100vh; }
 
 h1, h2, h3, h4, p { margin: 0; }
-/* touch-action: manipulation drops the browser's ~300ms double-tap-to-zoom
-   delay on tap targets, so buttons/links respond the instant a finger lifts
-   instead of waiting to see if a second tap is coming. */
-button {
-  font-family: inherit;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
+button { font-family: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
-a {
-  color: var(--accent-deep);
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
+a { color: var(--accent-deep); text-decoration: none; }
 ::selection { background: var(--accent-soft); color: var(--ocean-950); }
 
 * { scrollbar-width: thin; scrollbar-color: var(--accent-soft) transparent; }
@@ -118,12 +105,8 @@ a {
   background: linear-gradient(150deg, var(--surface), var(--surface-2));
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lens);
-  /* Blur radius trimmed from 20px to 14px — visually identical frosted
-     look at typical card sizes, but a noticeably cheaper filter for the
-     compositor to recompute on every scroll frame (backdrop-filter cost
-     scales with blur radius, and .lens appears dozens of times per screen). */
-  -webkit-backdrop-filter: blur(14px) saturate(1.1);
-  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(20px) saturate(1.1);
+  backdrop-filter: blur(20px) saturate(1.1);
 }
 /* Frosted fallback where backdrop-filter is unsupported. */
 @supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
@@ -164,13 +147,11 @@ a {
   color: var(--accent-deep);
   background: var(--surface-strong);
   box-shadow: 0 8px 20px rgba(2, 74, 86, 0.1), inset 0 1px 0 var(--highlight);
-  /* Only transform/box-shadow/color/background — never border-radius or
-     "all". Transform+opacity are compositor-only (GPU, no repaint), so a
-     tap's :active feedback lands immediately instead of waiting on a
-     paint pass. --dur-tap keeps that feedback inside ~120ms so taps feel
-     instant rather than animated. */
-  transition: transform var(--dur-tap) var(--ease-settle), box-shadow var(--dur-quick) var(--ease-liquid),
-    background var(--dur-quick) var(--ease-liquid), color var(--dur-quick) var(--ease-liquid);
+  /* All properties share one quick duration so press/release settle together
+     instead of trailing each other (that stagger reads as a "flutter"). */
+  transition: transform var(--dur-quick) var(--ease-settle), box-shadow var(--dur-quick) var(--ease-liquid),
+    background var(--dur-quick) var(--ease-liquid), color var(--dur-quick) var(--ease-liquid),
+    border-radius var(--dur-quick) var(--ease-settle);
 }
 /* Hover lift only for real pointers — on touch, tapping a link fires a
    synthetic hover that can stick after release, fighting with :active and
@@ -178,12 +159,7 @@ a {
 @media (hover: hover) and (pointer: fine) {
   .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-raised), inset 0 1px 0 var(--highlight); }
 }
-/* Press feedback is transform-only (scale) — the previous border-radius
-   "blob morph" on tap looked nice but forces a full repaint every frame of
-   the transition (border-radius isn't compositor-only), which is exactly
-   the kind of expensive-during-interaction work we're removing. The pill
-   shape itself is unchanged at rest and on release. */
-.btn:active { transform: scale(0.96); }
+.btn:active { transform: scale(0.96); border-radius: 40% 60% 55% 45% / 55% 45% 60% 40%; }
 .btn:disabled { opacity: 0.42; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .btn-primary {
@@ -262,7 +238,7 @@ a {
 .stagger > * { animation: rise-in var(--dur-slow) var(--ease-liquid) both; animation-delay: calc(var(--i, 0) * 65ms); }
 
 /* Press feedback usable on touch (no hover reliance) */
-.pressable { transition: transform var(--dur-tap) var(--ease-settle), box-shadow var(--dur-quick) var(--ease-liquid); }
+.pressable { transition: transform var(--dur-quick) var(--ease-settle), box-shadow var(--dur-quick) var(--ease-liquid); }
 .pressable:active { transform: scale(0.98); }
 
 .app-loading {
