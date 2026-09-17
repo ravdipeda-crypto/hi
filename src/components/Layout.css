@@ -172,7 +172,9 @@
   }
   .mobile-theme-toggle:active { transform: scale(0.88); }
 
-  .app-main { padding: 8px 14px 104px; }
+  /* Slightly more top padding so page content (e.g. the date eyebrow on
+     Today) sits a bit lower, clear of the floating topbar above it. */
+  .app-main { padding: 20px 14px 104px; }
 
   .mobile-nav {
     display: flex;
@@ -182,8 +184,9 @@
     right: 16px;
     bottom: 14px;
     z-index: 30;
-    height: 64px;
-    padding: 8px;
+    /* ~15% shorter than the original 64px bar. */
+    height: 54px;
+    padding: 6px;
     border-radius: var(--radius-pill);
     background: var(--surface-strong);
     box-shadow: var(--shadow-raised), inset 0 1px 0 var(--highlight);
@@ -203,7 +206,7 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    padding: 12px 6px;
+    padding: 9px 6px;
     border-radius: var(--radius-pill);
     color: var(--muted);
     font-size: var(--fs-micro);
