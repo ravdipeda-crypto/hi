@@ -77,11 +77,34 @@ export interface TimerState {
 
 export type ThemeMode = 'dark' | 'light';
 
+/** How often a daily reminder notification should be considered, when
+ *  notifications are enabled. Purely a stored preference — see
+ *  Settings.tsx for the capability-detection that governs what this
+ *  actually does on the current platform/browser. */
+export type ReminderFrequency = 'ONCE_DAILY' | 'TWICE_DAILY' | 'HOURLY';
+
 export interface Settings {
   id: 'app';
   theme: ThemeMode;
   notificationsEnabled: boolean;
   hasOnboarded: boolean;
+  /** Master reminder controls. `reminderSound`/`reminderVibration`/
+   *  `reminderFullScreenAlert` are only ever honored when the current
+   *  platform/browser actually supports the underlying capability — see
+   *  the capability checks in Settings.tsx. Storing the preference here
+   *  regardless means the choice is remembered if the app is later opened
+   *  somewhere that DOES support it (e.g. moving from a plain browser tab
+   *  to the packaged Android build). */
+  reminderSound: boolean;
+  reminderVibration: boolean;
+  reminderFullScreenAlert: boolean;
+  reminderFrequency: ReminderFrequency;
+  /** Local hour (0-23) at which the app's "today" rolls over to the next
+   *  calendar day. 0 = midnight (the original, unconfigurable behavior).
+   *  Only ever affects which date counts as "today" for scheduling/live
+   *  views going forward — never rewrites a DayRecord's already-stored
+   *  `date`. */
+  dailyResetHour: number;
 }
 
 /** Derived, presentation-only status used across Today/History/Progress. */

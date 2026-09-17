@@ -39,6 +39,9 @@ export function deriveTodayItem(
   date: string,
   timer: TimerState | null | undefined,
   nowMs: number,
+  /** The user's configured daily-reset hour (Settings > Daily refresh
+   *  time), 0-23. Defaults to 0 (midnight). */
+  dailyResetHour = 0,
 ): TodayItem {
   const trackingType = resolveTrackingType(habit);
   const isTimedHere = timer?.commitmentId === habit.id && timer.dayDate === date;
@@ -59,7 +62,7 @@ export function deriveTodayItem(
     commitment: habit,
     trackingType,
     record,
-    status: computeDisplayStatus(record, timer),
+    status: computeDisplayStatus(record, timer, dailyResetHour),
     liveElapsed,
     remaining: remainingSeconds,
     percent,

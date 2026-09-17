@@ -19,14 +19,14 @@ export interface ProgressSummary {
   consistencyPercent: number;
 }
 
-export function summarizeProgress(records: DayRecord[]): ProgressSummary {
+export function summarizeProgress(records: DayRecord[], dailyResetHour = 0): ProgressSummary {
   let completedDays = 0;
   let partialDays = 0;
   let missedDays = 0;
   let notStartedFuture = 0;
 
   for (const record of records) {
-    const dayHasPassed = isPast(record.date) || isToday(record.date);
+    const dayHasPassed = isPast(record.date, dailyResetHour) || isToday(record.date, dailyResetHour);
 
     if (record.status === 'DONE') {
       completedDays++;
@@ -38,7 +38,7 @@ export function summarizeProgress(records: DayRecord[]): ProgressSummary {
       continue;
     }
 
-    if (isToday(record.date)) {
+    if (isToday(record.date, dailyResetHour)) {
       // Today counts as partial-in-progress rather than missed until the
       // day actually elapses.
       if (record.elapsedSeconds > 0) {

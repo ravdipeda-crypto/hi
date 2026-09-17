@@ -1,58 +1,209 @@
-import { useSettings } from '../context/AppContext';
+import { useMemo, useState } from 'react';
+import { useApp } from '../context/AppContext';
+import CompactHeader from '../components/CompactHeader';
+import AquaSelect from '../components/AquaSelect';
+import { BellIcon, VibrationIcon, AlertScreenIcon, ClockIcon } from '../components/icons';
+import type { ReminderFrequency } from '../types';
+import {
+  fireTestReminder,
+  notificationPermission,
+  requestNotificationPermission,
+  supportsFullScreenAlert,
+  supportsNotifications,
+  supportsVibration,
+} from '../utils/notificationCapabilities';
 import './Settings.css';
 
+const FREQUENCY_OPTIONS: { value: ReminderFrequency; label: string }[] = [
+  { value: 'ONCE_DAILY', label: 'Once a day' },
+  { value: 'TWICE_DAILY', label: 'Twice a day' },
+  { value: 'HOURLY', label: 'Hourly' },
+];
+
+/** 0-23 -> "12:00 AM", "1:00 AM", ... "11:00 PM", for the daily-refresh-hour select. */
+function formatHourLabel(hour: number): string {
+  const period = hour < 12 ? 'AM' : 'PM';
+  const display = hour % 12 === 0 ? 12 : hour % 12;
+  return `${display}:00 ${period}`;
+}
+
 export default function Settings() {
-  const { settings, updateSettings } = useSettings();
+  const { settings, updateSettings } = useApp();
+  const notificationsSupported = supportsNotifications();
+  const vibrationSupported = supportsVibration();
+  const fullScreenAlertSupported = supportsFullScreenAlert();
+  const [permission, setPermission] = useState(notificationPermission());
+  const [testSentAt, setTestSentAt] = useState<number | null>(null);
+
+  async function handleNotificationsToggle(checked: boolean) {
+    if (checked && notificationsSupported && permission === 'default') {
+      const result = await requestNotificationPermission();
+      setPermission(result);
+      if (result !== 'granted') {
+        // Respect the platform's answer — don't silently flip the setting
+        // on if the user (or platform) actually denied/can't grant it.
+        return;
+      }
+    }
+    await updateSettings({ notificationsEnabled: checked });
+  }
+
+  function handleSendTest() {
+    fireTestReminder(settings.reminderVibration && vibrationSupported);
+    setTestSentAt(Date.now());
+  }
+
+  const notificationsBlocked = notificationsSupported && permission === 'denied';
+  const remindersOn = settings.notificationsEnabled;
+
+  const hourOptions = useMemo(
+    () => Array.from({ length: 24 }, (_, hour) => ({ value: String(hour), label: formatHourLabel(hour) })),
+    [],
+  );
 
   return (
     <div className="settings-screen">
-      <header className="settings-header">
-        <span className="eyebrow">Configuration</span>
-        <h1 className="settings-title">Settings</h1>
-      </header>
+      <CompactHeader />
 
       <section className="lens settings-section" style={{ ['--i' as string]: 0 }}>
         <div className="lens-head">
-          <h2 className="label">Appearance</h2>
+          <h2 className="label">Reminders</h2>
         </div>
-        <div className="settings-row">
-          <span>Theme</span>
-          <div className="settings-toggle-group" role="group" aria-label="Theme">
-            <button
-              type="button"
-              className={`settings-toggle ${settings.theme === 'light' ? 'active' : ''}`}
-              onClick={() => void updateSettings({ theme: 'light' })}
-              aria-pressed={settings.theme === 'light'}
-            >
-              Daylight
-            </button>
-            <button
-              type="button"
-              className={`settings-toggle ${settings.theme === 'dark' ? 'active' : ''}`}
-              onClick={() => void updateSettings({ theme: 'dark' })}
-              aria-pressed={settings.theme === 'dark'}
-            >
-              Deep
-            </button>
-          </div>
-        </div>
-      </section>
 
-      <section className="lens settings-section" style={{ ['--i' as string]: 1 }}>
-        <div className="lens-head">
-          <h2 className="label">Notifications</h2>
-        </div>
         <div className="settings-row">
-          <span>Daily reminder notifications</span>
+          <span className="settings-row-label">
+            <BellIcon width={16} height={16} />
+            Daily reminder notifications
+          </span>
           <label className="settings-switch">
             <input
               type="checkbox"
-              checked={settings.notificationsEnabled}
-              onChange={(e) => void updateSettings({ notificationsEnabled: e.target.checked })}
+              checked={remindersOn}
+              disabled={!notificationsSupported}
+              onChange={(e) => void handleNotificationsToggle(e.target.checked)}
             />
             <span className="settings-switch-track" aria-hidden="true" />
           </label>
         </div>
+        {!notificationsSupported && (
+          <p className="settings-capability-note">
+            Notifications aren't supported in this browser/build, so this control is disabled.
+          </p>
+        )}
+        {notificationsBlocked && (
+          <p className="settings-capability-note settings-capability-note-warning">
+            Notifications are blocked at the browser/system level. Allow them for GRIT in your
+            device settings to enable reminders.
+          </p>
+        )}
+
+        <div className="settings-row">
+          <span className="settings-row-label">Sound</span>
+          <label className="settings-switch">
+            <input
+              type="checkbox"
+              checked={settings.reminderSound}
+              disabled={!remindersOn || !notificationsSupported}
+              onChange={(e) => void updateSettings({ reminderSound: e.target.checked })}
+            />
+            <span className="settings-switch-track" aria-hidden="true" />
+          </label>
+        </div>
+        {notificationsSupported && (
+          <p className="settings-capability-note">
+            Plays your device's default notification sound — custom sounds aren't controllable
+            from a web app.
+          </p>
+        )}
+
+        <div className="settings-row">
+          <span className="settings-row-label">
+            <VibrationIcon width={16} height={16} />
+            Vibration
+          </span>
+          <label className="settings-switch">
+            <input
+              type="checkbox"
+              checked={settings.reminderVibration}
+              disabled={!remindersOn || !vibrationSupported}
+              onChange={(e) => void updateSettings({ reminderVibration: e.target.checked })}
+            />
+            <span className="settings-switch-track" aria-hidden="true" />
+          </label>
+        </div>
+        {!vibrationSupported && (
+          <p className="settings-capability-note">
+            Vibration isn't supported on this device/browser, so this control is disabled.
+          </p>
+        )}
+
+        <div className="settings-row">
+          <span className="settings-row-label">
+            <AlertScreenIcon width={16} height={16} />
+            Full-screen alert
+          </span>
+          <label className="settings-switch">
+            <input
+              type="checkbox"
+              checked={settings.reminderFullScreenAlert}
+              disabled={!remindersOn || !fullScreenAlertSupported}
+              onChange={(e) => void updateSettings({ reminderFullScreenAlert: e.target.checked })}
+            />
+            <span className="settings-switch-track" aria-hidden="true" />
+          </label>
+        </div>
+        <p className="settings-capability-note">
+          Not available yet — a wake-the-screen alarm-style alert needs native Android support
+          this build doesn't include. Left visible so it's clear this is on the roadmap, not
+          hidden or silently faked.
+        </p>
+
+        <div className="settings-row">
+          <span className="settings-row-label">
+            <ClockIcon width={16} height={16} />
+            Reminder frequency
+          </span>
+          <AquaSelect
+            value={settings.reminderFrequency}
+            options={FREQUENCY_OPTIONS}
+            disabled={!remindersOn}
+            onChange={(value) => void updateSettings({ reminderFrequency: value })}
+            ariaLabel="Reminder frequency"
+          />
+        </div>
+
+        <div className="settings-row">
+          <span className="settings-row-label">Send a test reminder</span>
+          <button
+            type="button"
+            className="btn btn-ghost settings-test-btn"
+            disabled={!remindersOn || !notificationsSupported || permission !== 'granted'}
+            onClick={handleSendTest}
+          >
+            Send test
+          </button>
+        </div>
+        {testSentAt !== null && <p className="settings-capability-note">Test reminder sent.</p>}
+      </section>
+
+      <section className="lens settings-section" style={{ ['--i' as string]: 1 }}>
+        <div className="lens-head">
+          <h2 className="label">Daily refresh</h2>
+        </div>
+        <div className="settings-row">
+          <span className="settings-row-label">Roll over to the next day at</span>
+          <AquaSelect
+            value={String(settings.dailyResetHour)}
+            options={hourOptions}
+            onChange={(value) => void updateSettings({ dailyResetHour: Number(value) })}
+            ariaLabel="Daily refresh time"
+          />
+        </div>
+        <p className="settings-capability-note">
+          Today, Progress, and history all switch to the next scheduled day at this time instead
+          of exactly midnight. Existing recorded days are never rewritten — this only changes
+          which date counts as "today" going forward.
+        </p>
       </section>
     </div>
   );

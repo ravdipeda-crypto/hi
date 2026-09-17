@@ -10,10 +10,10 @@ import { CloseIcon } from '../components/icons';
 import './Today.css';
 
 export default function Today() {
-  const { timer, startTimer, pauseTimer, resumeTimer, stopTimer, toggleTodayCompletion, error, dismissError } =
+  const { timer, startTimer, pauseTimer, resumeTimer, stopTimer, toggleTodayCompletion, error, dismissError, settings } =
     useApp();
   const [actionError, setActionError] = useState<string | null>(null);
-  const today = todayISO();
+  const today = todayISO(settings.dailyResetHour);
   const items = useTodayItems();
 
   // Operational grouping: what needs attention -> what is in progress -> what is complete.

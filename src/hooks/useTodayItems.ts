@@ -9,9 +9,10 @@ import { deriveTodayItem, type TodayItem } from '../domain/habit';
 import { todayISO } from '../utils/date';
 
 export function useTodayItems(): TodayItem[] {
-  const { commitments, dayRecordFor, timer } = useApp();
+  const { commitments, dayRecordFor, timer, settings } = useApp();
   const nowMs = useNowMs();
-  const today = todayISO();
+  const dailyResetHour = settings.dailyResetHour;
+  const today = todayISO(dailyResetHour);
 
   return useMemo<TodayItem[]>(() => {
     return commitments
@@ -19,8 +20,8 @@ export function useTodayItems(): TodayItem[] {
       .map((c) => {
         const record = dayRecordFor(c.id, today);
         if (!record) return null;
-        return deriveTodayItem(c, record, today, timer, nowMs);
+        return deriveTodayItem(c, record, today, timer, nowMs, dailyResetHour);
       })
       .filter((v): v is TodayItem => v !== null);
-  }, [commitments, dayRecordFor, today, timer, nowMs]);
+  }, [commitments, dayRecordFor, today, timer, nowMs, dailyResetHour]);
 }

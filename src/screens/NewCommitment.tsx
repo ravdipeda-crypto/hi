@@ -7,7 +7,7 @@ import { ArrowRightIcon } from '../components/icons';
 import './NewCommitment.css';
 
 export default function NewCommitment() {
-  const { createCommitment } = useApp();
+  const { createCommitment, settings } = useApp();
   const navigate = useNavigate();
 
   const [trackingType, setTrackingType] = useState<'DURATION' | 'COMPLETION'>('DURATION');
@@ -15,7 +15,7 @@ export default function NewCommitment() {
   const [hours, setHours] = useState('1');
   const [minutes, setMinutes] = useState('0');
   const [duration, setDuration] = useState('30');
-  const [startDate, setStartDate] = useState(todayISO());
+  const [startDate, setStartDate] = useState(() => todayISO(settings.dailyResetHour));
   const [errors, setErrors] = useState<CommitmentFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);

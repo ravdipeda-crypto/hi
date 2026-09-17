@@ -12,6 +12,10 @@ import { isPast, parseISODate, toISODate } from '../../utils/date';
 export function computeDisplayStatus(
   record: DayRecord,
   activeTimer?: TimerState | null,
+  /** The user's configured daily-reset hour (Settings > Daily refresh
+   *  time), 0-23. Defaults to 0 (midnight) — existing call sites that
+   *  don't pass this keep their exact original behavior. */
+  dailyResetHour = 0,
 ): DisplayStatus {
   const isThisRecordTimed =
     !!activeTimer &&
@@ -30,7 +34,7 @@ export function computeDisplayStatus(
     return 'IN_PROGRESS';
   }
 
-  const dayIsOver = isPast(record.date);
+  const dayIsOver = isPast(record.date, dailyResetHour);
 
   if (record.elapsedSeconds > 0) {
     return dayIsOver ? 'MISSED' : 'PARTIAL';

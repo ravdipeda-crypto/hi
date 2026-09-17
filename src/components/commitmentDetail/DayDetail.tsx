@@ -7,8 +7,8 @@ import type { DayRecord } from '../../types';
 /** Detail panel for a single selected day in a commitment's history
  *  calendar. Extracted from screens/CommitmentDetail.tsx verbatim. */
 export default function DayDetail({ record, isCompletion }: { record: DayRecord; isCompletion: boolean }) {
-  const { timer } = useApp();
-  const status = computeDisplayStatus(record, timer);
+  const { timer, settings } = useApp();
+  const status = computeDisplayStatus(record, timer, settings.dailyResetHour);
   return (
     <div className="day-detail-body">
       <p className="day-detail-date serif">{formatLongDate(record.date)}</p>

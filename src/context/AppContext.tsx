@@ -126,6 +126,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   dayRecordsRef.current = dayRecords;
   const timerRef = useRef(timer);
   timerRef.current = timer;
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
 
   const reportError = useCallback((err: unknown, fallback: string) => {
     console.error(err);
@@ -162,6 +164,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // ---------- theme reflected on <html> ----------
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', settings.theme);
+    // Mirrored into localStorage under the same key index.html's inline
+    // script reads synchronously before first paint — purely so a
+    // returning user's actual saved theme (light or dark) can be applied
+    // immediately on the next load, instead of flashing the default Deep
+    // theme for a moment while IndexedDB loads asynchronously. Best-effort
+    // only: if storage is unavailable, the app still works correctly, it
+    // just briefly shows the default theme before this effect runs.
+    try {
+      window.localStorage.setItem('grit_theme_cache', settings.theme);
+    } catch {
+      // Storage unavailable (private browsing, quota) — safe to ignore.
+    }
   }, [settings.theme]);
 
   // ---------- ticking clock while a timer runs, + auto-complete ----------
@@ -236,7 +250,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // the timer/record math itself anymore.
   const startTimer = useCallback(
     async (commitmentId: string) => {
-      const date = todayISO();
+      const date = todayISO(settingsRef.current.dailyResetHour);
       const record = dayRecordsRef.current.find((r) => r.commitmentId === commitmentId && r.date === date);
       assertCanStartSession(timerRef.current, record);
 
@@ -296,7 +310,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // ---------- completion-only habits (no timer involved) ----------
   const toggleTodayCompletion = useCallback(async (commitmentId: string) => {
-    const date = todayISO();
+    const date = todayISO(settingsRef.current.dailyResetHour);
     const record = dayRecordsRef.current.find((r) => r.commitmentId === commitmentId && r.date === date);
     if (!record) {
       throw new Error('This commitment has no scheduled day for today.');

@@ -4,14 +4,23 @@ import { summarizeProgress } from '../domain/habit';
 import { formatShortDate } from '../utils/date';
 import FocusLens from '../components/FocusLens';
 import AnimatedNumber from '../components/AnimatedNumber';
+import AquaSelect from '../components/AquaSelect';
 import './Progress.css';
 
 export default function Progress() {
-  const { commitments, dayRecords, dayRecordsFor } = useApp();
-  const [selectedId, setSelectedId] = useState<string | 'all'>('all');
+  const { commitments, dayRecords, dayRecordsFor, settings } = useApp();
+  const [selectedId, setSelectedId] = useState<string>('all');
 
   const scopedRecords = selectedId === 'all' ? dayRecords : dayRecordsFor(selectedId);
-  const scopedSummary = useMemo(() => summarizeProgress(scopedRecords), [scopedRecords]);
+  const scopedSummary = useMemo(
+    () => summarizeProgress(scopedRecords, settings.dailyResetHour),
+    [scopedRecords, settings.dailyResetHour],
+  );
+
+  const filterOptions = useMemo(
+    () => [{ value: 'all', label: 'Overall progress' }, ...commitments.map((c) => ({ value: c.id, label: c.name }))],
+    [commitments],
+  );
 
   const recentDays = useMemo(() => {
     return [...scopedRecords].sort((a, b) => a.date.localeCompare(b.date)).slice(-30);
@@ -29,19 +38,13 @@ export default function Progress() {
             Your <em className="accent">progress.</em>
           </h1>
         </div>
-        <select
+        <AquaSelect
           className="progress-select"
           value={selectedId}
-          onChange={(e) => setSelectedId(e.target.value)}
-          aria-label="Filter by commitment"
-        >
-          <option value="all">Overall progress</option>
-          {commitments.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+          options={filterOptions}
+          onChange={setSelectedId}
+          ariaLabel="Filter by commitment"
+        />
       </header>
 
       <div className="progress-top-grid">

@@ -22,13 +22,16 @@ const STATUS_DOT_CLASS: Record<DisplayStatus, string> = {
 export default function CommitmentDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { commitments, dayRecordsFor, timer, deleteCommitment } = useApp();
+  const { commitments, dayRecordsFor, timer, deleteCommitment, settings } = useApp();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const commitment = commitments.find((c) => c.id === id);
   const records = useMemo(() => (id ? dayRecordsFor(id) : []), [id, dayRecordsFor]);
-  const summary = useMemo(() => summarizeProgress(records), [records]);
+  const summary = useMemo(
+    () => summarizeProgress(records, settings.dailyResetHour),
+    [records, settings.dailyResetHour],
+  );
 
   if (!commitment) {
     return (
@@ -93,11 +96,11 @@ export default function CommitmentDetail() {
                     <button
                       key={record.date}
                       type="button"
-                      className={`commitment-calendar-day ${STATUS_DOT_CLASS[computeDisplayStatus(record, timer)]}${
+                      className={`commitment-calendar-day ${STATUS_DOT_CLASS[computeDisplayStatus(record, timer, settings.dailyResetHour)]}${
                         selectedDate === record.date ? ' selected' : ''
                       }`}
                       onClick={() => setSelectedDate(record.date)}
-                      aria-label={`${formatLongDate(record.date)}: ${computeDisplayStatus(record, timer)}`}
+                      aria-label={`${formatLongDate(record.date)}: ${computeDisplayStatus(record, timer, settings.dailyResetHour)}`}
                     >
                       {parseISODate(record.date).getDate()}
                     </button>

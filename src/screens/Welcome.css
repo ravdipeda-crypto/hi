@@ -1,9 +1,17 @@
 .welcome-screen {
-  min-height: 100vh;
+  /* dvh (dynamic viewport height) rather than vh — on mobile browsers vh
+     is the LARGEST possible viewport (address bar collapsed), so centering
+     against vh can leave the card sitting below the fold of the actual,
+     smaller initial viewport (address bar visible), forcing a scroll to
+     see the whole card on first load. dvh tracks the real current
+     viewport, so this fits in one screen without scrolling immediately. */
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 28px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 28px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
 }
 
 .welcome-card {
@@ -16,6 +24,18 @@
   align-items: center;
   gap: 16px;
   animation: surface-in var(--dur-slow) var(--ease-liquid) both;
+}
+
+@media (max-width: 480px) {
+  .welcome-screen { padding: 20px; }
+  /* Smaller vertical padding + gap on narrow phones — the card's content
+     (name input + tagline + continue button) is short, but the original
+     64px top/bottom padding alone could push total height past a small
+     phone's viewport once the browser chrome/keyboard-safe area is
+     accounted for. Typography scale is intentionally left alone (no
+     smaller than clamp(40px,10vw,64px) already provides) per "do not make
+     the text unnecessarily tiny". */
+  .welcome-card { padding: 40px 24px; gap: 14px; }
 }
 
 /* The primary, larger visual element — the input IS the name display.

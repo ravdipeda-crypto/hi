@@ -38,4 +38,7 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Used by the WebView's navigator.vibrate() API for the Vibration
+         reminder toggle in Settings — no other feature depends on this. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>

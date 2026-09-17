@@ -15,7 +15,7 @@ const NAV_ITEMS = [
 
 export default function Layout() {
   const { timer, commitments, settings, updateSettings } = useApp();
-  const today = todayISO();
+  const today = todayISO(settings.dailyResetHour);
   const activeCount = commitments.filter((c) => c.startDate <= today && today <= c.endDate).length;
   const timerLabel = timer ? (timer.status === 'running' ? 'Flowing' : 'Paused') : 'Still water';
   const isDeep = settings.theme === 'dark';

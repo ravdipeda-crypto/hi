@@ -9,6 +9,15 @@ html, body { margin: 0; padding: 0; }
    shift/narrow by the scrollbar's width when switching between a short tab
    and a tall one. */
 html { scrollbar-gutter: stable; }
+/* Defensive clip: the app's width should always be exactly the viewport's
+   (the shell/header/nav all use fixed or minmax(0,...) tracks — see
+   Layout.css/Today.css), but this guards against any single overflowing
+   child (e.g. unbreakable text) ever stretching the whole page wider than
+   the viewport and, with it, visually widening sticky/fixed chrome that's
+   sized relative to the page rather than the viewport. Doesn't change any
+   layout that already fits — only clips content that would otherwise
+   overflow off-screen. */
+html, body { overflow-x: hidden; }
 
 body {
   min-height: 100vh;

@@ -227,9 +227,19 @@
 .today-session-open { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; color: var(--accent-deep); font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* ---------------- Empty state ---------------- */
-.today-empty { display: flex; }
-.today-empty-panel { display: grid; grid-template-columns: 1.05fr 1fr; width: 100%; overflow: hidden; }
+.today-empty { display: flex; min-width: 0; }
+/* minmax(0, ...) rather than bare fr — a bare `1.05fr` track's implicit
+   minimum is `auto` (content-based), so a child with wide unbreakable
+   content (e.g. the loop list) could force this grid, and therefore the
+   whole header/nav shell around it, wider than the viewport/grid column
+   it's supposed to fit — the exact "container width changes depending on
+   what's currently rendered" failure mode. Clamping the minimum to 0 lets
+   the track shrink to the available space and wrap/clip its content
+   instead, so this panel's width is always exactly its parent's width,
+   never wider, whether zero or many commitments exist. */
+.today-empty-panel { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); width: 100%; overflow: hidden; }
 .today-empty-head {
+  min-width: 0;
   padding: 40px 36px;
   display: flex;
   flex-direction: column;
@@ -241,6 +251,7 @@
 .today-empty-copy { color: var(--muted); font-size: var(--fs-small); line-height: 1.65; max-width: 44ch; }
 .today-empty-cta { margin-top: 10px; }
 .today-empty-loop {
+  min-width: 0;
   list-style: none;
   margin: 0;
   padding: 26px;
@@ -276,7 +287,8 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 6px 14px var(--accent-glow);
 }
 .today-empty-step-k { font-size: 16px; }
-.today-empty-step-d { font-size: var(--fs-small); color: var(--muted); margin-top: 2px; }
+.today-empty-step-d { font-size: var(--fs-small); color: var(--muted); margin-top: 2px; word-break: break-word; }
+.today-empty-step > div { min-width: 0; }
 
 /* ---------------- Tablet ---------------- */
 @media (max-width: 1080px) and (min-width: 769px) {

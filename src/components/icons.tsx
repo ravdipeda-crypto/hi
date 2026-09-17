@@ -131,6 +131,60 @@ export function SunIcon(props: IconProps) {
   );
 }
 
+export function ChevronDownIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M5 9 L12 16 L19 9" />
+    </svg>
+  );
+}
+
+export function TrashIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 7 H20 M9 7 V4.6 C9 4.3 9.3 4 9.6 4 H14.4 C14.7 4 15 4.3 15 4.6 V7 M6.5 7 L7.3 19.4 C7.3 19.7 7.6 20 8 20 H16 C16.4 20 16.7 19.7 16.7 19.4 L17.5 7" />
+      <path d="M10.3 11 V16 M13.7 11 V16" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function BellIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6 10.5 C6 7 8.5 4.5 12 4.5 C15.5 4.5 18 7 18 10.5 V13.5 C18 14.5 18.4 15.4 19 16 H5 C5.6 15.4 6 14.5 6 13.5 Z" />
+      <path d="M10 18.5 C10 19.6 10.9 20.5 12 20.5 C13.1 20.5 14 19.6 14 18.5" />
+    </svg>
+  );
+}
+
+export function VibrationIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="8" y="5" width="8" height="14" rx="1.6" />
+      <path d="M3 9 V15 M21 9 V15" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function AlertScreenIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="4" y="4" width="16" height="16" rx="2" />
+      <path d="M12 8.5 V13" strokeLinecap="round" />
+      <circle cx="12" cy="16" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function ClockIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 8 V12 L15 14" />
+    </svg>
+  );
+}
+
 export function MoonIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>

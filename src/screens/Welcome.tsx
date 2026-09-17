@@ -5,7 +5,7 @@ import { capitalizeFirstLetter, getStoredUserName, storeUserName } from '../util
 import { ArrowRightIcon } from '../components/icons';
 import './Welcome.css';
 
-const TAGLINE = 'Grit — Build Through Action.';
+const TAGLINE = 'GRIT — Build Through Action.';
 
 /**
  * First-launch/onboarding screen.

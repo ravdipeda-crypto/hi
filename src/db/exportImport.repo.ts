@@ -7,7 +7,7 @@ import type { ExportPayload } from '../types';
 import { listCommitments } from './commitments.repo';
 import { listAllDayRecords } from './dayRecords.repo';
 import { getTimerState } from './timer.repo';
-import { getSettings } from './settings.repo';
+import { getSettings, withSettingsDefaults } from './settings.repo';
 
 export async function exportAllData(): Promise<ExportPayload> {
   const [commitments, dayRecords, timerState, settings] = await Promise.all([
@@ -45,7 +45,10 @@ export async function importAllData(payload: unknown): Promise<void> {
     await put(STORES.timerState, payload.timerState);
   }
   if (payload.settings) {
-    await put(STORES.settings, payload.settings);
+    // Back-fill any reminder/reset fields missing from an older export
+    // (from before those fields existed) with their defaults, same as a
+    // normal getSettings() read would.
+    await put(STORES.settings, withSettingsDefaults(payload.settings));
   }
 }
 
