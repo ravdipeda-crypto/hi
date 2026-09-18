@@ -20,6 +20,7 @@ import {
 import type { Commitment, DayRecord, ExportPayload, Settings, TimerState } from '../types';
 import * as repo from '../db/repository';
 import { todayISO } from '../utils/date';
+import { reconcileReminders, startReminderLoop, type ReminderState } from '../utils/reminderScheduler';
 import {
   applyAutoCompleteToRecord,
   applyPauseToRecord,
@@ -128,6 +129,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
   timerRef.current = timer;
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
+  const commitmentsRef = useRef(commitments);
+  commitmentsRef.current = commitments;
+
+  // Latest reminder-relevant state, read on demand by the reminder loop so
+  // it never operates on stale data captured in a closure.
+  const reminderState = useCallback(
+    (): ReminderState => ({
+      commitments: commitmentsRef.current,
+      dayRecords: dayRecordsRef.current,
+      timer: timerRef.current,
+      settings: settingsRef.current,
+    }),
+    [],
+  );
 
   const reportError = useCallback((err: unknown, fallback: string) => {
     console.error(err);
@@ -160,6 +175,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [reportError]);
+
+  // ---------- smart reminders ----------
+  // Re-reconcile whenever anything a reminder depends on changes (or after
+  // the initial load completes). On native this re-schedules OS
+  // notifications from current state (so completed/edited commitments stop
+  // reminding and nothing duplicates); on web it fires any due reminder
+  // while the app is open. All gated on the user's reminder settings +
+  // real permission inside the scheduler.
+  useEffect(() => {
+    if (loading) return;
+    reconcileReminders({ commitments, dayRecords, timer, settings });
+  }, [loading, commitments, dayRecords, timer, settings]);
+
+  // Background driver: web foreground interval + native app-resume re-sync.
+  // Mounted once; reads fresh state on demand via reminderState().
+  useEffect(() => {
+    const stop = startReminderLoop(reminderState);
+    return stop;
+  }, [reminderState]);
 
   // ---------- theme reflected on <html> ----------
   useEffect(() => {

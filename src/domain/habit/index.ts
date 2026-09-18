@@ -13,3 +13,4 @@ export * from './timerSession';
 export * from './dailyProgress';
 export * from './history';
 export * from './todayItem';
+export * from './reminders';
