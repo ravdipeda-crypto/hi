@@ -7,7 +7,7 @@
   cached shell so the app opens with no network at all after the first visit.
   Dependency-free and scoped automatically to the registration path (/hi/).
 */
-const CACHE = 'grit-aqua-v16';
+const CACHE = 'grit-aqua-v17';
 const BASE = self.registration.scope; // e.g. https://host/hi/
 
 self.addEventListener('install', (event) => {

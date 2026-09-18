@@ -147,8 +147,14 @@
        a safe-area inset (notches, punch-holes, Android's status bar in a
        fullscreen/edge-to-edge WebView). env(...) falls back to 0px on
        platforms that don't define it, so this is a no-op everywhere else —
-       the bar still floats 12px from the top exactly as before. */
-    top: calc(env(safe-area-inset-top, 0px) + 12px);
+       the bar still floats 12px from the top exactly as before. Clamped
+       with min(..., 48px): some Android WebView versions have reported
+       wildly inflated/incorrect safe-area-inset-top values (far beyond any
+       real status bar height), which would push this bar way down the
+       screen and read as an oversized header. No real device's status bar
+       exceeds ~48px, so this clamp can only ever protect against a bad
+       value — it never trims a legitimate one. */
+    top: calc(min(env(safe-area-inset-top, 0px), 48px) + 12px);
     z-index: 20;
     margin: 0 12px 6px;
     /* ~15% shorter than the original bar height, via reduced vertical
@@ -214,8 +220,10 @@
      .mobile-topbar), so this only needs to add the inset to its bottom
      padding — clearing the floating bottom nav dock plus the system
      gesture/nav-bar area beneath it, so the last card in a scrolled list
-     is never hidden under either. */
-  .app-main { padding: 20px 14px calc(env(safe-area-inset-bottom, 0px) + 104px); }
+     is never hidden under either. Clamped to 48px max for the same reason
+     as .mobile-topbar's top offset above — guards against a WebView
+     reporting an inflated inset value. */
+  .app-main { padding: 20px 14px calc(min(env(safe-area-inset-bottom, 0px), 48px) + 104px); }
 
   .mobile-nav {
     display: flex;
@@ -231,8 +239,9 @@
        edge-to-edge gesture strip, iOS's home indicator) via the safe-area
        inset, so the dock never sits under or gets obscured by it. Falls
        back to plain 14px on platforms without a bottom inset — unchanged
-       from before. */
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+       from before. Clamped to 48px max, same reasoning as .mobile-topbar's
+       top offset above. */
+    bottom: calc(min(env(safe-area-inset-bottom, 0px), 48px) + 14px);
     z-index: 30;
     /* ~15% shorter than the original 64px bar. */
     height: 54px;
