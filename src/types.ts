@@ -77,11 +77,11 @@ export interface TimerState {
 
 export type ThemeMode = 'dark' | 'light';
 
-/** How often a daily reminder notification should be considered, when
- *  notifications are enabled. Purely a stored preference — see
+/** Gap between reminder notifications while reminders are enabled, as an
+ *  hourly interval (1 to 5 hours). Purely a stored preference — see
  *  Settings.tsx for the capability-detection that governs what this
  *  actually does on the current platform/browser. */
-export type ReminderFrequency = 'ONCE_DAILY' | 'TWICE_DAILY' | 'HOURLY';
+export type ReminderFrequency = 'EVERY_1H' | 'EVERY_2H' | 'EVERY_3H' | 'EVERY_4H' | 'EVERY_5H';
 
 export interface Settings {
   id: 'app';
@@ -97,7 +97,6 @@ export interface Settings {
    *  to the packaged Android build). */
   reminderSound: boolean;
   reminderVibration: boolean;
-  reminderFullScreenAlert: boolean;
   reminderFrequency: ReminderFrequency;
   /** Local hour (0-23) at which the app's "today" rolls over to the next
    *  calendar day. 0 = midnight (the original, unconfigurable behavior).

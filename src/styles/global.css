@@ -18,6 +18,13 @@ html { scrollbar-gutter: stable; }
    layout that already fits — only clips content that would otherwise
    overflow off-screen. */
 html, body { overflow-x: hidden; }
+/* Welcome/empty Today state lock: while there are no commitments, the page
+   is designed to fit within a single viewport and must not scroll at all.
+   Today.tsx toggles `welcome-locked` on <html> whenever the list is empty;
+   normal scrolling returns automatically once commitments overflow the
+   screen (the class is removed as soon as any commitment exists). The
+   fixed bottom nav is position:fixed so it stays usable regardless. */
+html.welcome-locked, html.welcome-locked body { overflow: hidden; }
 
 body {
   min-height: 100vh;

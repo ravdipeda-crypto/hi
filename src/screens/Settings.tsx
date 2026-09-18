@@ -2,13 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import CompactHeader from '../components/CompactHeader';
 import AquaSelect from '../components/AquaSelect';
-import { BellIcon, VibrationIcon, AlertScreenIcon, ClockIcon } from '../components/icons';
+import { BellIcon, VibrationIcon, ClockIcon } from '../components/icons';
 import type { ReminderFrequency } from '../types';
 import {
   fireTestReminder,
   getNotificationPermission,
   requestNotificationPermission,
-  supportsFullScreenAlert,
   supportsNotifications,
   supportsVibration,
   type NotificationPermissionState,
@@ -16,9 +15,11 @@ import {
 import './Settings.css';
 
 const FREQUENCY_OPTIONS: { value: ReminderFrequency; label: string }[] = [
-  { value: 'ONCE_DAILY', label: 'Once a day' },
-  { value: 'TWICE_DAILY', label: 'Twice a day' },
-  { value: 'HOURLY', label: 'Hourly' },
+  { value: 'EVERY_1H', label: 'Every 1 hour' },
+  { value: 'EVERY_2H', label: 'Every 2 hours' },
+  { value: 'EVERY_3H', label: 'Every 3 hours' },
+  { value: 'EVERY_4H', label: 'Every 4 hours' },
+  { value: 'EVERY_5H', label: 'Every 5 hours' },
 ];
 
 /** 0-23 -> "12:00 AM", "1:00 AM", ... "11:00 PM", for the daily-refresh-hour select. */
@@ -32,7 +33,6 @@ export default function Settings() {
   const { settings, updateSettings } = useApp();
   const notificationsSupported = supportsNotifications();
   const vibrationSupported = supportsVibration();
-  const fullScreenAlertSupported = supportsFullScreenAlert();
   // Permission is resolved asynchronously (the native check is async), so it
   // starts unknown and is filled in by the effect below.
   const [permission, setPermission] = useState<NotificationPermissionState>(
@@ -123,13 +123,6 @@ export default function Settings() {
             <span className="settings-switch-track" aria-hidden="true" />
           </label>
         </div>
-        {notificationsSupported && (
-          <p className="settings-capability-note">
-            Plays your device's default notification sound — custom sounds aren't controllable
-            from a web app.
-          </p>
-        )}
-
         <div className="settings-row">
           <span className="settings-row-label">
             <VibrationIcon width={16} height={16} />
@@ -147,30 +140,9 @@ export default function Settings() {
         </div>
         {!vibrationSupported && (
           <p className="settings-capability-note">
-            Vibration isn't supported on this device/browser, so this control is disabled.
+            Vibration isn't supported on this device, so this control is disabled.
           </p>
         )}
-
-        <div className="settings-row">
-          <span className="settings-row-label">
-            <AlertScreenIcon width={16} height={16} />
-            Full-screen alert
-          </span>
-          <label className="settings-switch">
-            <input
-              type="checkbox"
-              checked={settings.reminderFullScreenAlert}
-              disabled={!remindersOn || !fullScreenAlertSupported}
-              onChange={(e) => void updateSettings({ reminderFullScreenAlert: e.target.checked })}
-            />
-            <span className="settings-switch-track" aria-hidden="true" />
-          </label>
-        </div>
-        <p className="settings-capability-note">
-          Not available yet — a wake-the-screen alarm-style alert needs native Android support
-          this build doesn't include. Left visible so it's clear this is on the roadmap, not
-          hidden or silently faked.
-        </p>
 
         <div className="settings-row">
           <span className="settings-row-label">
@@ -214,9 +186,8 @@ export default function Settings() {
           />
         </div>
         <p className="settings-capability-note">
-          Today, Progress, and history all switch to the next scheduled day at this time instead
-          of exactly midnight. Existing recorded days are never rewritten — this only changes
-          which date counts as "today" going forward.
+          The app rolls over to the next day at this time instead of midnight. Existing records
+          are never changed.
         </p>
       </section>
     </div>

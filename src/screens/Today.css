@@ -326,7 +326,16 @@
      without unnecessary scrolling — tighter head padding and a smaller
      loop footprint. Typography, text and animations are unchanged; only
      the vertical gaps shrink. */
-  .today-empty-head { padding: 22px 20px; gap: 10px; }
-  .today-empty-loop { padding: 14px; }
-  .today-empty-step { padding: 7px 12px; }
+  .today-empty-head { padding: 20px; gap: 8px; }
+  .today-empty-title { font-size: 26px; }
+  .today-empty-copy { line-height: 1.5; }
+  .today-empty-loop { padding: 12px; }
+  .today-empty-step { padding: 6px 12px; }
+
+  /* On the empty/welcome screen specifically, tighten the header so the
+     greeting + the empty panel together fit one viewport (the page is
+     scroll-locked here). Only affects the empty state — the normal Today
+     header is untouched. */
+  .today-screen--empty .today-header { margin-bottom: 14px; }
+  .today-screen--empty .today-title { font-size: 30px; }
 }

@@ -1,4 +1,4 @@
-.settings-screen { max-width: 680px; display: flex; flex-direction: column; gap: 16px; }
+.settings-screen { max-width: 680px; display: flex; flex-direction: column; gap: 12px; }
 
 .settings-section { animation: rise-in var(--dur-base) var(--ease-liquid) both; animation-delay: calc(var(--i, 0) * 60ms); }
 
@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 16px 20px;
+  padding: 12px 18px;
   font-size: var(--fs-small);
   flex-wrap: wrap;
 }
@@ -31,10 +31,10 @@
    explanation. Sits flush under its row, not its own bordered box, so it
    reads as an inline caption rather than a separate alert. */
 .settings-capability-note {
-  margin: -6px 20px 12px;
-  padding: 0 0 4px;
+  margin: -4px 18px 8px;
+  padding: 0 0 2px;
   font-size: var(--fs-micro);
-  line-height: 1.5;
+  line-height: 1.45;
   color: var(--muted);
 }
 .settings-capability-note-warning { color: var(--warning); }

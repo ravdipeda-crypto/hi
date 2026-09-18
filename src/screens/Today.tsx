@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatLongDate, todayISO } from '../utils/date';
+import { capitalizeFirstLetter, getStoredUserName } from '../utils/userName';
 import { useTodayItems } from '../hooks/useTodayItems';
 import FocusLens from '../components/FocusLens';
 import AnimatedNumber from '../components/AnimatedNumber';
@@ -37,6 +38,23 @@ export default function Today() {
   const completedCount = complete.length;
   const completionPercent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
+  // The header greeting leads with the user's own name (normalized to
+  // first-letter-uppercase) instead of the literal word "Today". Falls back
+  // to "Today" only if no name was ever captured during onboarding.
+  const displayName = capitalizeFirstLetter(getStoredUserName()) || 'Today';
+
+  // The empty/welcome state is designed to sit within a single viewport, so
+  // lock page scrolling entirely while the list is empty — it must not
+  // scroll "even 1cm". As soon as real commitments fill (and overflow) the
+  // screen, `total` becomes > 0, the class is removed, and normal scrolling
+  // returns. The class lives on <html> and is cleaned up on unmount too.
+  const isEmpty = total === 0;
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle('welcome-locked', isEmpty);
+    return () => root.classList.remove('welcome-locked');
+  }, [isEmpty]);
+
   const handleStart = useCallback(
     async (commitmentId: string) => {
       setActionError(null);
@@ -70,12 +88,12 @@ export default function Today() {
   );
 
   return (
-    <div className="today-screen">
+    <div className={`today-screen${isEmpty ? ' today-screen--empty' : ''}`}>
       <header className="today-header">
         <div className="today-header-lead">
           <span className="eyebrow">{formatLongDate(today)}</span>
           <h1 className="today-title display">
-            Today,<br />
+            {displayName},<br />
             <em className="accent">find your clear current.</em>
           </h1>
         </div>

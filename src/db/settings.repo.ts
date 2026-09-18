@@ -1,7 +1,7 @@
 // Typed data-access functions for app Settings.
 
 import { STORES, getById, put } from './db';
-import type { Settings } from '../types';
+import type { ReminderFrequency, Settings } from '../types';
 
 const SETTINGS_KEY = 'app';
 
@@ -13,10 +13,17 @@ export const DEFAULT_SETTINGS: Settings = {
   hasOnboarded: false,
   reminderSound: true,
   reminderVibration: true,
-  reminderFullScreenAlert: false,
-  reminderFrequency: 'ONCE_DAILY',
+  reminderFrequency: 'EVERY_1H',
   dailyResetHour: 0,
 };
+
+const VALID_REMINDER_FREQUENCIES: ReminderFrequency[] = [
+  'EVERY_1H',
+  'EVERY_2H',
+  'EVERY_3H',
+  'EVERY_4H',
+  'EVERY_5H',
+];
 
 /**
  * Back-fills any reminder/reset fields missing from a previously-saved
@@ -27,10 +34,18 @@ export const DEFAULT_SETTINGS: Settings = {
  * import — gets the same backward-compatible shape.
  */
 export function withSettingsDefaults(settings: Settings): Settings {
-  return {
+  const merged: Settings = {
     ...DEFAULT_SETTINGS,
     ...settings,
   };
+  // Migrate a reminderFrequency saved under the old scheme (e.g.
+  // 'ONCE_DAILY'/'TWICE_DAILY'/'HOURLY') — or any unrecognized value — to
+  // the current hourly-interval default, so the stored choice always maps
+  // to a real option in the picker.
+  if (!VALID_REMINDER_FREQUENCIES.includes(merged.reminderFrequency)) {
+    merged.reminderFrequency = DEFAULT_SETTINGS.reminderFrequency;
+  }
+  return merged;
 }
 
 export async function getSettings(): Promise<Settings> {
