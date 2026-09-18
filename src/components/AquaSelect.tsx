@@ -1,4 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDownIcon } from './icons';
 import './AquaSelect.css';
 
@@ -16,21 +17,33 @@ interface AquaSelectProps<T extends string> {
   className?: string;
 }
 
+interface PanelPos {
+  left: number;
+  top: number;
+  width: number;
+  openUp: boolean;
+}
+
+/** Rough per-option height (padding + text), used to estimate panel height
+ *  for positioning before it's painted. */
+const OPTION_HEIGHT = 44;
+const PANEL_MAX_HEIGHT = 280;
+const GAP = 10;
+
 /**
  * A custom dropdown/listbox styled as part of the Aqua Lens system —
  * translucent glass, soft blur, aqua tint, rounded organic shape, no sharp
- * borders, and a smooth open/close animation. Replaces the browser's
- * native `<select>` popup for the app's own dropdowns (Progress's
- * commitment filter, Settings' reminder-frequency/daily-refresh-time
- * pickers) — native `<select>` popups are rendered by the OS/browser
- * itself and can't be restyled at all, which is exactly the "looks like a
- * generic system dialog" problem this replaces.
+ * borders, and a smooth open/close animation. Replaces the browser's native
+ * `<select>` popup (which can't be restyled).
  *
- * Built from scratch with plain button/ul/li rather than a dependency:
- * this app already avoids adding UI libraries for a single control (see
- * AppContext's "keep it simple" note), and the required behavior (toggle
- * open state, arrow-key navigation, click-outside/Escape to close) is
- * small enough to keep transparent here.
+ * The open panel is rendered through a portal onto `document.body` with
+ * fixed positioning. That's deliberate: each Aqua Lens card uses
+ * `backdrop-filter`, which creates its own stacking context, so a panel
+ * rendered inline inside a card is trapped there and gets painted over by
+ * later sibling cards (e.g. the Reminder-frequency menu being hidden behind
+ * the Daily-refresh card). A body-level portal escapes every card's
+ * stacking context and always paints on top. It also flips above the
+ * trigger when there isn't room below.
  */
 export default function AquaSelect<T extends string>({
   value,
@@ -41,46 +54,57 @@ export default function AquaSelect<T extends string>({
   className,
 }: AquaSelectProps<T>) {
   const [open, setOpen] = useState(false);
-  // Whether to open upward instead of downward. Decided when the menu opens
-  // based on the room available below the trigger, so a dropdown near the
-  // bottom of the screen (e.g. Reminder frequency, which sits just above the
-  // Daily refresh section) opens up and away from the content beneath it
-  // instead of covering it.
-  const [openUp, setOpenUp] = useState(false);
+  const [pos, setPos] = useState<PanelPos | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLUListElement>(null);
   const listboxId = useId();
   const selected = options.find((o) => o.value === value) ?? options[0];
   const selectedIndex = options.findIndex((o) => o.value === value);
 
-  // Before the browser paints the open panel, measure whether it fits below
-  // the trigger; if not (and there's more room above), flip it upward.
-  useLayoutEffect(() => {
-    if (!open) return;
+  function computePosition(): PanelPos | null {
     const trigger = rootRef.current?.getBoundingClientRect();
-    const panel = panelRef.current?.getBoundingClientRect();
-    if (!trigger || !panel) return;
-    const margin = 24;
+    if (!trigger) return null;
+    const estHeight = Math.min(options.length * OPTION_HEIGHT + 16, PANEL_MAX_HEIGHT);
     const spaceBelow = window.innerHeight - trigger.bottom;
-    const needed = panel.height + margin;
-    setOpenUp(spaceBelow < needed && trigger.top > spaceBelow);
+    const openUp = spaceBelow < estHeight + GAP + 8 && trigger.top > spaceBelow;
+    return {
+      left: trigger.left,
+      width: trigger.width,
+      top: openUp ? trigger.top - GAP : trigger.bottom + GAP,
+      openUp,
+    };
+  }
+
+  // Position the panel the moment it opens, before paint (no flash).
+  useLayoutEffect(() => {
+    if (open) setPos(computePosition());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   useEffect(() => {
     if (!open) return;
     function handlePointerDown(e: MouseEvent) {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      const target = e.target as Node;
+      if (rootRef.current?.contains(target) || panelRef.current?.contains(target)) return;
+      setOpen(false);
     }
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') setOpen(false);
     }
+    // The panel is fixed-positioned relative to the trigger; rather than
+    // track it while the page moves, just close on scroll/resize.
+    function handleReflow() {
+      setOpen(false);
+    }
     document.addEventListener('mousedown', handlePointerDown);
     document.addEventListener('keydown', handleKey);
+    window.addEventListener('scroll', handleReflow, true);
+    window.addEventListener('resize', handleReflow);
     return () => {
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('keydown', handleKey);
+      window.removeEventListener('scroll', handleReflow, true);
+      window.removeEventListener('resize', handleReflow);
     };
   }, [open]);
 
@@ -118,33 +142,40 @@ export default function AquaSelect<T extends string>({
         </span>
       </button>
 
-      {open && (
-        <ul
-          ref={panelRef}
-          className={`aqua-select-panel${openUp ? ' up' : ''}`}
-          role="listbox"
-          id={listboxId}
-          aria-label={ariaLabel}
-          tabIndex={-1}
-        >
-          {options.map((opt) => (
-            <li key={opt.value} role="none">
-              <button
-                type="button"
-                role="option"
-                aria-selected={opt.value === value}
-                className={`aqua-select-option${opt.value === value ? ' selected' : ''}`}
-                onClick={() => {
-                  onChange(opt.value);
-                  setOpen(false);
-                }}
-              >
-                {opt.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {open && pos &&
+        createPortal(
+          <ul
+            ref={panelRef}
+            className={`aqua-select-panel${pos.openUp ? ' up' : ''}`}
+            role="listbox"
+            id={listboxId}
+            aria-label={ariaLabel}
+            tabIndex={-1}
+            style={{
+              left: pos.left,
+              width: pos.width,
+              ...(pos.openUp ? { bottom: window.innerHeight - pos.top } : { top: pos.top }),
+            }}
+          >
+            {options.map((opt) => (
+              <li key={opt.value} role="none">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={opt.value === value}
+                  className={`aqua-select-option${opt.value === value ? ' selected' : ''}`}
+                  onClick={() => {
+                    onChange(opt.value);
+                    setOpen(false);
+                  }}
+                >
+                  {opt.label}
+                </button>
+              </li>
+            ))}
+          </ul>,
+          document.body,
+        )}
     </div>
   );
 }

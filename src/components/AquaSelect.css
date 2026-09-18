@@ -54,11 +54,11 @@
    (translucent, blurred, soft-glowing), organic rounded corners, and a
    smooth scale+fade open animation rather than snapping into place. */
 .aqua-select-panel {
-  position: absolute;
-  z-index: 40;
-  top: calc(100% + 10px);
-  left: 0;
-  min-width: 100%;
+  /* Fixed + portaled to <body> so it escapes each Aqua Lens card's
+     backdrop-filter stacking context (otherwise a later card paints over
+     it); left/top/width are set inline from the trigger's position. */
+  position: fixed;
+  z-index: 1000;
   max-height: 280px;
   overflow-y: auto;
   margin: 0;
@@ -78,12 +78,10 @@
   transform-origin: top center;
   animation: aqua-select-open var(--dur-quick) var(--ease-settle) both;
 }
-/* Upward variant — used when there isn't room below the trigger (e.g. the
-   Reminder frequency picker sitting just above the Daily refresh section),
-   so the menu opens up and away instead of overlapping the content beneath. */
+/* Upward variant — used when there isn't room below the trigger, so the
+   menu opens up and away from the content beneath. Positioning (bottom) is
+   applied inline; this only sets the animation origin/direction. */
 .aqua-select-panel.up {
-  top: auto;
-  bottom: calc(100% + 10px);
   transform-origin: bottom center;
   animation-name: aqua-select-open-up;
 }
