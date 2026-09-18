@@ -78,8 +78,21 @@
   transform-origin: top center;
   animation: aqua-select-open var(--dur-quick) var(--ease-settle) both;
 }
+/* Upward variant — used when there isn't room below the trigger (e.g. the
+   Reminder frequency picker sitting just above the Daily refresh section),
+   so the menu opens up and away instead of overlapping the content beneath. */
+.aqua-select-panel.up {
+  top: auto;
+  bottom: calc(100% + 10px);
+  transform-origin: bottom center;
+  animation-name: aqua-select-open-up;
+}
 @keyframes aqua-select-open {
   from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes aqua-select-open-up {
+  from { opacity: 0; transform: scale(0.96) translateY(4px); }
   to { opacity: 1; transform: none; }
 }
 

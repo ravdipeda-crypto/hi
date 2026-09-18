@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { ChevronDownIcon } from './icons';
 import './AquaSelect.css';
 
@@ -41,10 +41,30 @@ export default function AquaSelect<T extends string>({
   className,
 }: AquaSelectProps<T>) {
   const [open, setOpen] = useState(false);
+  // Whether to open upward instead of downward. Decided when the menu opens
+  // based on the room available below the trigger, so a dropdown near the
+  // bottom of the screen (e.g. Reminder frequency, which sits just above the
+  // Daily refresh section) opens up and away from the content beneath it
+  // instead of covering it.
+  const [openUp, setOpenUp] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLUListElement>(null);
   const listboxId = useId();
   const selected = options.find((o) => o.value === value) ?? options[0];
   const selectedIndex = options.findIndex((o) => o.value === value);
+
+  // Before the browser paints the open panel, measure whether it fits below
+  // the trigger; if not (and there's more room above), flip it upward.
+  useLayoutEffect(() => {
+    if (!open) return;
+    const trigger = rootRef.current?.getBoundingClientRect();
+    const panel = panelRef.current?.getBoundingClientRect();
+    if (!trigger || !panel) return;
+    const margin = 24;
+    const spaceBelow = window.innerHeight - trigger.bottom;
+    const needed = panel.height + margin;
+    setOpenUp(spaceBelow < needed && trigger.top > spaceBelow);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -99,7 +119,14 @@ export default function AquaSelect<T extends string>({
       </button>
 
       {open && (
-        <ul className="aqua-select-panel" role="listbox" id={listboxId} aria-label={ariaLabel} tabIndex={-1}>
+        <ul
+          ref={panelRef}
+          className={`aqua-select-panel${openUp ? ' up' : ''}`}
+          role="listbox"
+          id={listboxId}
+          aria-label={ariaLabel}
+          tabIndex={-1}
+        >
           {options.map((opt) => (
             <li key={opt.value} role="none">
               <button
