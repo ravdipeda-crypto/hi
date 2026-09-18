@@ -229,15 +229,70 @@ function tickWebReminders(state: ReminderState, now: number): void {
 
 // ---------------- Public entry points ----------------
 
-/** Reconcile reminders against the latest state. Call on load and whenever
- *  commitments / records / timer / settings change. Fire-and-forget. */
-export function reconcileReminders(state: ReminderState): void {
-  const now = Date.now();
-  if (isNative()) {
-    void syncNativeReminders(state, now);
-  } else {
-    tickWebReminders(state, now);
+/**
+ * Compact "did anything a reminder cares about change?" signature.
+ *
+ * The context effect that calls reconcileReminders can fire on any app-
+ * state change (new dayRecord after a tick, theme toggle, commitment
+ * edit, ...), but MOST of those changes are irrelevant to the reminder
+ * schedule itself — reminders only depend on: whether reminders are
+ * enabled, the frequency + reset hour, and whether each active
+ * commitment's TODAY record is still in an incomplete state. Comparing a
+ * cheap signature before doing any real work skips the (expensive on
+ * native — IPC round-trip to cancel + reschedule OS notifications, plus
+ * localStorage reads) reconcile on the many state changes that don't
+ * change what should fire.
+ */
+function reminderSignature(state: ReminderState): string {
+  const { commitments, dayRecords, timer, settings } = state;
+  if (!settings.notificationsEnabled) return 'off';
+  const today = todayISO(settings.dailyResetHour);
+  const timerKey = timer ? `${timer.commitmentId}:${timer.dayDate}:${timer.status}` : '-';
+  const parts: string[] = [
+    settings.reminderFrequency,
+    String(settings.dailyResetHour),
+    settings.reminderSound ? '1' : '0',
+    settings.reminderVibration ? '1' : '0',
+    timerKey,
+  ];
+  for (const commitment of commitments) {
+    if (!(commitment.startDate <= today && today <= commitment.endDate)) continue;
+    const record = dayRecords.find((r) => r.commitmentId === commitment.id && r.date === today);
+    if (!record) continue;
+    // Elapsed changes as a timer runs but doesn't affect WHICH reminders
+    // are due — status + persisted elapsed>0 is enough to distinguish the
+    // three states the reminder logic branches on.
+    parts.push(
+      `${commitment.id}|${commitment.endDate}|${record.status}|${record.elapsedSeconds > 0 ? '1' : '0'}`,
+    );
   }
+  return parts.join('~');
+}
+
+let pendingReconcileTimer: ReturnType<typeof setTimeout> | null = null;
+let lastReconciledSignature: string | null = null;
+
+/** Reconcile reminders against the latest state. Call on load and whenever
+ *  commitments / records / timer / settings change. Fire-and-forget.
+ *
+ *  Coalesced: rapid bursts of calls (e.g. multiple setStates during initial
+ *  load or a habit toggle) collapse into a single reconcile ~250ms later,
+ *  and no work runs at all when the reminder-relevant signature hasn't
+ *  actually changed since the last reconcile. */
+export function reconcileReminders(state: ReminderState): void {
+  const signature = reminderSignature(state);
+  if (signature === lastReconciledSignature) return;
+  if (pendingReconcileTimer != null) clearTimeout(pendingReconcileTimer);
+  pendingReconcileTimer = setTimeout(() => {
+    pendingReconcileTimer = null;
+    lastReconciledSignature = signature;
+    const now = Date.now();
+    if (isNative()) {
+      void syncNativeReminders(state, now);
+    } else {
+      tickWebReminders(state, now);
+    }
+  }, 250);
 }
 
 /**

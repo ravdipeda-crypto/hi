@@ -22,7 +22,10 @@ export default function AnimatedNumber({
   durationMs = 600,
   className,
 }: AnimatedNumberProps) {
-  const animated = useCountUp(value, durationMs);
+  // Passing `decimals` into the hook lets it skip per-frame setStates whose
+  // rounded output wouldn't change — the exact metric this component
+  // displays via `.toFixed(decimals)`. See useCountUp for details.
+  const animated = useCountUp(value, durationMs, decimals);
   const display = animated.toFixed(decimals);
   return (
     <span className={`num ${className ?? ''}`}>
