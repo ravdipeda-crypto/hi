@@ -237,7 +237,7 @@
      is never hidden under either. Clamped to 48px max for the same reason
      as .mobile-topbar's top offset above — guards against a WebView
      reporting an inflated inset value. */
-  .app-main { padding: 40px 14px calc(min(env(safe-area-inset-bottom, 0px), 48px) + 104px); }
+  .app-main { padding: 64px 14px calc(min(env(safe-area-inset-bottom, 0px), 48px) + 104px); }
 
   .mobile-nav {
     display: flex;
