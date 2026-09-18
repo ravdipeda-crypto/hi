@@ -132,7 +132,21 @@
 
 /* ---------------- Mobile ---------------- */
 @media (max-width: 768px) {
-  .app-shell { grid-template-columns: 1fr; }
+  .app-shell {
+    grid-template-columns: 1fr;
+    /* Explicit rows: topbar sized to its content, the main area absorbs
+       ALL leftover vertical space. Without this, the grid's default
+       `align-content: stretch` (min-height:100vh, auto rows) splits the
+       leftover height between BOTH rows — ballooning the sticky topbar
+       into a tall empty box whenever the page content is shorter than the
+       viewport. That's far more pronounced in the fullscreen native
+       Android WebView (no browser URL bar = more leftover height) than in
+       a browser tab, which is exactly why it showed in the APK but looked
+       fine on the live web page. `align-content: start` is a
+       belt-and-suspenders guard for the same thing. */
+    grid-template-rows: auto 1fr;
+    align-content: start;
+  }
   .sidebar { display: none; }
 
   /* A frosted glass bar: rounded on all sides, blurred translucent surface,
