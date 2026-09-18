@@ -45,3 +45,12 @@
   .compact-header-theme-toggle:hover { color: var(--accent-bright); background: var(--surface-strong); }
 }
 .compact-header-theme-toggle:active { transform: scale(0.88); }
+
+/* On mobile the persistent .mobile-topbar (see Layout.css) already shows the
+   GRIT wordmark + theme toggle at the top of every screen, so rendering this
+   compact header there too produced a duplicate GRIT row directly beneath
+   the top bar. Hide it on mobile; it's only needed on desktop, where there
+   is no top bar (the sidebar takes its place and carries no theme toggle). */
+@media (max-width: 768px) {
+  .compact-header { display: none; }
+}

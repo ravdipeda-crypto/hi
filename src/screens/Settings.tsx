@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import CompactHeader from '../components/CompactHeader';
 import AquaSelect from '../components/AquaSelect';
@@ -6,11 +6,12 @@ import { BellIcon, VibrationIcon, AlertScreenIcon, ClockIcon } from '../componen
 import type { ReminderFrequency } from '../types';
 import {
   fireTestReminder,
-  notificationPermission,
+  getNotificationPermission,
   requestNotificationPermission,
   supportsFullScreenAlert,
   supportsNotifications,
   supportsVibration,
+  type NotificationPermissionState,
 } from '../utils/notificationCapabilities';
 import './Settings.css';
 
@@ -32,24 +33,37 @@ export default function Settings() {
   const notificationsSupported = supportsNotifications();
   const vibrationSupported = supportsVibration();
   const fullScreenAlertSupported = supportsFullScreenAlert();
-  const [permission, setPermission] = useState(notificationPermission());
+  // Permission is resolved asynchronously (the native check is async), so it
+  // starts unknown and is filled in by the effect below.
+  const [permission, setPermission] = useState<NotificationPermissionState>(
+    notificationsSupported ? 'default' : 'unsupported',
+  );
   const [testSentAt, setTestSentAt] = useState<number | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+    void getNotificationPermission().then((p) => {
+      if (!cancelled) setPermission(p);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   async function handleNotificationsToggle(checked: boolean) {
-    if (checked && notificationsSupported && permission === 'default') {
+    if (checked && notificationsSupported && permission !== 'granted') {
+      // Ask the OS/browser for permission every time the user tries to turn
+      // reminders on while not yet granted. Respect the real answer — never
+      // flip the setting on unless permission is actually granted.
       const result = await requestNotificationPermission();
       setPermission(result);
-      if (result !== 'granted') {
-        // Respect the platform's answer — don't silently flip the setting
-        // on if the user (or platform) actually denied/can't grant it.
-        return;
-      }
+      if (result !== 'granted') return;
     }
     await updateSettings({ notificationsEnabled: checked });
   }
 
   function handleSendTest() {
-    fireTestReminder(settings.reminderVibration && vibrationSupported);
+    void fireTestReminder(settings.reminderVibration && vibrationSupported);
     setTestSentAt(Date.now());
   }
 
