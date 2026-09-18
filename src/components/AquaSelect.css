@@ -65,7 +65,13 @@
   padding: 8px;
   list-style: none;
   border-radius: var(--radius-lg);
-  background: linear-gradient(150deg, var(--surface-strong), var(--surface-2));
+  /* Two background layers: the aqua glass tint on top, over an OPAQUE base
+     (`--field-b`, a solid hex in both themes). Without the opaque base the
+     panel's translucent surface let the page content behind it bleed
+     through, so options lower in the list visually overlapped whatever sat
+     beneath the dropdown (e.g. the Daily refresh section). The opaque base
+     fully occludes that while the tint + blur keep the Aqua Lens look. */
+  background: linear-gradient(150deg, var(--surface-strong), var(--surface-2)), var(--field-b);
   -webkit-backdrop-filter: blur(16px) saturate(1.2);
   backdrop-filter: blur(16px) saturate(1.2);
   box-shadow: var(--shadow-raised), 0 0 0 1px rgba(90, 219, 224, 0.16), 0 0 30px var(--accent-glow);
