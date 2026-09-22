@@ -82,22 +82,6 @@ export function supportsVibration(): boolean {
 }
 
 /**
- * Full-screen alert (an alarm-clock-style takeover that wakes the screen
- * even when locked) needs a dedicated native full-screen-intent
- * implementation this build doesn't ship. Reported as unsupported rather
- * than exposing a checkbox that controls nothing.
- */
-export function supportsFullScreenAlert(): boolean {
-  return false;
-}
-
-/** Whether firing a notification with the platform's default alert sound is
- *  possible at all (there's no cross-platform API for a *custom* sound). */
-export function supportsNotificationSound(): boolean {
-  return supportsNotifications();
-}
-
-/**
  * Fires a one-off reminder for the "Send test reminder" action in Settings,
  * honoring the vibration preference where supported. Native uses the OS
  * notification; web uses the Notification API. Assumes the caller has

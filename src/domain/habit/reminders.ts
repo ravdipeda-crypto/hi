@@ -113,12 +113,4 @@ export function computeReminder(
   };
 }
 
-/** Urgency order used when a single "most important" reminder is needed
- *  (e.g. a test reminder): deadline first, then behind, then not-started. */
-const URGENCY: Record<ReminderType, number> = { DEADLINE: 0, BEHIND: 1, NOT_STARTED: 2 };
 
-/** Picks the single most urgent reminder from a list, or null if empty. */
-export function pickPrimaryReminder(reminders: SmartReminder[]): SmartReminder | null {
-  if (reminders.length === 0) return null;
-  return [...reminders].sort((a, b) => URGENCY[a.type] - URGENCY[b.type])[0];
-}

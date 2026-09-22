@@ -166,16 +166,6 @@ export function VibrationIcon(props: IconProps) {
   );
 }
 
-export function AlertScreenIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <rect x="4" y="4" width="16" height="16" rx="2" />
-      <path d="M12 8.5 V13" strokeLinecap="round" />
-      <circle cx="12" cy="16" r="0.6" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
 export function ClockIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
